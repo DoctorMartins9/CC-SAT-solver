@@ -1,0 +1,2 @@
+/usr/bin/ar qc libhp.a  CMakeFiles/hp.dir/src/main.cpp.o
+/usr/bin/ranlib libhp.a
