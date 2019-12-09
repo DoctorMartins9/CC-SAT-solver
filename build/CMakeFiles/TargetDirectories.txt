@@ -1,11 +1,6 @@
-/home/emartini/Documenti/Heap/build/CMakeFiles/rebuild_cache.dir
-/home/emartini/Documenti/Heap/build/CMakeFiles/test.dir
-/home/emartini/Documenti/Heap/build/CMakeFiles/edit_cache.dir
-/home/emartini/Documenti/Heap/build/CMakeFiles/heap_test.dir
-/home/emartini/Documenti/Heap/build/CMakeFiles/clean-all.dir
-/home/emartini/Documenti/Heap/build/CMakeFiles/doc.dir
-/home/emartini/Documenti/Heap/build/CMakeFiles/hp.dir
-/home/emartini/Documenti/Heap/build/CMakeFiles/release.dir
-/home/emartini/Documenti/Heap/build/CMakeFiles/my_heap.dir
-/home/emartini/Documenti/Heap/build/CMakeFiles/tidy.dir
-/home/emartini/Documenti/Heap/build/CMakeFiles/cyclo.dir
+/home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles/rebuild_cache.dir
+/home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles/release.dir
+/home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles/cc_sat.dir
+/home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles/clean-all.dir
+/home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles/ccsat.dir
+/home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles/edit_cache.dir

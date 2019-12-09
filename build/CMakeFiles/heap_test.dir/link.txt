@@ -1,1 +1,0 @@
-/usr/bin/c++     CMakeFiles/heap_test.dir/tests/test.cpp.o  -o heap_test libhp.a 

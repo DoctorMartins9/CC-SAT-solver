@@ -1,17 +1,12 @@
 [
 {
-  "directory": "/home/emartini/Documenti/Heap/build",
-  "command": "/usr/bin/c++   -I/home/emartini/Documenti/Heap/include -I/home/emartini/Documenti/Heap/lib    -std=c++14 -Wall -Wextra -Wpedantic -Werror -std=gnu++14 -o CMakeFiles/heap_test.dir/tests/test.cpp.o -c /home/emartini/Documenti/Heap/tests/test.cpp",
-  "file": "/home/emartini/Documenti/Heap/tests/test.cpp"
+  "directory": "/home/enrico/Scrivania/GitHub/CC-SAT-solver/build",
+  "command": "/usr/bin/c++   -I/home/enrico/Scrivania/GitHub/CC-SAT-solver/include -I/home/enrico/Scrivania/GitHub/CC-SAT-solver/lib    -std=c++14 -std=gnu++14 -o CMakeFiles/cc_sat.dir/src/main.cpp.o -c /home/enrico/Scrivania/GitHub/CC-SAT-solver/src/main.cpp",
+  "file": "/home/enrico/Scrivania/GitHub/CC-SAT-solver/src/main.cpp"
 },
 {
-  "directory": "/home/emartini/Documenti/Heap/build",
-  "command": "/usr/bin/c++   -I/home/emartini/Documenti/Heap/include -I/home/emartini/Documenti/Heap/lib    -std=c++14 -Wall -Wextra -Wpedantic -Werror -std=gnu++14 -o CMakeFiles/hp.dir/src/main.cpp.o -c /home/emartini/Documenti/Heap/src/main.cpp",
-  "file": "/home/emartini/Documenti/Heap/src/main.cpp"
-},
-{
-  "directory": "/home/emartini/Documenti/Heap/build",
-  "command": "/usr/bin/c++   -I/home/emartini/Documenti/Heap/include -I/home/emartini/Documenti/Heap/lib    -std=c++14 -Wall -Wextra -Wpedantic -Werror -std=gnu++14 -o CMakeFiles/my_heap.dir/src/main.cpp.o -c /home/emartini/Documenti/Heap/src/main.cpp",
-  "file": "/home/emartini/Documenti/Heap/src/main.cpp"
+  "directory": "/home/enrico/Scrivania/GitHub/CC-SAT-solver/build",
+  "command": "/usr/bin/c++   -I/home/enrico/Scrivania/GitHub/CC-SAT-solver/include -I/home/enrico/Scrivania/GitHub/CC-SAT-solver/lib    -std=c++14 -std=gnu++14 -o CMakeFiles/ccsat.dir/src/main.cpp.o -c /home/enrico/Scrivania/GitHub/CC-SAT-solver/src/main.cpp",
+  "file": "/home/enrico/Scrivania/GitHub/CC-SAT-solver/src/main.cpp"
 }
 ]

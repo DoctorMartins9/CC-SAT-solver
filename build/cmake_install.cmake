@@ -1,4 +1,4 @@
-# Install script for directory: /home/emartini/Documenti/Heap
+# Install script for directory: /home/enrico/Scrivania/GitHub/CC-SAT-solver
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/emartini/Documenti/Heap/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/enrico/Scrivania/GitHub/CC-SAT-solver/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

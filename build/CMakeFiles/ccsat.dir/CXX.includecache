@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/impl/variable.i.hpp
+vector
+-
+iostream
+-
+
+../include/variable.hpp
+impl/variable.i.hpp
+../include/impl/variable.i.hpp
+
+/home/enrico/Scrivania/GitHub/CC-SAT-solver/src/main.cpp
+vector
+-
+iostream
+-
+chrono
+-
+variable.hpp
+/home/enrico/Scrivania/GitHub/CC-SAT-solver/src/variable.hpp
+
