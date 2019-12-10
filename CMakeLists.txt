@@ -16,13 +16,6 @@ else()
 endif()
 
 
-if (CMAKE_COMPILER_IS_GNUCXX)
-    add_compile_options("-Wall")
-    add_compile_options("-Wextra")
-    add_compile_options("-Wpedantic")
-    add_compile_options("-Werror")
-endif()
-
 # BUILD MODE ------------------------------------------------------------------
 
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
@@ -61,7 +54,7 @@ endif()
 add_custom_target(release
                   COMMAND mkdir -p ${PROJECT_SOURCE_DIR}/bin
                   COMMAND make all
-                  COMMAND cp ${PROJECT_SOURCE_DIR}/build/my_heap ${PROJECT_SOURCE_DIR}/bin/
+                  COMMAND cp ${PROJECT_SOURCE_DIR}/build/ccsat ${PROJECT_SOURCE_DIR}/bin/
                   COMMENT "The example file is aviable in bin directory")
 
 add_custom_target(clean-all
@@ -102,61 +95,6 @@ include_directories(${PROJECT_SOURCE_DIR}/include
 
 file(GLOB_RECURSE SRCS ${PROJECT_SOURCE_DIR}/src/*.cpp)
 
-add_executable( my_heap ${SRCS} )
+add_executable( ccsat ${SRCS} )
 
-add_library(hp ${SRCS})
-
-add_executable(heap_test EXCLUDE_FROM_ALL
-               ${PROJECT_SOURCE_DIR}/tests/test.cpp)
-target_link_libraries(heap_test hp)
-
-# TEST DIRECTIVES -------------------------------------------------------------
-
-enable_testing()
-
-add_test(NAME IntHeapMax
-         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/build
-         COMMAND ./heap_test [IntHeapMax])
-
-
-add_test(NAME FloatHeapTestMax
-         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/build
-         COMMAND ./heap_test [FloatHeapTestMax])
-
-
-add_test(NAME DoubleHeapTestMax
-         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/build
-         COMMAND ./heap_test [DoubleHeapTestMax])
-
-
-add_test(NAME IntHeapTestMin
-         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/build
-         COMMAND ./heap_test [IntHeapTestMin])
-
-          
-    find_program(VALGRIND_FOUND valgrind)
-    if (VALGRIND_FOUND)
-
-        add_test(NAME ValgrindTest1
-                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/build
-                COMMAND valgrind --leak-check=full --show-leak-kinds=all
-                                --track-origins=yes
-                                ./heap_test [IntHeapMax])
-
-        add_test(NAME ValgrindTest2
-                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/build
-                COMMAND valgrind --leak-check=full --show-leak-kinds=all
-                                --track-origins=yes
-                                ./heap_test [FloatHeapTestMax])
-
-        add_test(NAME ValgrindTest3
-                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/build
-                COMMAND valgrind --leak-check=full --show-leak-kinds=all
-                                --track-origins=yes
-                                ./heap_test [DoubleHeapTestMax])
-        add_test(NAME ValgrindTest4
-                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/build
-                COMMAND valgrind --leak-check=full --show-leak-kinds=all
-                                --track-origins=yes
-                                ./heap_test [IntHeapTestMin])
-    endif()
+add_library(cc_sat ${SRCS})

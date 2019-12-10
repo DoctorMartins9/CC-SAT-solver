@@ -1,5 +1,5 @@
 /**
- * @copyright Copyright © 2019 Heap. All rights reserved.
+ * @copyright Copyright © 2019 Enrico Martini. All rights reserved.
  *
  * @license{<blockquote>
  * Redistribution and use in source and binary forms, with or without
@@ -29,59 +29,36 @@
  *
  * @author Enrico Martini                                                  <br>
  *         enrico.martini_02@studenti.univr.it
- * @date June, 2019
+ * @date December, 2019
  * @version v1.0
  *
  * @file
  */
 #pragma once
+#include "variable.hpp"
 
-namespace hp{
+namespace ccsat{
 
-    /**
-    *   @brief      Node useful for complex data structures like heap.
-    *   @tparam T   supports multiple type of numeric data.
-    * 
-     */    
-    template<typename T>
-    class Node{
-    
+class Clause{
     private:
-        T value;
-
-        /**
-         * @brief               set the value that the node contains.
-         * @param[in] input     value to set.
-         */    
-        void setValue(T input);
+        
+        Variable v1;
+        Variable v2;
+        bool is_equal;
+        
+        void setFirstValue(Variable input);
+        void setSecondValue(Variable input);
+        void setEqual(bool eq);
 
     public:
+        Clause();
+        Clause(Variable v_1, Variable v_2, bool is_equal);
+        std::string getClause();
+        Variable getFirstVariable();
+        Variable getSecondVariable();
+        bool isEqual();
+};
 
-        /**
-         * @brief   default constructor.
-         */
-        Node();
+}   // namespace 'ccsat'
 
-        /**
-         * @brief           constructor given a value to contain.       
-         * @param[in] i     value that the node will contain.
-         */        
-        Node(T i);
-
-        /**
-         * @brief           override of the = operator for assignments.
-         * @param[in] n     node to assign.
-         * @return          Node with value given in node input.
-         */
-        Node operator= (Node n);
-
-        /**
-         * @brief           get the value contained into the node.
-         * @return          return the value of the node.
-         */
-        T getValue();
-
-    };
-}   // namespace 'hp'
-
-#include "impl/node.i.hpp"
+#include "impl/clause.i.hpp"
