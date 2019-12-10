@@ -6,13 +6,45 @@
 
 #IncludeRegexTransform: 
 
-../include/impl/variable.i.hpp
+../include/cc.hpp
+formula.hpp
+../include/formula.hpp
 vector
 -
-iostream
+string
 -
+impl/cc.i.hpp
+../include/impl/cc.i.hpp
+
+../include/clause.hpp
+variable.hpp
+../include/variable.hpp
+string
+-
+impl/clause.i.hpp
+../include/impl/clause.i.hpp
+
+../include/formula.hpp
+clause.hpp
+../include/clause.hpp
+vector
+-
+string
+-
+impl/formula.i.hpp
+../include/impl/formula.i.hpp
+
+../include/impl/cc.i.hpp
+
+../include/impl/clause.i.hpp
+
+../include/impl/formula.i.hpp
+
+../include/impl/variable.i.hpp
 
 ../include/variable.hpp
+string
+-
 impl/variable.i.hpp
 ../include/impl/variable.i.hpp
 
@@ -23,6 +55,6 @@ iostream
 -
 chrono
 -
-variable.hpp
-/home/enrico/Scrivania/GitHub/CC-SAT-solver/src/variable.hpp
+cc.hpp
+/home/enrico/Scrivania/GitHub/CC-SAT-solver/src/cc.hpp
 

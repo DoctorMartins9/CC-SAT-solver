@@ -35,31 +35,23 @@
  * @file
  */
 #pragma once
-#include "variable.hpp"
+#include "clause.hpp"
+#include <vector>
 #include <string>
 
 namespace ccsat{
 
-class Clause{
+class Formula{
     private:
-        
-        Variable v1;
-        Variable v2;
-        bool is_equal;
-        
-        void setFirstValue(Variable input);
-        void setSecondValue(Variable input);
-        void setEqual(bool eq);
-
+        std::vector<Clause> v_set;
     public:
-        Clause();
-        Clause(Variable v_1, Variable v_2, bool is_equal);
-        std::string getClause();
-        Variable getFirstVariable();
-        Variable getSecondVariable();
-        bool isEqual();
+        Formula();
+        Formula(std::vector<Clause> input );
+        uint64_t getSize();
+        std::string getFormula();
+        void addClause(Clause input);
 };
 
 }   // namespace 'ccsat'
 
-#include "impl/clause.i.hpp"
+#include "impl/formula.i.hpp"

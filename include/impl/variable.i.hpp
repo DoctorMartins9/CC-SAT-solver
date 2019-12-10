@@ -1,6 +1,3 @@
-#include <vector>       // Vector manipulation  -> std::vector, ...
-#include <iostream>     // I/O operations       -> std::cout,   ...
-
 namespace ccsat{
     
 void Variable::setValue(std::string input){

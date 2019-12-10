@@ -1,6 +1,3 @@
-#include <vector>       // Vector manipulation  -> std::vector, ...
-#include <iostream>     // I/O operations       -> std::cout,   ...
-
 namespace ccsat{
         
     void Clause::setSecondValue(Variable input){
@@ -26,7 +23,7 @@ namespace ccsat{
     std::string Clause::getClause(){
         std::string str = "";
         str += v1.getValue();
-        std::string eq = is_equal ? "=" : "!=" ;
+        std::string eq = is_equal ? " = " : " != " ;
         str += eq;
         str += v2.getValue();
         return str;

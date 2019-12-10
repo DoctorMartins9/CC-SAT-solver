@@ -35,6 +35,7 @@
  * @file
  */
 #pragma once
+#include <string>
 
 namespace ccsat{
 
