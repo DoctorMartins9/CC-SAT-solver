@@ -39,16 +39,31 @@
 
 namespace ccsat{
 
-class Variable{
+class Node{
     private:
-        std::string value;
-        void setValue(std::string input);
+        std::string fn;                   // Costant or symbol function name
+        uint64_t id;                      // Node's unique identification number
+        std::vector<uint64_t> args;       // If node is function here there are its arguments
+        uint64_t find;                    // Representative of his congruent class
+        std::vector<uint64_t> ccpar;      // Congruence closure parents list 
+
     public:
-        Variable();
-        Variable(std::string i);
-        std::string getValue();
+
+        // Constructor
+        Node();
+        Node(std::string fn_i, uint64_t id_i, std::vector<uint64_t> args_i, 
+                               uint64_t find_i,std::vector<uint64_t> ccpar_i);
+
+        // Methods
+        std::string get_fn();
+        uint64_t get_id();
+        std::vector<uint64_t> get_args();
+        std::vector<uint64_t> get_ccpar();
+        uint64_t get_find();
+        void set_find(uint64_t find_i);
+        void set_ccpar(std::vector<uint64_t> ccpar_i);
 };
 
 }   // namespace 'ccsat'
 
-#include "impl/variable.i.hpp"
+#include "impl/node.i.hpp"

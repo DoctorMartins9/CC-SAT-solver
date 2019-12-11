@@ -1,16 +1,16 @@
 namespace ccsat{
 
-    CC::CC(){}
+    Sat::Sat(){}
 
-    CC::CC(Formula input ){
+    Sat::Sat(Formula input ){
         f = input;
     }
 
-    Formula CC::getFormula(){
+    Formula Sat::get_formula(){
         return f;
     }
 
-    void CC::setFormula(Formula input){
+    void Sat::set_formula(Formula input){
         f = input;
     }
 

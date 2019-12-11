@@ -6,19 +6,9 @@
 
 #IncludeRegexTransform: 
 
-../include/cc.hpp
-formula.hpp
-../include/formula.hpp
-vector
--
-string
--
-impl/cc.i.hpp
-../include/impl/cc.i.hpp
-
 ../include/clause.hpp
-variable.hpp
-../include/variable.hpp
+node.hpp
+../include/node.hpp
 string
 -
 impl/clause.i.hpp
@@ -34,19 +24,29 @@ string
 impl/formula.i.hpp
 ../include/impl/formula.i.hpp
 
-../include/impl/cc.i.hpp
-
 ../include/impl/clause.i.hpp
 
 ../include/impl/formula.i.hpp
 
-../include/impl/variable.i.hpp
+../include/impl/node.i.hpp
 
-../include/variable.hpp
+../include/impl/sat.i.hpp
+
+../include/node.hpp
 string
 -
-impl/variable.i.hpp
-../include/impl/variable.i.hpp
+impl/node.i.hpp
+../include/impl/node.i.hpp
+
+../include/sat.hpp
+formula.hpp
+../include/formula.hpp
+vector
+-
+string
+-
+impl/sat.i.hpp
+../include/impl/sat.i.hpp
 
 /home/enrico/Scrivania/GitHub/CC-SAT-solver/src/main.cpp
 vector
@@ -55,6 +55,6 @@ iostream
 -
 chrono
 -
-cc.hpp
-/home/enrico/Scrivania/GitHub/CC-SAT-solver/src/cc.hpp
+sat.hpp
+/home/enrico/Scrivania/GitHub/CC-SAT-solver/src/sat.hpp
 

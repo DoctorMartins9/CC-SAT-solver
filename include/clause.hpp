@@ -35,29 +35,29 @@
  * @file
  */
 #pragma once
-#include "variable.hpp"
+#include "node.hpp"
 #include <string>
 
 namespace ccsat{
 
 class Clause{
     private:
-        
-        Variable v1;
-        Variable v2;
+        Node n1;
+        Node n2;
         bool is_equal;
-        
-        void setFirstValue(Variable input);
-        void setSecondValue(Variable input);
-        void setEqual(bool eq);
 
     public:
+        // Constructors
         Clause();
-        Clause(Variable v_1, Variable v_2, bool is_equal);
-        std::string getClause();
-        Variable getFirstVariable();
-        Variable getSecondVariable();
-        bool isEqual();
+        Clause(Node n_1, Node n_2, bool is_equal_i);
+
+        // Methods
+        void set_first(Node input);
+        void set_second(Node input);
+        void set_equal(bool eq);
+        Node get_first();
+        Node get_second();
+        bool get_equal();
 };
 
 }   // namespace 'ccsat'

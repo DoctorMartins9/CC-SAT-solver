@@ -44,12 +44,16 @@ namespace ccsat{
 class Formula{
     private:
         std::vector<Clause> v_set;
+        
     public:
+        // Constructors
         Formula();
         Formula(std::vector<Clause> input );
-        uint64_t getSize();
-        std::string getFormula();
-        void addClause(Clause input);
+
+        // Methods
+        uint64_t get_size();
+        void add_clause(Clause input);
+        std::vector<Clause> get_formula();
 };
 
 }   // namespace 'ccsat'

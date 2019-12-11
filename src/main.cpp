@@ -2,26 +2,29 @@
 #include <iostream>         // I/O operations   |   std::cout , ...
 #include <chrono>           // time keeping     |   std::chrono, ... 
 
-#include "cc.hpp"     // Build formula     |   ccsat::Formula, ...
+#include "sat.hpp"     // Build formula     |   ccsat::Formula, ...
 
 int main(){
 
-    ccsat::Variable v1 = ccsat::Variable("f(x)");
-    ccsat::Variable v2 = ccsat::Variable("f(y)");
-    ccsat::Variable v3 = ccsat::Variable("z");
-    ccsat::Variable v4 = ccsat::Variable("f(x,y)");
+    // Node debug initialization
+    std::string fn = "f" ;
+    uint64_t id = 0;
+    std::vector<uint64_t> args;
+    uint64_t find = 5;
+    std::vector<uint64_t> ccpar;
+    ccsat::Node n = ccsat::Node(fn,id,args,find,ccpar);
 
-    ccsat::Clause clasue1 = ccsat::Clause(v1,v2,true);
-    ccsat::Clause clasue2 = ccsat::Clause(v3,v4,false);
+    // Clause debug initialization
+    ccsat::Clause c = ccsat::Clause(n,n,false);
 
+    // Formula debug initialization
     ccsat::Formula f = ccsat::Formula();
+    f.add_clause(c);
 
-    f.addClause(clasue1);
-    f.addClause(clasue2);
+    // Sat debugging initializzation
+    ccsat::Sat s = ccsat::Sat(f);
 
-    ccsat::CC cc = ccsat::CC(f);
-
-    std::cout << cc.getFormula().getFormula() << std::endl;
+    std::cout << n.get_fn() << std::endl;
 
     return 0;
 }

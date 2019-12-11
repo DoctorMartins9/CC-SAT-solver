@@ -1,43 +1,31 @@
 namespace ccsat{
-        
-    void Clause::setSecondValue(Variable input){
-        v2 = input;
-    }
-
-    void Clause::setFirstValue(Variable input){
-        v1 = input;
-    }
-    
-    void Clause::setEqual(bool eq){
-        is_equal = eq;
-    }
 
     Clause::Clause(){}
     
-    Clause::Clause(Variable v_1, Variable v_2, bool is_equal){
-        setFirstValue(v_1);
-        setSecondValue(v_2);
-        setEqual(is_equal);
+    Clause::Clause(Node n_1, Node n_2, bool is_equal_i){
+        n1 = n_1;
+        n2 = n_2;
+        is_equal = is_equal_i;
     }
 
-    std::string Clause::getClause(){
-        std::string str = "";
-        str += v1.getValue();
-        std::string eq = is_equal ? " = " : " != " ;
-        str += eq;
-        str += v2.getValue();
-        return str;
+    void Clause::set_second(Node input){
     }
 
-    Variable Clause::getFirstVariable(){
-        return v1;
+    void Clause::set_first(Node input){
     }
     
-    Variable Clause::getSecondVariable(){
-        return v2;
+    void Clause::set_equal(bool eq){
+    }
+
+    Node Clause::get_first(){
+        return n1;
     }
     
-    bool Clause::isEqual(){
+    Node Clause::get_second(){
+        return n2;
+    }
+    
+    bool Clause::get_equal(){
         return is_equal;
     }
 

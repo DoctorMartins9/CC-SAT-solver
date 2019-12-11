@@ -6,25 +6,16 @@ namespace ccsat{
         v_set = input;
     }
 
-    uint64_t Formula::getSize(){
+    uint64_t Formula::get_size(){
         return v_set.size();
     }
 
-    std::string Formula::getFormula(){
-        
-        std::string str = "F:{ ";
-        
-        for( uint64_t i = 0 ; i < getSize() ; i++ ){
-            str += v_set[i].getClause();
-            if(i != getSize()-1)
-                str += " ; ";
-        }
-        str += " }";
-        return str;
+    void Formula::add_clause(Clause input){
+        v_set.push_back(input);
     }
 
-    void Formula::addClause(Clause input){
-        v_set.push_back(input);
+    std::vector<Clause> Formula::get_formula(){
+        return v_set;
     }
 
 }   // namespace 'ccsat'

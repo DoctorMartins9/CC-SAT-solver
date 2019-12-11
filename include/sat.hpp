@@ -41,16 +41,20 @@
 
 namespace ccsat{
 
-class CC{
+class Sat{
     private:
         Formula f;
+        
     public:
-        CC();
-        CC(Formula input );
-        Formula getFormula();
-        void setFormula(Formula input);
+        // Constructors
+        Sat();
+        Sat(Formula input );
+
+        // Methods
+        Formula get_formula();
+        void set_formula(Formula input);
 };
 
 }   // namespace 'ccsat'
 
-#include "impl/cc.i.hpp"
+#include "impl/sat.i.hpp"
