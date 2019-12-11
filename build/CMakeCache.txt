@@ -14,6 +14,12 @@
 # EXTERNAL cache entries
 ########################
 
+//Value Computed by CMake
+CC-SAT_solver_BINARY_DIR:STATIC=/home/enrico/Scrivania/GitHub/CC-SAT-solver/build
+
+//Value Computed by CMake
+CC-SAT_solver_SOURCE_DIR:STATIC=/home/enrico/Scrivania/GitHub/CC-SAT-solver
+
 //Path to a program.
 CLANGTIDY_FOUND:FILEPATH=CLANGTIDY_FOUND-NOTFOUND
 
@@ -116,7 +122,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=HeapLibrary
+CMAKE_PROJECT_NAME:STATIC=CC-SAT_solver
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/usr/bin/ranlib

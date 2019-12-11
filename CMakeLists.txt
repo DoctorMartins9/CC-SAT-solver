@@ -1,4 +1,4 @@
-project("HeapLibrary" CXX)                              # Project name
+project("CC-SAT_solver" CXX)                              # Project name
 cmake_minimum_required(VERSION 3.5)                     # CMake Version
 
 set(CMAKE_CXX_STANDARD 14)                              # C++ 14

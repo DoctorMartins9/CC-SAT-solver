@@ -43,12 +43,17 @@ namespace ccsat{
 
 class Sat{
     private:
+        // Variables
         Formula f;
-        
+        std::vector<Node> n_set;
+        // Methods
+        void initialize_DAG(std::string input);
+
     public:
         // Constructors
         Sat();
         Sat(Formula input );
+        Sat(std::string input);
 
         // Methods
         Formula get_formula();
