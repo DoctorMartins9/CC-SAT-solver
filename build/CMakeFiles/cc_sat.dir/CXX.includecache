@@ -45,6 +45,8 @@ vector
 -
 string
 -
+algorithm
+-
 impl/sat.i.hpp
 ../include/impl/sat.i.hpp
 
