@@ -57,6 +57,8 @@ iostream
 -
 chrono
 -
+cassert
+-
 sat.hpp
 /home/enrico/Scrivania/GitHub/CC-SAT-solver/src/sat.hpp
 
