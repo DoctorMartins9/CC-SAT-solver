@@ -39,4 +39,11 @@ void Node::set_ccpar(std::vector<uint64_t> ccpar_i){
     ccpar = ccpar_i;
 }
 
+void Node::add_ccpar(uint64_t ccpar_i){
+    for(int i = 0; i < ccpar.size();i++)
+        if(ccpar[i]==ccpar_i)
+            return;
+    ccpar.push_back(ccpar_i);
+}
+
 }   // namespace 'ccsat'

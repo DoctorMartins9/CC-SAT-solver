@@ -56,5 +56,6 @@
         "streambuf": "cpp",
         "typeinfo": "cpp",
         "bit": "cpp"
-    }
+    },
+    "C_Cpp.dimInactiveRegions": false
 }

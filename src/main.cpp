@@ -1,13 +1,60 @@
 #include <vector>           // vector utils     |   std::vector , ...
 #include <iostream>         // I/O operations   |   std::cout , ...
 #include <chrono>           // time keeping     |   std::chrono, ... 
+#include <cassert>
+
+#define DEBUG
 
 #include "sat.hpp"     // Build formula     |   ccsat::Formula, ...
 
 int main(){
 
-    std::string str = "f(a)=b&g(c,d)=b";
-    ccsat::Sat s = ccsat::Sat(str);
+    // TEST STRING
+    #ifndef DEBUG
+    // costant string
+    assert(!ccsat::solve("a=b&a!=b"));
+    assert(ccsat::solve("a=b&c!=b"));
+    // function with one argument
+    assert(!ccsat::solve("f(a)=b&f(a)!=b"));
+    assert(ccsat::solve("f(a)=b&f(a)!=c"));
+    assert(!ccsat::solve("f(f(a))=f(b)&f(f(a))!=f(b)"));
+    assert(ccsat::solve("f(f(a))=f(b)&f(f(a))!=c"));
+    // function with multiple argument
+    assert(!ccsat::solve("f(a,b)=b&f(a,b)!=b"));
+    assert(ccsat::solve("f(a,b)=b&f(a,b)!=c"));
+    // Bradley-Manna strings
+    assert(ccsat::solve("f(x)=f(y)&x!=y"));
+    assert(!ccsat::solve("x=y&f(x)!=f(y)"));
+    assert(!ccsat::solve("f(a,b)=a&f(f(a,b),b)!=a"));
+    assert(!ccsat::solve("f(f(f(a)))=a&f(f(f(f(f(a)))))=a&f(a)!=a"));
+    // List theory strings
+    assert(!ccsat::solve("car(x)=car(y)&cdr(x)=cdr(y)&f(x)!=f(y)&!atom(x)&!atom(y)"));
+    assert(!ccsat::solve("f(b)=b&f(f(b))!=car(cdr(cons(f(b),cons(b,d))))"));
+
+
+    // If core dump is not created
+    std::cout << "All test passed!" << std::endl;
+    #endif
+
+    # ifdef DEBUG
+        
+    //std::string str = "f(b)=b&f(f(b))!=car(cdr(cons(f(b),cons(b,d))))";
+    std::string str = "car(x)=car(y)&cdr(x)=cdr(y)&f(x)!=f(y)&!atom(x)&!atom(y)";
+
+    //ccsat::Sat s = ccsat::Sat(str);
+
+
+
+    bool is_sat = ccsat::solve(str);
+
+    if(is_sat)
+        std::cout << "SAT" << std::endl;
+    else
+        std::cout << "UNSAT" << std::endl;
+
+    
+
+    # endif
 
     return 0;
 }

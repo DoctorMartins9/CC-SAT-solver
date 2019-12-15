@@ -38,6 +38,7 @@
 #include "formula.hpp"
 #include <vector>
 #include <string>
+#include <algorithm>
 
 namespace ccsat{
 
@@ -46,8 +47,24 @@ class Sat{
         // Variables
         Formula f;
         std::vector<Node> n_set;
+        std::vector<uint64_t> atoms;
+
         // Methods
+        uint64_t transform_node(std::string n);
         void initialize_DAG(std::string input);
+
+        // Classic Congruence Closure algorithm
+
+        // FIND i
+        uint64_t FIND(uint64_t index);
+        // UNION i1 i2
+        void UNION(uint64_t i1, uint64_t i2);
+        // CCPAR i
+        std::vector<uint64_t> CCPAR(uint64_t index);
+        // CONGRUENT i1 i2
+        bool CONGRUENT(uint64_t i1, uint64_t i2);
+        // MERGE i1 i2
+        void MERGE(uint64_t i1, uint64_t i2);
 
     public:
         // Constructors
@@ -56,8 +73,14 @@ class Sat{
         Sat(std::string input);
 
         // Methods
+        static bool well_formed(std::string s);
+        void print_status();
         Formula get_formula();
         void set_formula(Formula input);
+        std::vector<Node> get_nodes();
+        bool classic_congruence_closure();
+        bool list_congruence_closure();
+        static bool solve(std::string s);
 };
 
 }   // namespace 'ccsat'

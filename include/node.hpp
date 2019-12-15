@@ -62,6 +62,7 @@ class Node{
         uint64_t get_find();
         void set_find(uint64_t find_i);
         void set_ccpar(std::vector<uint64_t> ccpar_i);
+        void add_ccpar(uint64_t ccpar_i);
 };
 
 }   // namespace 'ccsat'

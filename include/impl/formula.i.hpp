@@ -18,4 +18,24 @@ namespace ccsat{
         return v_set;
     }
 
+    std::string Formula::get_string(){
+        std::string str = "";
+        for(int i = 0; i < v_set.size() ; i++){
+            str += v_set[i].get_first().get_fn();
+            if(v_set[i].get_first().get_args().size() != 0){
+                str +="(";
+                for(int j = 0; j<v_set[i].get_first().get_args().size();j++){
+                    str += v_set[i].get_first().get_args().at(j);
+                }
+                str += ")";
+            }
+            std::string segno = v_set[i].get_equal() ? "=" : "!=";
+            str += segno;
+            str += v_set[i].get_second().get_fn();
+            if(i != v_set.size()-1)
+                str += "&";
+        }
+        return str;
+    }
+
 }   // namespace 'ccsat'
