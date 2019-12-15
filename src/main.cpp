@@ -4,6 +4,7 @@
 #include <cassert>
 
 #define DEBUG
+#define PARSER
 
 #include "sat.hpp"     // Build formula     |   ccsat::Formula, ...
 
@@ -11,7 +12,8 @@ int main(){
 
     // TEST STRING
     #ifndef DEBUG
-    // costant string
+
+    // Equality theory string
     assert(!ccsat::solve("a=b&a!=b"));
     assert(ccsat::solve("a=b&c!=b"));
     // function with one argument
@@ -27,8 +29,16 @@ int main(){
     assert(!ccsat::solve("x=y&f(x)!=f(y)"));
     assert(!ccsat::solve("f(a,b)=a&f(f(a,b),b)!=a"));
     assert(!ccsat::solve("f(f(f(a)))=a&f(f(f(f(f(a)))))=a&f(a)!=a"));
+    
     // List theory strings
+    assert(!ccsat::solve("x1=x2&y1=y2&cons(x1,y1)!=cons(x2,y2)"));
+    assert(!ccsat::solve("x=y&car(x)!=car(y)"));
+    assert(!ccsat::solve("x=y&cdr(x)!=cdr(y)"));
+
+    // Bradley Manna example
     assert(!ccsat::solve("car(x)=car(y)&cdr(x)=cdr(y)&f(x)!=f(y)&!atom(x)&!atom(y)"));
+    
+    // Intermediate exame question
     assert(!ccsat::solve("f(b)=b&f(f(b))!=car(cdr(cons(f(b),cons(b,d))))"));
 
 
@@ -37,9 +47,18 @@ int main(){
     #endif
 
     # ifdef DEBUG
-        
+    
+    #ifdef PARSER
+    //std::string str = "car(cdr(cons(f(b),cons(b,d))))=b";
+    //std::string str = "f(g(x),h(y))=c";
+    //std::cout << "string to parse: " << str << std::endl;
+    //ccsat::Sat s = ccsat::Sat(str);
+    #endif
+    
     //std::string str = "f(b)=b&f(f(b))!=car(cdr(cons(f(b),cons(b,d))))";
-    std::string str = "car(x)=car(y)&cdr(x)=cdr(y)&f(x)!=f(y)&!atom(x)&!atom(y)";
+    //std::string str = "car(x)=car(y)&cdr(x)=cdr(y)&f(x)!=f(y)&!atom(x)&!atom(y)";
+
+    std::string str = "cons(a,b)=x&atom(x)";
 
     //ccsat::Sat s = ccsat::Sat(str);
 
@@ -50,10 +69,8 @@ int main(){
     if(is_sat)
         std::cout << "SAT" << std::endl;
     else
-        std::cout << "UNSAT" << std::endl;
-
+        std::cout << "UNSAT" << std::endl;        
     
-
     # endif
 
     return 0;

@@ -22,10 +22,53 @@ namespace ccsat{
         return n_set;
     }
 
-    uint64_t Sat::transform_node(std::string n){
+    std::vector<std::string> Sat::split_arguments(std::string s){
+        std::vector<std::string> splitted;
+        // If there is only a costant
+        if(s.find_first_of(",") == std::string::npos){
+            splitted.push_back(s);
+            return splitted;
+        }
+        
+        // If there is a comma
+        uint64_t level = 0;
+        std::vector<uint64_t> comma_pos;
+        comma_pos.push_back(0);
+        for(uint64_t i = 0; i < s.size(); i++){
+            if(s[i] == '('){
+                level++;
+            }
+            else if(s[i] == ')'){
+                level--;
+            }
+            else if(s[i] == ',' && level == 0){
+                comma_pos.push_back(i);
+            }
+        }
 
+        // Split the string
+        if(comma_pos.size()==1){
+            splitted.push_back(s);
+            return splitted;
+        }
+        // At least 1 comma
+        for(uint64_t i = 1; i < comma_pos.size();i++){
+            uint64_t delta = comma_pos[i] - comma_pos[i-1];
+            splitted.push_back(s.substr(comma_pos[i-1],delta));
+        }
+        splitted.push_back(s.substr(comma_pos[comma_pos.size()-1]+1));
+        return splitted;
+    }
+
+    uint64_t Sat::transform_node(std::string n){
+            #ifdef PARSER
+            std::cout << "transform_node -> "<< n << std::endl;
+            #endif
             // Costant
             if(n.find_first_of("(") == std::string::npos){
+                #ifdef PARSER
+                std::cout << "costant <-"<< n << std::endl;
+                #endif
                 // If the costant is initialized yet
                 for(int j = 0; j < n_set.size() ; j++){
                     if(n_set[j].get_fn() == n){
@@ -42,79 +85,38 @@ namespace ccsat{
             }
             // Function
             else {
+                // Function name
                 std::string fun_name = n.substr(0,n.find_first_of("("));
-                // Base case (1 argument)
-                if(n.find_first_of(",") == std::string::npos){
-                    std::string arg_name = n.substr(n.find_first_of("(")+1,n.find_first_of(")"));
-                    // Create node
-                    uint64_t id_son = transform_node(arg_name.substr(0,arg_name.find_first_of(")")));
-                    // Find if exists already this functions
-                    for(uint64_t i = 0; i < n_set.size() ; i++ ){
-                        if(fun_name == n_set[i].get_fn()){
-                            uint64_t arg_id = n_set[i].get_args().at(0);
-                            if(arg_id == id_son){
-                                return i;
-                            }
-                        }
-                    }
-                    // If doesn't exists
-                    uint64_t id = n_set.size();
-                    std::vector<uint64_t> args;
-                    std::vector<uint64_t> ccpar;
-                    args.push_back(id_son);
-                    Node node = Node(fun_name,id,args,id,ccpar);
-                    n_set.push_back(node);
-                    return id;
-                }
-                // Multiple argument
-                else{
-                    std::vector<std::string> args_list;
-                    std::string args = n.substr(n.find_first_of("(")+1,n.find_last_of(")")-(n.find_first_of("(")+1));
-                    // Case of nested functions
-                    while(args.find_first_of(",") != std::string::npos){
-                        // If there is a function inside with more than 1 argument
-                        
-                        // TODO
-                        std::cout << args << std::endl;
-                        // If there is a function
-                        if(args.find_first_of("(") != std::string::npos && args.find_first_of("(") < args.find_first_of(",") ){
-                            std::string sub_fun = args.substr(0,args.find_first_of(")")+1);
-                            
-                            // TODO
-                            std::cout << sub_fun << std::endl;
-                            
-                            args_list.push_back(sub_fun);
-                            args = args.substr(args.find_first_of(")")+2);
-                        }
-                        // If there is a function nested with single argument
-                        else{
-                            std::string arg = args.substr(0,args.find_first_of(","));
-                            args_list.push_back(arg);
-                            args = args.substr(args.find_first_of(",")+1,args.size());;
-                        }
-                    }
-                    std::cout << args << std::endl;
-                    args_list.push_back(args);
+                // Function argument
+                int end = n.find_last_of(")");
+                int init = n.find_first_of("(");
+                std::string fun_argument = n.substr(init+1,end-(init+1));
+                
+                #ifdef PARSER
+                std::cout << "function <- "<< fun_name << " : " << fun_argument << std::endl;
+                #endif
 
-                    // Now we have to capture the arguments id
-                    std::vector<uint64_t> id_args;
-                    for(int i = 0; i < args_list.size();i++){
-                        id_args.push_back(transform_node(args_list[i]));
-                    }
-                    // Find if exists already this function
-                    for(uint64_t i = 0; i < n_set.size() ; i++ ){
-                        if(fun_name == n_set[i].get_fn()){
-                            if( id_args == n_set[i].get_args() )
-                                return i;
-                        }
-                    }
-                    // Finally we can create the function node with the right arguments
-                    uint64_t id = n_set.size();
-                    std::vector<uint64_t> ccpar;
-                    Node node = Node(fun_name,id,id_args,id,ccpar);
-                    n_set.push_back(node);
-                    return id;
+                // We have arguments list
+                std::vector<std::string> args_list = split_arguments(fun_argument);
+                
+                // Now we have to capture the arguments id
+                std::vector<uint64_t> id_args;
+                for(int i = 0; i < args_list.size();i++){
+                    id_args.push_back(transform_node(args_list[i]));
                 }
+                // Find if exists already this function
+                for(uint64_t i = 0; i < n_set.size() ; i++ ){
+                    if(fun_name == n_set[i].get_fn()){
+                        if( id_args == n_set[i].get_args() )
+                            return i;
+                    }
+                }
+                // Finally we can create the function node with the right arguments
+                uint64_t id = n_set.size();
+                std::vector<uint64_t> ccpar;
+                Node node = Node(fun_name,id,id_args,id,ccpar);
+                n_set.push_back(node);
+                return id;
             }
             // Return 999 in case of error
             return 999;
@@ -317,10 +319,14 @@ namespace ccsat{
         }
         // Theory congruence closure
         if(classic_congruence_closure()){
+            #ifdef DEBUG
+            std::cout << "Euality theory passed" << std::endl;
+            #endif 
             for(uint64_t i = 0; i < atoms.size();i++){
-                // Check if atom is in the same cc of cons
+                // Check if an atom is in the same cc of cons
                 for(uint64_t j = 0; j < n_set.size();j++){
                     if(FIND(i) == FIND(j) && n_set[i].get_fn()=="cons"){
+                        std::cout << "pise" << std::endl;
                         return false;
                     }
                 }
@@ -418,7 +424,6 @@ namespace ccsat{
         if(well_formed(s)){
             Sat sat = Sat(s);
             return sat.list_congruence_closure();
-            //return sat.classic_congruence_closure();
         }
         // Raise error
         assert(false);

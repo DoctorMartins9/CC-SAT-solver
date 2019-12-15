@@ -73,6 +73,7 @@ class Sat{
         Sat(std::string input);
 
         // Methods
+        std::vector<std::string> split_arguments(std::string s);
         static bool well_formed(std::string s);
         void print_status();
         Formula get_formula();
