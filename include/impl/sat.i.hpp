@@ -119,6 +119,7 @@ namespace ccsat{
                 return id;
             }
             // Return 999 in case of error
+            assert(false);
             return 999;
     }
 

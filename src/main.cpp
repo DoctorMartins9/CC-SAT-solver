@@ -4,7 +4,7 @@
 #include <cassert>
 
 #define DEBUG
-#define PARSER
+//#define PARSER
 
 #include "sat.hpp"     // Build formula     |   ccsat::Formula, ...
 
@@ -37,8 +37,9 @@ int main(){
 
     // Bradley Manna example
     assert(!ccsat::solve("car(x)=car(y)&cdr(x)=cdr(y)&f(x)!=f(y)&!atom(x)&!atom(y)"));
+    // Calce example
     
-    // Intermediate exame question
+    // Intermediate exam question
     assert(!ccsat::solve("f(b)=b&f(f(b))!=car(cdr(cons(f(b),cons(b,d))))"));
 
 
@@ -58,7 +59,7 @@ int main(){
     //std::string str = "f(b)=b&f(f(b))!=car(cdr(cons(f(b),cons(b,d))))";
     //std::string str = "car(x)=car(y)&cdr(x)=cdr(y)&f(x)!=f(y)&!atom(x)&!atom(y)";
 
-    std::string str = "cons(a,b)=x&atom(x)";
+    std::string str = "f(b)=b&f(f(b))!=car(cdr(cons(f(b),cons(b,d))))";
 
     //ccsat::Sat s = ccsat::Sat(str);
 
