@@ -4,7 +4,7 @@
 #include <cassert>
 
 #define DEBUG
-//#define PARSER
+#define PARSER
 
 #include "sat.hpp"     // Build formula     |   ccsat::Formula, ...
 
@@ -13,7 +13,7 @@ int main(){
     // TEST STRING
     #ifndef DEBUG
 
-    // Equality theory string
+    // Equality theory string -----------------------------------------------------------
     assert(!ccsat::solve("a=b&a!=b"));
     assert(ccsat::solve("a=b&c!=b"));
     // function with one argument
@@ -29,16 +29,25 @@ int main(){
     assert(!ccsat::solve("x=y&f(x)!=f(y)"));
     assert(!ccsat::solve("f(a,b)=a&f(f(a,b),b)!=a"));
     assert(!ccsat::solve("f(f(f(a)))=a&f(f(f(f(f(a)))))=a&f(a)!=a"));
-    
-    // List theory strings
+    assert(!ccsat::solve("f(f(f(a)))=f(f(a))&f(f(f(f(a))))=a&f(a)!=a"));
+    assert(ccsat::solve("f(x,y)=f(y,x)&f(a,y)!=f(y,a)"));
+    assert(!ccsat::solve("f(g(x))=g(f(x))&f(g(f(y)))=x&f(y)=x&g(f(x))!=x"));
+    // List theory strings --------------------------------------------------------------
     assert(!ccsat::solve("x1=x2&y1=y2&cons(x1,y1)!=cons(x2,y2)"));
     assert(!ccsat::solve("x=y&car(x)!=car(y)"));
     assert(!ccsat::solve("x=y&cdr(x)!=cdr(y)"));
-
+    // Calce example
+    assert(!ccsat::solve("car(cons(x,y))!=x"));
+    assert(!ccsat::solve("cdr(cons(x,y))!=y"));
+    assert(ccsat::solve("!atom(cons(x,y))"));
+    assert(!ccsat::solve("atom(cons(x,y))"));
+    assert(!ccsat::solve("atom(x)&cons(car(x),cdr(x))=x"));
+    assert(ccsat::solve("!atom(x)&cons(car(x),cdr(x))=x"));
+    assert(!ccsat::solve("car(cons(z,w))!=z"));
+    assert(!ccsat::solve("cdr(cons(z,w))!=w"));
     // Bradley Manna example
     assert(!ccsat::solve("car(x)=car(y)&cdr(x)=cdr(y)&f(x)!=f(y)&!atom(x)&!atom(y)"));
-    // Calce example
-    
+    assert(!ccsat::solve("car(x)=y&cdr(x)=z&x!=cons(y,z)"));
     // Intermediate exam question
     assert(!ccsat::solve("f(b)=b&f(f(b))!=car(cdr(cons(f(b),cons(b,d))))"));
 
@@ -56,14 +65,9 @@ int main(){
     //ccsat::Sat s = ccsat::Sat(str);
     #endif
     
-    //std::string str = "f(b)=b&f(f(b))!=car(cdr(cons(f(b),cons(b,d))))";
-    //std::string str = "car(x)=car(y)&cdr(x)=cdr(y)&f(x)!=f(y)&!atom(x)&!atom(y)";
-
-    std::string str = "f(b)=b&f(f(b))!=car(cdr(cons(f(b),cons(b,d))))";
-
-    //ccsat::Sat s = ccsat::Sat(str);
-
-
+    std::string str = "car(x)=y&cdr(x)=z&x!=cons(y,z)";
+    std::cout << str << std::endl;
+    
 
     bool is_sat = ccsat::solve(str);
 

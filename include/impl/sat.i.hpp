@@ -137,7 +137,9 @@ namespace ccsat{
         std::vector<std::string> a_node;
         std::vector<bool> a_sign;
         for (int i = 0; i < a_clause.size(); i++){
-            
+            #ifdef PARSER
+            std::cout << a_clause[i] << std::endl;
+            #endif
             // !atom(x) -> cons(car(x),cdr(x)) = x
             if(a_clause[i].find("!atom") != std::string::npos ){
                 std::string s =  a_clause[i].substr(6,a_clause[i].rfind(")")-6);
@@ -149,19 +151,12 @@ namespace ccsat{
             // atom(x)
             else if(a_clause[i].find("atom") != std::string::npos ){
                 std::string s = a_clause[i].substr(5,a_clause[i].rfind(")")-5);
-                // Search if is in the set
-                uint64_t id = n_set.size();
-                for(uint64_t j = 0; j < n_set.size();j++){
-                    if(n_set[j].get_fn() == s){
-                        id = j;
-                    }
-                }
-                // If it doesn't exist, then create it
-                if(id != n_set.size()){
-                    std::vector<uint64_t> empty;
-                    Node n = Node(s,id,empty,id,empty);
-                }
+                uint64_t id = transform_node(s);
                 atoms.push_back(id);
+                #ifdef PARSER
+                std::cout << "atom <- " << id << std::endl;
+                #endif
+                
             }
             // equal
             else if(a_clause[i].find_first_of("!") == std::string::npos){
@@ -305,17 +300,38 @@ namespace ccsat{
         // Pre-process
         for(uint64_t i = 0; i < n_set.size() ; i++ ){
             if(n_set[i].get_fn() == "cons"){
-                // Add car(n) and cdr(n) to DAG
+                // Add car(n) and cdr(n) to DAG (IF NOT EXIST!)
                 uint64_t id = n_set.size();
+                std::vector<uint64_t> cons_args = n_set[i].get_args();
                 std::vector<uint64_t> args;
-                args.push_back(i);
                 std::vector<uint64_t> ccpar;
-                Node car = Node("car",id,args,id,ccpar);
-                n_set.push_back(car);
-                MERGE(id, i);
-                Node cdr = Node("cdr",id+1,args,id+1,ccpar);
-                n_set.push_back(cdr);
-                MERGE(id+1, i);
+                args.push_back(i);
+                // Search if the node car already exists
+                // CAR
+                for(uint64_t j = 0; j < n_set.size(); j++){
+                    if(n_set[j].get_fn() == "car" && n_set[j].get_args().at(0) == i ){
+                        id = j;
+                    }
+                }
+                if(id == n_set.size()){
+                    Node car = Node("car",id,args,id,ccpar);
+                    n_set.push_back(car);
+                }
+                n_set[i].add_ccpar(id);
+                MERGE(id, n_set[i].get_args().at(0));
+                // CDR
+                id = n_set.size();
+                for(uint64_t j = 0; j < n_set.size(); j++){
+                    if(n_set[j].get_fn() == "cdr" && n_set[j].get_args().at(0) == i ){
+                        id = j;
+                    }
+                }
+                if(id == n_set.size()){
+                    Node cdr = Node("cdr",id,args,id,ccpar);
+                    n_set.push_back(cdr);
+                }
+                n_set[i].add_ccpar(id);
+                MERGE(id, n_set[i].get_args().at(1));
             }
         }
         // Theory congruence closure
@@ -326,8 +342,10 @@ namespace ccsat{
             for(uint64_t i = 0; i < atoms.size();i++){
                 // Check if an atom is in the same cc of cons
                 for(uint64_t j = 0; j < n_set.size();j++){
-                    if(FIND(i) == FIND(j) && n_set[i].get_fn()=="cons"){
-                        std::cout << "pise" << std::endl;
+                    #ifdef DEBUG
+                    std::cout << FIND(atoms[i]) << "--" << FIND(j) << std::endl;
+                    #endif
+                    if(FIND(atoms[i]) == FIND(j) && n_set[j].get_fn()=="cons"){
                         return false;
                     }
                 }
@@ -340,7 +358,6 @@ namespace ccsat{
     // Theory of equality
     bool Sat::classic_congruence_closure(){
         std::vector<Clause> clause = f.get_formula();
-
         #ifdef DEBUG
         std::cout << "------------" << std::endl;
         print_status();
@@ -352,13 +369,11 @@ namespace ccsat{
                 MERGE(clause[i].get_first().get_id(),clause[i].get_second().get_id());
             }
         }
-
         #ifdef DEBUG
         std::cout << "------------" << std::endl;
         print_status();
         std::cout << "------------" << std::endl;
         #endif
-
         // Check not equality
         for(uint64_t i = 0; i < clause.size(); i++){
             if(!clause[i].get_equal()){
@@ -370,38 +385,39 @@ namespace ccsat{
     }
 
     void Sat::print_status(){
+        std::cout << "node\t\tfind\t\tccpar"<<std::endl;
+        std::cout << "________________________________________"<<std::endl;
         std::vector<Node> nodi = n_set;
         for(int i = 0; i < nodi.size() ; i++){
-            std::cout << nodi[i].get_fn();
             std::cout << nodi[i].get_id();
+            std::cout << nodi[i].get_fn();
+
             // ARGS PRINT
             if(nodi[i].get_args().size()>0){
                 std::cout << "->";
                 for (int h = 0; h < nodi[i].get_args().size(); h++)
                     std::cout << nodi[i].get_args().at(h);
             }
-            std::cout << " | ";
-            
+            std::cout << "\t\t";
+
+            // FIND PRINT
+            std::cout << nodi[i].get_find();
+            std::cout << "\t\t";
+
+
             // CCPAR PRINT
             if(nodi[i].get_ccpar().size() > 0){
                 for (int  h = 0; h < nodi[i].get_ccpar().size(); h++){
                     std::cout << nodi[i].get_ccpar().at(h);
                 }
-                std::cout << " | ";
             }
             else{
                 std::cout << "-";
-                std::cout << " | ";
             }
-            
-            // FIND PRINT
-            std::cout << nodi[i].get_find();
-            std::cout << " | ";
             std::cout << std::endl;
-
-
-
+            
         }
+        std::cout << "________________________________________"<<std::endl;
     }
 
     static bool well_formed(std::string s){
