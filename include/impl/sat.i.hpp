@@ -22,6 +22,7 @@ namespace ccsat{
         return n_set;
     }
 
+    // Return arguments of a function
     std::vector<std::string> Sat::split_arguments(std::string s){
         std::vector<std::string> splitted;
         // If there is only a costant
@@ -47,19 +48,91 @@ namespace ccsat{
         }
 
         // Split the string
+        // No commas
         if(comma_pos.size()==1){
             splitted.push_back(s);
             return splitted;
         }
-        // At least 1 comma
-        for(uint64_t i = 1; i < comma_pos.size();i++){
-            uint64_t delta = comma_pos[i] - comma_pos[i-1];
-            splitted.push_back(s.substr(comma_pos[i-1],delta));
+        // 2 commas
+        if(comma_pos.size()==2){
+            for(uint64_t i = 1; i < comma_pos.size();i++){
+                uint64_t delta = comma_pos[i] - comma_pos[i-1];
+                std::string string = s.substr(comma_pos[i-1],delta);
+                splitted.push_back(string);
+            }
+            splitted.push_back(s.substr(comma_pos[comma_pos.size()-1]+1));
+            return splitted;
         }
+        // More than 2 comma
+        // Split the first
+        splitted.push_back(s.substr(0,comma_pos[1]));
+        // Split the n-1
+        for(uint64_t i = 2; i < comma_pos.size();i++){
+            uint64_t delta = comma_pos[i] -1 - comma_pos[i-1];
+            std::string string = s.substr(comma_pos[i-1] +1 ,delta);
+            splitted.push_back(string);
+        }
+        // Split the last
         splitted.push_back(s.substr(comma_pos[comma_pos.size()-1]+1));
         return splitted;
     }
 
+    // Return arguments of a function
+    static std::vector<std::string> split(std::string s){
+        std::vector<std::string> splitted;
+        // If there is only a costant
+        if(s.find_first_of(",") == std::string::npos){
+            splitted.push_back(s);
+            return splitted;
+        }
+        
+        // If there is a comma
+        uint64_t level = 0;
+        std::vector<uint64_t> comma_pos;
+        comma_pos.push_back(0);
+        for(uint64_t i = 0; i < s.size(); i++){
+            if(s[i] == '('){
+                level++;
+            }
+            else if(s[i] == ')'){
+                level--;
+            }
+            else if(s[i] == ',' && level == 0){
+                comma_pos.push_back(i);
+            }
+        }
+
+        // Split the string
+        // No commas
+        if(comma_pos.size()==1){
+            splitted.push_back(s);
+            return splitted;
+        }
+        // 2 commas
+        if(comma_pos.size()==2){
+            for(uint64_t i = 1; i < comma_pos.size();i++){
+                uint64_t delta = comma_pos[i] - comma_pos[i-1];
+                std::string string = s.substr(comma_pos[i-1],delta);
+                splitted.push_back(string);
+            }
+            splitted.push_back(s.substr(comma_pos[comma_pos.size()-1]+1));
+            return splitted;
+        }
+        // More than 2 comma
+        // Split the first
+        splitted.push_back(s.substr(0,comma_pos[1]));
+        // Split the n-1
+        for(uint64_t i = 2; i < comma_pos.size();i++){
+            uint64_t delta = comma_pos[i] -1 - comma_pos[i-1];
+            std::string string = s.substr(comma_pos[i-1] +1 ,delta);
+            splitted.push_back(string);
+        }
+        // Split the last
+        splitted.push_back(s.substr(comma_pos[comma_pos.size()-1]+1));
+        return splitted;
+    }
+
+    // Transforma a string into a node
     uint64_t Sat::transform_node(std::string n){
             #ifdef PARSER
             std::cout << "transform_node -> "<< n << std::endl;
@@ -198,6 +271,133 @@ namespace ccsat{
         }
     }
 
+    static std::vector<std::string> detect_store(std::string input){
+        #ifdef DEBUG
+        std::cout << "-----------\n" << "detect store" << std::endl;
+        #endif
+        std::string initial = input;
+        // Divide clauses_string of formula_string
+        std::vector<std::string> a_clause;
+        while(input.find_first_of("&") != std::string::npos){
+            uint64_t end = input.find_first_of("&");
+            a_clause.push_back(input.substr(0,end));
+            input.erase(0,end+1);
+        }
+        a_clause.push_back(input);
+        // Divide variables_string of clause_string
+        std::string to_add;
+        std::vector<std::string> a_node;
+        std::vector<bool> a_sign;
+        for (int i = 0; i < a_clause.size(); i++){
+            // !atom(x)
+            if(a_clause[i].find("!atom") != std::string::npos ){
+                to_add += "a_clause[i]"; 
+                to_add += "&";
+            }
+            // atom(x)
+            else if(a_clause[i].find("atom") != std::string::npos ){
+                to_add += "a_clause[i]"; 
+                to_add += "&";                
+            }
+            // equal
+            else if(a_clause[i].find_first_of("!") == std::string::npos){
+                uint64_t end = a_clause[i].find_first_of("=");
+                a_node.push_back(a_clause[i].substr(0,end));
+                a_node.push_back(a_clause[i].substr(end+1,a_clause[i].size()-1));
+                a_sign.push_back(true);
+            }
+            // not-equal
+            else{
+                uint64_t end = a_clause[i].find_first_of("!");
+                a_node.push_back(a_clause[i].substr(0,end));
+                a_node.push_back(a_clause[i].substr(end+2,a_clause[i].size()-1));
+                a_sign.push_back(false);
+            }
+        }
+
+        // Detect if there aren't store
+        std::vector<std::string> formulas;
+        for(int i = 0; i < a_node.size(); i++){
+            // Change select(store) -> 1 | 2
+            if(a_node[i].find("select(store(")!= std::string::npos ){
+                #ifdef DEBUG
+                std::cout << a_node[i] << std::endl;
+                #endif
+                
+                // Split into -> store(...),j
+                int start_sel = a_node[i].find_first_of("(")+1;
+                int end_sel = a_node[i].find_last_of(")");
+                std::string select_string = a_node[i].substr(start_sel,end_sel-start_sel);
+                std::vector<std::string> select_args = split(select_string);
+                
+                // Split into -> x,i,v
+                int start_sto = select_args[0].find_first_of("(")+1;
+                int end_sto = select_args[0].find_last_of(")");
+                std::string store_string = select_args[0].substr(start_sto,end_sto-start_sto);
+                std::vector<std::string> store_args = split(store_string);
+                #ifdef DEBUG
+                std::cout << store_string << std::endl;
+                std::cout << store_args[0] << " " << store_args[1] << " " << store_args[2] << std::endl;
+                #endif
+
+                // Detect the place to inject new clauses
+                int init = initial.find(a_node[i]);
+                int length = a_node[i].size();
+                #ifdef DEBUG
+                std::cout << "_____" << std::endl;
+                std::cout << "1: " << initial.substr(0,init) << std::endl;
+                std::cout << "2: " << initial.substr(init+length) << std::endl;                
+                std::cout << "_____" << std::endl;
+                #endif
+                std::string part1 = initial.substr(0,init);
+                std::string part2 = initial.substr(init+length);
+                
+                // Create first string formula
+                std::string first = "";
+                std::string second = "";
+
+                // Detect the left or the right operands
+                if(part1[part1.size()-1]=='='){
+                    first = first + store_args[2]+ "&";
+                    first = first + select_args[1] + "=" + store_args[1];
+                    second = second + "select(" + store_args[0] + "," + select_args[1] + ")"+ "&";
+                    second = second + select_args[1] + "!=" + store_args[1];
+                }
+                else{
+                    first = first + select_args[1] + "=" + store_args[1] + "&";
+                    first += store_args[2];
+                    second = second + select_args[1] + "!=" + store_args[1] + "&";
+                    second = second + "select(" + store_args[0] + "," + select_args[1] + ")";
+                }    
+                first = part1 + first + part2;
+                second = part1 + second + part2;
+
+                #ifdef DEBUG
+                std::cout << "_____" << std::endl;
+                std::cout << "1: " << first << std::endl;
+                std::cout << "2: " << second << std::endl;                
+                std::cout << "_____" << std::endl;
+                #endif
+                // Exit
+                formulas.push_back(first);
+                formulas.push_back(second);
+                break;
+            }
+        }
+        if(formulas.size()==0){
+            #ifdef DEBUG
+            std::cout << "store not detected" << "\n-----------" << std::endl;
+            #endif
+            formulas.push_back(input);
+        }
+        #ifdef DEBUG
+        for(int i = 0; i < formulas.size(); i ++)
+            std::cout << formulas[i] << std::endl;
+        #endif
+        return formulas;
+    }
+
+
     // Classic Congruence Closure algorithm
 
     // FIND i
@@ -218,12 +418,12 @@ namespace ccsat{
         #endif
         i1 = n_set[FIND(i1)].get_id();
         i2 = n_set[FIND(i2)].get_id();
-        n_set[i1].set_find(n_set[i2].get_find());
-        for(int i = 0; i < n_set[i1].get_ccpar().size();i++){
-            n_set[i2].add_ccpar(n_set[i1].get_ccpar().at(i));
+        n_set[i2].set_find(n_set[i1].get_find());
+        for(int i = 0; i < n_set[i2].get_ccpar().size();i++){
+            n_set[i1].add_ccpar(n_set[i2].get_ccpar().at(i));
         }
         std::vector<uint64_t> empty_ccpar;
-        n_set[i1].set_ccpar(empty_ccpar);
+        n_set[i2].set_ccpar(empty_ccpar);
     }
     
     // CCPAR i
@@ -439,8 +639,16 @@ namespace ccsat{
 
     static bool solve(std::string s){
         if(well_formed(s)){
-            Sat sat = Sat(s);
-            return sat.list_congruence_closure();
+            // Detect if there are any store
+            std::vector<std::string> formulas = detect_store(s); 
+            // For every formula, solve it
+            for(int i = 0; i < formulas.size(); i++){
+                Sat sat = Sat(formulas[i]);
+                if(sat.list_congruence_closure()){
+                    return true;
+                }
+            }
+            return false;
         }
         // Raise error
         assert(false);
