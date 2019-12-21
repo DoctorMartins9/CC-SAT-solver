@@ -157,7 +157,7 @@ def dnf(s):
 def main():
     sat = []
     info = []
-    for i in range(1,3):
+    for i in range(1,10):
         x = []
         file = open("../benchmarks/eq_diamond/eq_diamond" + str(i) + ".smt2", "r")
         for f in file:
@@ -165,7 +165,15 @@ def main():
         file.close()
         sat.append(dnf(x[len(x)-3]))
         info.append(x[9])
+    out = open("benchmarks_info.txt",'a')
+    for i in range(len(info)):
+        out.write(info[i]+'\n')
+    out.close()
     
+    out = open("benchmarks_formula.txt",'a')
+    for i in range(len(sat)):
+        out.write(sat[i]+'\n')
+    out.close()
 
 if __name__ == '__main__':
     main()

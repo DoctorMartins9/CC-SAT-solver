@@ -1,0 +1,18 @@
+(set-info :status unsat)
+
+(set-info :status unsat)
+
+(set-info :status unsat)
+
+(set-info :status unsat)
+
+(set-info :status unsat)
+
+(set-info :status unsat)
+
+(set-info :status unsat)
+
+(set-info :status unsat)
+
+(set-info :status unsat)
+

@@ -88,6 +88,7 @@ class Sat{
         static bool solve(std::string s);
         static bool solve_parallel(std::string s);
         static std::vector<std::string> detect_store(std::string input);
+        static bool SOLVE(std::string input);
 };
 
 }   // namespace 'ccsat'

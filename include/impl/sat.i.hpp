@@ -690,4 +690,21 @@ namespace ccsat{
         return true;
     }
 
+    static bool SOLVE(std::string input){
+        // Count & split occurrence of "|"
+        std::vector<std::string> formula;
+        while(input.find_first_of("|") != std::string::npos){
+            uint64_t pos = input.find_first_of("|");
+            formula.push_back(input.substr(0,pos));
+            input = input.substr(pos+1,input.size()-pos);
+        }
+        formula.push_back(input);
+        
+        for(int i = 0; i < formula.size(); i++){
+            if(solve(formula[i].substr(1,formula[i].size()-2)))
+                return true;
+        }
+        return false;
+    }
+
 }   // namespace 'ccsat'
