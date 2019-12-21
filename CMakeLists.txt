@@ -11,13 +11,14 @@ include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++14" COMPILER_SUPPORTS_CXX14)
 if (COMPILER_SUPPORTS_CXX14)
     add_compile_options("-std=c++14")
+    add_compile_options("-pthread")
 else()
     message(FATAL_ERROR "Compiler ${CMAKE_CXX_COMPILER} has no C++14 support.")
 endif()
 
+find_package (Threads)
 
 # BUILD MODE ------------------------------------------------------------------
-
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
     add_compile_options("-O3")
 
@@ -96,5 +97,6 @@ include_directories(${PROJECT_SOURCE_DIR}/include
 file(GLOB_RECURSE SRCS ${PROJECT_SOURCE_DIR}/src/*.cpp)
 
 add_executable( ccsat ${SRCS} )
+target_link_libraries (ccsat ${CMAKE_THREAD_LIBS_INIT})
 
 add_library(cc_sat ${SRCS})

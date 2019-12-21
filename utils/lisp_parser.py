@@ -1,5 +1,5 @@
 import sys
-
+from sympy import *
 from typing import Any, List
 
 # Parse input string into a list of all parentheses and atoms (int or str),
@@ -53,7 +53,12 @@ def get_ast(input_norm: List[str]) -> List[Any]:
         i += 1
     return ast
 
+
+translate = {}
+names = 0
+
 def parse_equal(s):
+    global names
     string = ""
     if type(s[1]) is list :
         string += to_string(s[1])
@@ -64,9 +69,12 @@ def parse_equal(s):
         string += to_string(s[2])
     else :
         string += s[2]
-    return string
+    names += 1
+    translate['A' + str(names)]=string
+    return 'A' + str(names)
 
 def parse_nequal(s):
+    global names
     string = ""
     s = s[1]
     if type(s[1]) is list :
@@ -78,7 +86,9 @@ def parse_nequal(s):
         string += to_string(s[2])
     else :
         string += s[2]
-    return string
+    names += 1
+    translate['A' + str(names)]=string
+    return 'A' + str(names)
 
 
 def parse_function(s):
@@ -92,67 +102,70 @@ def parse_function(s):
     string += ")"
     return string
 
-def parse_and(s):
-    string = ""
-    if type(s[1]) is list :
-        string += to_string(s[1])
-    else :
-        string += s[1]
-    string += '&'
-    if type(s[2]) is list :
-        string += to_string(s[2])
-    else :
-        string += s[2]
-    return string
-
-def parse_or(s):
-    string = ""
-    if type(s[1]) is list :
-        string += to_string(s[1])
-    else :
-        string += s[1]
-    string += '|'
-    if type(s[2]) is list :
-        string += to_string(s[2])
-    else :
-        string += s[2]
-    return string
-
 def to_string(s):
     string = ""
     # Case: string
     if type(s) is not list:
         return s
-    # Case: assert
-    if len(s) == 1 and s[0][0] == 'assert':
-        s = s[0][1]
-    # Case: equal
     if(s[0] == '='):
+        string += "("
         string += parse_equal(s)
+        string += ")"
     elif(s[0] == 'not'):
+        string += "("
         string += parse_nequal(s)
+        string += ")"
     elif(s[0] == 'and'):
-        string += parse_and(s)
+        string += "("
+        for i in range(1,len(s)):
+            string += to_string(s[i])
+            if i != len(s)-1:
+                string += "&"
+        string += ")"
     elif(s[0] == 'or'):
-        string += parse_or(s)
+        string += "("        
+        for i in range(1,len(s)):
+            string += to_string(s[i])
+            if i != len(s)-1:
+                string += "|"
+        string += ")"
     # Function
     else:
+        print("Function")
+        string += "("
         string += parse_function(s)
+        string += ")"
     return string
 
-
-
+def dnf(s):
+    input_norm = normalize_str(s)
+    ast = get_ast(input_norm)
+    ast = ast[0]
+    string = to_string(ast[1])
+    to_replace =  str(to_dnf(string,simplify=False))
+    to_replace = to_replace.replace('(','( ')
+    to_replace = to_replace.replace(')',' )')
+    array = to_replace.split()
+    for i in range(len(array)):
+        if array[i] != '&' and array[i] != '|' and array[i] != '(' and array[i] != ')':
+            array[i] = translate[array[i]]
+    result = ""
+    for i in range(len(array)):
+        result+=array[i]
+    return result
+    
 def main():
-    input_str = """(assert (and (and (and (and (and (and (and (and (and (not (= e0 e1)) (not (= e0 e2))) (not (= e0 e3))) (not (= e0 e4))) (not (= e1 e2))) (not (= e1 e3))) (not (= e1 e4))) (not (= e2 e3))) (not (= e2 e4))) (not (= e3 e4))))"""
-    list_str = input_str.split('\n')
-    out = ""
-    for l in list_str:
-        input_norm = normalize_str(l)
-        ast = get_ast(input_norm)
-        out += to_string(ast)
-        if l != list_str[len(list_str)-1]:
-            out += "&"
-    print(out)
+    sat = []
+    info = []
+    for i in range(1,3):
+        x = []
+        file = open("../benchmarks/eq_diamond/eq_diamond" + str(i) + ".smt2", "r")
+        for f in file:
+            x.append(f)
+        file.close()
+        sat.append(dnf(x[len(x)-3]))
+        info.append(x[9])
+    
 
 if __name__ == '__main__':
     main()

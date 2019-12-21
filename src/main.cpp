@@ -5,10 +5,10 @@
 #include <chrono>
 
 // Define the behaviour of the program
-#define DEBUG
+//#define DEBUG
 //#define PARSER
 //#define TEST
-//#define BENCHMARK
+#define BENCHMARK
 
 #include "sat.hpp"     // Build formula     |   ccsat::Formula, ...
 
@@ -111,21 +111,24 @@ int main(){
 
 
 
-
-
-
     #ifdef BENCHMARK
-    std::string str = "f1!=f2&f3(f4,f5,f6,f7,f8(f9))!=f1&f3(f4,f5,f6,f7,f10)=f1&f10=f8(f9)&f3(f4,f5,f6,f7,f10)=f1";
-    ccsat::Sat s = ccsat::Sat(str);
+    std::string str = "i1=j&i1!=i2&select(a,j)=v1&select(store(store(a,i1,v1),i2,v2),j)!=select(a,j)";
 
     auto start_time = std::chrono::system_clock::now();
-    auto res = s.classic_congruence_closure();
+    bool res = ccsat::solve(str);
     auto end_time= std::chrono::system_clock::now();
-    
-    assert(!res);
-    
+
     std::chrono::duration<double> diff = end_time - start_time;
-    std::cout << "Elapsed: " << diff.count()*1000 << " ms" << std::endl; // in seconds
+    std::cout << "Sequential SAT elapsed: " << diff.count()*1000 << " ms" << std::endl; // in seconds
+
+    start_time = std::chrono::system_clock::now();
+    res = ccsat::solve_parallel(str);
+    end_time= std::chrono::system_clock::now();
+
+    diff = end_time - start_time;
+    std::cout << "Parallel SAT elapsed: " << diff.count()*1000 << " ms" << std::endl; // in seconds
+    
+
     #endif
 
     return 0;

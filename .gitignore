@@ -21,3 +21,5 @@
 
 # Executables
 bin/*
+#SMT-LIB Benchmarks
+benchmarks/*

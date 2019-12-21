@@ -661,6 +661,33 @@ namespace ccsat{
         return true;
     }
 
-
+    static bool solve_parallel(std::string s){
+        if(well_formed(s)){
+            
+            // Base case
+            if(s.find("select(store(") == std::string::npos){
+                Sat sat = Sat(s);
+                if(sat.list_congruence_closure()){
+                    return true;
+                }
+                return false;
+            }
+            
+            // Parallelism
+            std::vector<std::string> formulas = detect_store(s);
+            
+            auto first = std::async(std::launch::async,solve, formulas[0]);
+            auto second = std::async(std::launch::async,solve, formulas[1]);
+            
+            bool r1 = first.get();
+            bool r2 = second.get();
+            if(r1 || r2)
+                return true;
+            return false;
+        }
+        // Raise error
+        assert(false);
+        return true;
+    }
 
 }   // namespace 'ccsat'

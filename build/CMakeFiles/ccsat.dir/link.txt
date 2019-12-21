@@ -1,1 +1,1 @@
-/usr/bin/c++     CMakeFiles/ccsat.dir/src/main.cpp.o  -o ccsat 
+/usr/bin/c++     CMakeFiles/ccsat.dir/src/main.cpp.o  -o ccsat -lpthread 

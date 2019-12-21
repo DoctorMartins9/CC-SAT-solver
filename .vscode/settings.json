@@ -55,7 +55,10 @@
         "stdexcept": "cpp",
         "streambuf": "cpp",
         "typeinfo": "cpp",
-        "bit": "cpp"
+        "bit": "cpp",
+        "future": "cpp",
+        "mutex": "cpp",
+        "thread": "cpp"
     },
     "C_Cpp.dimInactiveRegions": false
 }

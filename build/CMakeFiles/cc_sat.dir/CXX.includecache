@@ -47,6 +47,10 @@ string
 -
 algorithm
 -
+future
+-
+thread
+-
 impl/sat.i.hpp
 ../include/impl/sat.i.hpp
 

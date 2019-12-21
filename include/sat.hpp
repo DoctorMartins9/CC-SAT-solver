@@ -39,6 +39,9 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <future>
+#include <thread>
+
 
 namespace ccsat{
 
@@ -83,6 +86,7 @@ class Sat{
         bool classic_congruence_closure();
         bool list_congruence_closure();
         static bool solve(std::string s);
+        static bool solve_parallel(std::string s);
         static std::vector<std::string> detect_store(std::string input);
 };
 
