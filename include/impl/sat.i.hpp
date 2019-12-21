@@ -388,7 +388,7 @@ namespace ccsat{
             #ifdef DEBUG
             std::cout << "store not detected" << "\n-----------" << std::endl;
             #endif
-            formulas.push_back(input);
+            formulas.push_back(initial);
         }
         #ifdef DEBUG
         for(int i = 0; i < formulas.size(); i ++)
@@ -639,12 +639,18 @@ namespace ccsat{
 
     static bool solve(std::string s){
         if(well_formed(s)){
-            // Detect if there are any store
-            std::vector<std::string> formulas = detect_store(s); 
-            // For every formula, solve it
-            for(int i = 0; i < formulas.size(); i++){
-                Sat sat = Sat(formulas[i]);
+            // Base case
+            if(s.find("select(store(") == std::string::npos){
+                Sat sat = Sat(s);
                 if(sat.list_congruence_closure()){
+                    return true;
+                }
+                return false;
+            }
+            // Recursive case
+            std::vector<std::string> formulas = detect_store(s); 
+            for(int i = 0; i < formulas.size(); i++){
+                if(solve(formulas[i])){
                     return true;
                 }
             }

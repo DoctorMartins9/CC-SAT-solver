@@ -49,7 +49,6 @@ class Sat{
         std::vector<Node> n_set;
         // Sorte
         std::vector<uint64_t> atoms;
-        std::vector<uint64_t> t_array;
         
         // Methods
         uint64_t transform_node(std::string n);
