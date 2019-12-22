@@ -1,10 +1,20 @@
 #Congruence Closure parallel SAT-Solver 
-Text small abstract
+High performance parallel implementation of a satisfability solver for the congruence closure, able to solve a set of literals in the quantifiers free fragment of first order logic, based on the union of the equality theory, list theory and array theory.
 
 ###### Author
 *Enrico Martini, VR445202 , Automatic Reasoning Course Project*
 <br>
 @github/DoctorMartins9
+
+### Usage example
+```
+#include "sat.hpp"
+
+std::string formula;
+
+// Run CC-Closure procedure
+bool isSAT = ccsat::SOLVE(formula,"S");
+```
 
 ### Run the example (Release mode)
 For running an example, in build directory type:
@@ -14,19 +24,19 @@ cmake ..
 make release
 ../bin/ccsat
 ```
-
-### Usage example
+At this point you can insert the formula to see how the algorithm works. An example of formula accepted is:
 ```
-#include "sat.hpp"
-
-std::string formula;
-
-// Run CC-Closure procedure
-bool isSAT = ccsat::SOLVE(fomrula,"S");
+f(x)!=f(y)&x=y
+```
+Example of not allowed formulas:
+```
+(a)=b   ->  a=b             : useless parenthesis are not allowed 
+a = b   ->  a=b             : space between literals are not allowed
+F&(G|H) ->  (F&G)|(F&H)     : CNF form is not allowed, only DNF
 
 ```
 ### Testing
-In build directory type:
+More than 30 test was done to check the correctness and the strength of the algorithm, including axioms. For real-time test, in build directory type:
 ```
 cmake ..
 make -j
@@ -37,14 +47,18 @@ In build directory type:
 ```
 cmake ..
 make release
+cd ../bin
+./benchmark *mode* *path* *number*
 ```
-Then in project directory type:
+Where *mode* is parallel ('P') or sequential ('S'), *path* is the path of the file .txt where the clauses are placed and *number* is the number of the line. For running example of the benchmark in bin directory type:
 ```
-bash utils/test_formula.sh *mode* *number*
+./benchmark S ../utils/benchmarks_formula.txt 10
 ```
-Where *mode* is parallel ('P') or sequential ('S') and *number* is the number of the SMT-LIB QF_UF eq_diamond benchmark, from 1 to 17 is allowed at the moment.
+### Lisp parser
+For benchmarking needs, in utils directory there is a python script called lisp_parser.py that allows to translate the SMT-LIB formulas from lisp language to DNF formulas that are legal input of the SAT solver.
+
 ### Documentation
-LaTex documentation can be found in doc directory.
+LaTex documentation pre-compiled can be found in doc directory.
 
 ### Complexity informations
 Using [lizard](https://pypi.org/project/lizard/) library for complexity informations, in build directory type:

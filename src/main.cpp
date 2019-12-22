@@ -17,7 +17,7 @@ int main(){
     std::cin >> str;
 
     // SAT solve
-    if(ccsat::solve(str))
+    if(ccsat::SOLVE(str,"P"))
         std::cout << "SAT" << std::endl;
     else
         std::cout << "UNSAT" << std::endl;        
