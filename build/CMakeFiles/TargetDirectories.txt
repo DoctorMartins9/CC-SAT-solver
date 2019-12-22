@@ -1,6 +1,9 @@
 /home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles/rebuild_cache.dir
-/home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles/release.dir
 /home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles/cc_sat.dir
+/home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles/test.dir
+/home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles/benchmark.dir
+/home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles/release.dir
+/home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles/cyclo.dir
+/home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles/edit_cache.dir
 /home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles/clean-all.dir
 /home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles/ccsat.dir
-/home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles/edit_cache.dir

@@ -1,2 +1,2 @@
-/usr/bin/ar qc libcc_sat.a  CMakeFiles/cc_sat.dir/src/main.cpp.o
+/usr/bin/ar qc libcc_sat.a  CMakeFiles/cc_sat.dir/src/benchmark.cpp.o
 /usr/bin/ranlib libcc_sat.a

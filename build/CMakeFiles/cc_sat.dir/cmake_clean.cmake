@@ -1,5 +1,5 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/cc_sat.dir/src/main.cpp.o"
+  "CMakeFiles/cc_sat.dir/src/benchmark.cpp.o"
   "libcc_sat.pdb"
   "libcc_sat.a"
 )

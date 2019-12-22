@@ -111,6 +111,45 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named cc_sat
+
+# Build rule for target.
+cc_sat: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 cc_sat
+.PHONY : cc_sat
+
+# fast build rule for target.
+cc_sat/fast:
+	$(MAKE) -f CMakeFiles/cc_sat.dir/build.make CMakeFiles/cc_sat.dir/build
+.PHONY : cc_sat/fast
+
+#=============================================================================
+# Target rules for targets named test
+
+# Build rule for target.
+test: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test
+.PHONY : test
+
+# fast build rule for target.
+test/fast:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
+.PHONY : test/fast
+
+#=============================================================================
+# Target rules for targets named benchmark
+
+# Build rule for target.
+benchmark: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 benchmark
+.PHONY : benchmark
+
+# fast build rule for target.
+benchmark/fast:
+	$(MAKE) -f CMakeFiles/benchmark.dir/build.make CMakeFiles/benchmark.dir/build
+.PHONY : benchmark/fast
+
+#=============================================================================
 # Target rules for targets named release
 
 # Build rule for target.
@@ -124,17 +163,17 @@ release/fast:
 .PHONY : release/fast
 
 #=============================================================================
-# Target rules for targets named cc_sat
+# Target rules for targets named cyclo
 
 # Build rule for target.
-cc_sat: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 cc_sat
-.PHONY : cc_sat
+cyclo: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 cyclo
+.PHONY : cyclo
 
 # fast build rule for target.
-cc_sat/fast:
-	$(MAKE) -f CMakeFiles/cc_sat.dir/build.make CMakeFiles/cc_sat.dir/build
-.PHONY : cc_sat/fast
+cyclo/fast:
+	$(MAKE) -f CMakeFiles/cyclo.dir/build.make CMakeFiles/cyclo.dir/build
+.PHONY : cyclo/fast
 
 #=============================================================================
 # Target rules for targets named clean-all
@@ -162,13 +201,42 @@ ccsat/fast:
 	$(MAKE) -f CMakeFiles/ccsat.dir/build.make CMakeFiles/ccsat.dir/build
 .PHONY : ccsat/fast
 
+src/benchmark.o: src/benchmark.cpp.o
+
+.PHONY : src/benchmark.o
+
+# target to build an object file
+src/benchmark.cpp.o:
+	$(MAKE) -f CMakeFiles/cc_sat.dir/build.make CMakeFiles/cc_sat.dir/src/benchmark.cpp.o
+	$(MAKE) -f CMakeFiles/benchmark.dir/build.make CMakeFiles/benchmark.dir/src/benchmark.cpp.o
+.PHONY : src/benchmark.cpp.o
+
+src/benchmark.i: src/benchmark.cpp.i
+
+.PHONY : src/benchmark.i
+
+# target to preprocess a source file
+src/benchmark.cpp.i:
+	$(MAKE) -f CMakeFiles/cc_sat.dir/build.make CMakeFiles/cc_sat.dir/src/benchmark.cpp.i
+	$(MAKE) -f CMakeFiles/benchmark.dir/build.make CMakeFiles/benchmark.dir/src/benchmark.cpp.i
+.PHONY : src/benchmark.cpp.i
+
+src/benchmark.s: src/benchmark.cpp.s
+
+.PHONY : src/benchmark.s
+
+# target to generate assembly for a file
+src/benchmark.cpp.s:
+	$(MAKE) -f CMakeFiles/cc_sat.dir/build.make CMakeFiles/cc_sat.dir/src/benchmark.cpp.s
+	$(MAKE) -f CMakeFiles/benchmark.dir/build.make CMakeFiles/benchmark.dir/src/benchmark.cpp.s
+.PHONY : src/benchmark.cpp.s
+
 src/main.o: src/main.cpp.o
 
 .PHONY : src/main.o
 
 # target to build an object file
 src/main.cpp.o:
-	$(MAKE) -f CMakeFiles/cc_sat.dir/build.make CMakeFiles/cc_sat.dir/src/main.cpp.o
 	$(MAKE) -f CMakeFiles/ccsat.dir/build.make CMakeFiles/ccsat.dir/src/main.cpp.o
 .PHONY : src/main.cpp.o
 
@@ -178,7 +246,6 @@ src/main.i: src/main.cpp.i
 
 # target to preprocess a source file
 src/main.cpp.i:
-	$(MAKE) -f CMakeFiles/cc_sat.dir/build.make CMakeFiles/cc_sat.dir/src/main.cpp.i
 	$(MAKE) -f CMakeFiles/ccsat.dir/build.make CMakeFiles/ccsat.dir/src/main.cpp.i
 .PHONY : src/main.cpp.i
 
@@ -188,9 +255,35 @@ src/main.s: src/main.cpp.s
 
 # target to generate assembly for a file
 src/main.cpp.s:
-	$(MAKE) -f CMakeFiles/cc_sat.dir/build.make CMakeFiles/cc_sat.dir/src/main.cpp.s
 	$(MAKE) -f CMakeFiles/ccsat.dir/build.make CMakeFiles/ccsat.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
+
+tests/test.o: tests/test.cpp.o
+
+.PHONY : tests/test.o
+
+# target to build an object file
+tests/test.cpp.o:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/tests/test.cpp.o
+.PHONY : tests/test.cpp.o
+
+tests/test.i: tests/test.cpp.i
+
+.PHONY : tests/test.i
+
+# target to preprocess a source file
+tests/test.cpp.i:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/tests/test.cpp.i
+.PHONY : tests/test.cpp.i
+
+tests/test.s: tests/test.cpp.s
+
+.PHONY : tests/test.s
+
+# target to generate assembly for a file
+tests/test.cpp.s:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/tests/test.cpp.s
+.PHONY : tests/test.cpp.s
 
 # Help Target
 help:
@@ -199,14 +292,23 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
-	@echo "... release"
 	@echo "... cc_sat"
+	@echo "... test"
+	@echo "... benchmark"
+	@echo "... release"
+	@echo "... cyclo"
+	@echo "... edit_cache"
 	@echo "... clean-all"
 	@echo "... ccsat"
-	@echo "... edit_cache"
+	@echo "... src/benchmark.o"
+	@echo "... src/benchmark.i"
+	@echo "... src/benchmark.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... tests/test.o"
+	@echo "... tests/test.i"
+	@echo "... tests/test.s"
 .PHONY : help
 
 

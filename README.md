@@ -1,4 +1,4 @@
-# SAT-implementation
+#Congruence Closure parallel SAT-Solver 
 Text small abstract
 
 ###### Author
@@ -6,55 +6,49 @@ Text small abstract
 <br>
 @github/DoctorMartins9
 
-## Run the example (Release mode)
+### Run the example (Release mode)
 For running an example, in build directory type:
 
 ```
 cmake ..
 make release
-../bin/my_heap
-
+../bin/ccsat
 ```
 
-
-## Usage
+### Usage example
 ```
-#include "max_heap.hpp"
+#include "sat.hpp"
 
-std::vector<T> vec;
+std::string formula;
 
-// Sorting 
-hp::MaxHeap<T>::heapSort(vec);
-[...]
+// Run CC-Closure procedure
+bool isSAT = ccsat::SOLVE(fomrula,"S");
 
 ```
-
-## Testing
-Using the [catch2](https://github.com/catchorg/Catch2) library for testing, in build directory type:
-
+### Testing
+In build directory type:
 ```
 cmake ..
-make heap_test
-./heap_test
+make -j
+./test
 ```
-
-## Documentation
-Using [doxigen](http://www.doxygen.nl/), in build directory type:
+### Benchmarks
+In build directory type:
 ```
 cmake ..
-make doc
+make release
 ```
-After this, go to doc/html directory and open with browser "index.html". if you have firefox, from build directory you can type:
+Then in project directory type:
 ```
-firefox ../doc/html/index.html &
+bash utils/test_formula.sh *mode* *number*
 ```
+Where *mode* is parallel ('P') or sequential ('S') and *number* is the number of the SMT-LIB QF_UF eq_diamond benchmark, from 1 to 17 is allowed at the moment.
+### Documentation
+LaTex documentation can be found in doc directory.
 
-## Complexity informations
+### Complexity informations
 Using [lizard](https://pypi.org/project/lizard/) library for complexity informations, in build directory type:
-
 ```
-
 cmake ..
 make cyclo
-
 ```

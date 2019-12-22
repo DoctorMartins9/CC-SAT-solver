@@ -54,10 +54,12 @@ CMAKE_BINARY_DIR = /home/enrico/Scrivania/GitHub/CC-SAT-solver/build
 include CMakeFiles/release.dir/progress.make
 
 CMakeFiles/release:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "The example file is aviable in bin directory"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "The example files are aviable in bin directory"
 	mkdir -p /home/enrico/Scrivania/GitHub/CC-SAT-solver/bin
 	make all
 	cp /home/enrico/Scrivania/GitHub/CC-SAT-solver/build/ccsat /home/enrico/Scrivania/GitHub/CC-SAT-solver/bin/
+	cp /home/enrico/Scrivania/GitHub/CC-SAT-solver/build/test /home/enrico/Scrivania/GitHub/CC-SAT-solver/bin/
+	cp /home/enrico/Scrivania/GitHub/CC-SAT-solver/build/benchmark /home/enrico/Scrivania/GitHub/CC-SAT-solver/bin/
 
 release: CMakeFiles/release
 release: CMakeFiles/release.dir/build.make

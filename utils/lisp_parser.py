@@ -1,6 +1,8 @@
 import sys
 from sympy import *
 from typing import Any, List
+from multiprocessing import *
+import os 
 
 # Parse input string into a list of all parentheses and atoms (int or str),
 # exclude whitespaces.
@@ -153,27 +155,67 @@ def dnf(s):
     for i in range(len(array)):
         result+=array[i]
     return result
-    
-def main():
-    sat = []
-    info = []
-    for i in range(1,10):
-        x = []
-        file = open("../benchmarks/eq_diamond/eq_diamond" + str(i) + ".smt2", "r")
-        for f in file:
-            x.append(f)
-        file.close()
+
+sat = []
+info = []
+
+def thread(i,l):
+    x = []
+    file = open("../benchmarks/eq_diamond/eq_diamond" + str(i) + ".smt2", "r")
+    for f in file:
+        x.append(f)
+    file.close()
+    print("Thread " + str(i) + " finished")
+    l.acquire()
+    try:
         sat.append(dnf(x[len(x)-3]))
         info.append(x[9])
+        out = open("benchmarks_info.txt",'a')
+        for i in range(len(info)):
+            out.write(info[i]+'\n')
+        out.close()
+        out = open("benchmarks_formula.txt",'a')
+        for i in range(len(sat)):
+            out.write(sat[i]+'\n')
+        out.close()
+    finally:
+        l.release()
+
+def multi_parser(m,n):
+    threads=[]
+    for i in range(1,n):
+        lock = Lock()
+        threads.append(Process(target=thread,args=(i,lock)))
+    for t in threads:    
+        t.start()
+    for t in threads:
+        t.join()
+
+
+def single_parser(i):
+    x = []
+    file = open("../benchmarks/eq_diamond/eq_diamond" + str(i) + ".smt2", "r")
+    for f in file:
+        x.append(f)
+    file.close()
+    sat.append(dnf(x[len(x)-3]))
+    info.append(x[9])
     out = open("benchmarks_info.txt",'a')
     for i in range(len(info)):
         out.write(info[i]+'\n')
     out.close()
-    
     out = open("benchmarks_formula.txt",'a')
     for i in range(len(sat)):
         out.write(sat[i]+'\n')
     out.close()
+
+
+def main():
+    multi_parser(14,17)
+    #single_parser(14)
+
+    
+
 
 if __name__ == '__main__':
     main()

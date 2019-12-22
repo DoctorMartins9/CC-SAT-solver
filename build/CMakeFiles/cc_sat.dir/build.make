@@ -57,27 +57,27 @@ include CMakeFiles/cc_sat.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/cc_sat.dir/flags.make
 
-CMakeFiles/cc_sat.dir/src/main.cpp.o: CMakeFiles/cc_sat.dir/flags.make
-CMakeFiles/cc_sat.dir/src/main.cpp.o: ../src/main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/cc_sat.dir/src/main.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cc_sat.dir/src/main.cpp.o -c /home/enrico/Scrivania/GitHub/CC-SAT-solver/src/main.cpp
+CMakeFiles/cc_sat.dir/src/benchmark.cpp.o: CMakeFiles/cc_sat.dir/flags.make
+CMakeFiles/cc_sat.dir/src/benchmark.cpp.o: ../src/benchmark.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/cc_sat.dir/src/benchmark.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cc_sat.dir/src/benchmark.cpp.o -c /home/enrico/Scrivania/GitHub/CC-SAT-solver/src/benchmark.cpp
 
-CMakeFiles/cc_sat.dir/src/main.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/cc_sat.dir/src/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/enrico/Scrivania/GitHub/CC-SAT-solver/src/main.cpp > CMakeFiles/cc_sat.dir/src/main.cpp.i
+CMakeFiles/cc_sat.dir/src/benchmark.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/cc_sat.dir/src/benchmark.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/enrico/Scrivania/GitHub/CC-SAT-solver/src/benchmark.cpp > CMakeFiles/cc_sat.dir/src/benchmark.cpp.i
 
-CMakeFiles/cc_sat.dir/src/main.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cc_sat.dir/src/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/enrico/Scrivania/GitHub/CC-SAT-solver/src/main.cpp -o CMakeFiles/cc_sat.dir/src/main.cpp.s
+CMakeFiles/cc_sat.dir/src/benchmark.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cc_sat.dir/src/benchmark.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/enrico/Scrivania/GitHub/CC-SAT-solver/src/benchmark.cpp -o CMakeFiles/cc_sat.dir/src/benchmark.cpp.s
 
 # Object files for target cc_sat
 cc_sat_OBJECTS = \
-"CMakeFiles/cc_sat.dir/src/main.cpp.o"
+"CMakeFiles/cc_sat.dir/src/benchmark.cpp.o"
 
 # External object files for target cc_sat
 cc_sat_EXTERNAL_OBJECTS =
 
-libcc_sat.a: CMakeFiles/cc_sat.dir/src/main.cpp.o
+libcc_sat.a: CMakeFiles/cc_sat.dir/src/benchmark.cpp.o
 libcc_sat.a: CMakeFiles/cc_sat.dir/build.make
 libcc_sat.a: CMakeFiles/cc_sat.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX static library libcc_sat.a"

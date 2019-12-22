@@ -47,9 +47,9 @@ string
 -
 algorithm
 -
-future
--
 thread
+-
+future
 -
 impl/sat.i.hpp
 ../include/impl/sat.i.hpp
@@ -64,6 +64,8 @@ chrono
 cassert
 -
 chrono
+-
+algorithm
 -
 sat.hpp
 /home/enrico/Scrivania/GitHub/CC-SAT-solver/src/sat.hpp

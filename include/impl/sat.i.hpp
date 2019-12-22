@@ -660,7 +660,27 @@ namespace ccsat{
         assert(false);
         return true;
     }
-
+    static void solve_threads(std::promise<bool> result , std::string s){
+        if(well_formed(s)){
+            // Base case
+            if(s.find("select(store(") == std::string::npos){
+                Sat sat = Sat(s);
+                if(sat.list_congruence_closure()){
+                    result.set_value(true);
+                }
+                result.set_value(false);
+            }
+            // Recursive case
+            std::vector<std::string> formulas = detect_store(s); 
+            for(int i = 0; i < formulas.size(); i++){
+                if(solve(formulas[i])){
+                    result.set_value(true);
+                }
+            }
+            result.set_value(false);
+        }
+        assert(false);
+    }
     static bool solve_parallel(std::string s){
         if(well_formed(s)){
             
@@ -690,7 +710,7 @@ namespace ccsat{
         return true;
     }
 
-    static bool SOLVE(std::string input){
+    static bool SOLVE(std::string input,std::string mode){
         // Count & split occurrence of "|"
         std::vector<std::string> formula;
         while(input.find_first_of("|") != std::string::npos){
@@ -699,12 +719,36 @@ namespace ccsat{
             input = input.substr(pos+1,input.size()-pos);
         }
         formula.push_back(input);
-        
-        for(int i = 0; i < formula.size(); i++){
-            if(solve(formula[i].substr(1,formula[i].size()-2)))
-                return true;
+
+        // Sequential mode
+        if(mode == "S"){
+            for(int i = 0; i < formula.size(); i++){
+                if(solve(formula[i].substr(1,formula[i].size()-2)))
+                    return true;
+            }
+            return false;
         }
-        return false;
+        // Parallel mode
+        else if(mode == "P"){
+            int cores = std::thread::hardware_concurrency();
+            int run = int(formula.size()/cores);
+            std::cout << run << std::endl;
+            for(int c = 0; c < run ; c++){
+                std::vector<std::future<bool>> futures;
+                for(int i = 0 ; i < cores ; i++ ){
+                    futures.push_back(std::async(std::launch::async,solve,formula[cores*c+i].substr(1,formula[cores*c+i].size()-2)));
+                }
+                for(int i = 0 ; i < cores ; i++ ){
+                    if(futures[i].valid() && futures[i].get()==true)
+                        return true;
+                }
+            }
+            return false;
+        }
+        else{
+            std::cout << "Error: wrong mode" << std::endl;
+            return false;
+        }
     }
 
 }   // namespace 'ccsat'

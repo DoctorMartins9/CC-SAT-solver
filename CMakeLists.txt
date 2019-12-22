@@ -1,4 +1,4 @@
-project("CC-SAT_solver" CXX)                              # Project name
+project("CC-SAT_solver" CXX)                            # Project name
 cmake_minimum_required(VERSION 3.5)                     # CMake Version
 
 set(CMAKE_CXX_STANDARD 14)                              # C++ 14
@@ -7,7 +7,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)                     # Requested
 # COMPILATION FLAGS -----------------------------------------------------------
 
 include(CheckCXXCompilerFlag)
-
 CHECK_CXX_COMPILER_FLAG("-std=c++14" COMPILER_SUPPORTS_CXX14)
 if (COMPILER_SUPPORTS_CXX14)
     add_compile_options("-std=c++14")
@@ -15,7 +14,6 @@ if (COMPILER_SUPPORTS_CXX14)
 else()
     message(FATAL_ERROR "Compiler ${CMAKE_CXX_COMPILER} has no C++14 support.")
 endif()
-
 find_package (Threads)
 
 # BUILD MODE ------------------------------------------------------------------
@@ -56,7 +54,9 @@ add_custom_target(release
                   COMMAND mkdir -p ${PROJECT_SOURCE_DIR}/bin
                   COMMAND make all
                   COMMAND cp ${PROJECT_SOURCE_DIR}/build/ccsat ${PROJECT_SOURCE_DIR}/bin/
-                  COMMENT "The example file is aviable in bin directory")
+                  COMMAND cp ${PROJECT_SOURCE_DIR}/build/test ${PROJECT_SOURCE_DIR}/bin/
+                  COMMAND cp ${PROJECT_SOURCE_DIR}/build/benchmark ${PROJECT_SOURCE_DIR}/bin/
+                  COMMENT "The example files are aviable in bin directory")
 
 add_custom_target(clean-all
                   COMMAND rm -rf ${PROJECT_SOURCE_DIR}/build/*
@@ -91,12 +91,18 @@ endif()
 
 SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-include_directories(${PROJECT_SOURCE_DIR}/include
-                    ${PROJECT_SOURCE_DIR}/lib)
+include_directories(${PROJECT_SOURCE_DIR}/include)
 
-file(GLOB_RECURSE SRCS ${PROJECT_SOURCE_DIR}/src/*.cpp)
-
+file(GLOB_RECURSE SRCS ${PROJECT_SOURCE_DIR}/src/main.cpp)
 add_executable( ccsat ${SRCS} )
 target_link_libraries (ccsat ${CMAKE_THREAD_LIBS_INIT})
+
+file(GLOB_RECURSE SRCS ${PROJECT_SOURCE_DIR}/tests/test.cpp)
+add_executable( test ${SRCS} )
+target_link_libraries (test ${CMAKE_THREAD_LIBS_INIT})
+
+file(GLOB_RECURSE SRCS ${PROJECT_SOURCE_DIR}/src/benchmark.cpp)
+add_executable( benchmark ${SRCS} )
+target_link_libraries (benchmark ${CMAKE_THREAD_LIBS_INIT})
 
 add_library(cc_sat ${SRCS})

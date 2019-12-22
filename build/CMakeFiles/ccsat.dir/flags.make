@@ -6,5 +6,5 @@ CXX_FLAGS =   -std=c++14 -pthread -std=gnu++14
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/enrico/Scrivania/GitHub/CC-SAT-solver/include -I/home/enrico/Scrivania/GitHub/CC-SAT-solver/lib 
+CXX_INCLUDES = -I/home/enrico/Scrivania/GitHub/CC-SAT-solver/include 
 

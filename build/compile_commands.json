@@ -1,12 +1,22 @@
 [
 {
   "directory": "/home/enrico/Scrivania/GitHub/CC-SAT-solver/build",
-  "command": "/usr/bin/c++   -I/home/enrico/Scrivania/GitHub/CC-SAT-solver/include -I/home/enrico/Scrivania/GitHub/CC-SAT-solver/lib    -std=c++14 -pthread -std=gnu++14 -o CMakeFiles/cc_sat.dir/src/main.cpp.o -c /home/enrico/Scrivania/GitHub/CC-SAT-solver/src/main.cpp",
-  "file": "/home/enrico/Scrivania/GitHub/CC-SAT-solver/src/main.cpp"
+  "command": "/usr/bin/c++   -I/home/enrico/Scrivania/GitHub/CC-SAT-solver/include    -std=c++14 -pthread -std=gnu++14 -o CMakeFiles/cc_sat.dir/src/benchmark.cpp.o -c /home/enrico/Scrivania/GitHub/CC-SAT-solver/src/benchmark.cpp",
+  "file": "/home/enrico/Scrivania/GitHub/CC-SAT-solver/src/benchmark.cpp"
 },
 {
   "directory": "/home/enrico/Scrivania/GitHub/CC-SAT-solver/build",
-  "command": "/usr/bin/c++   -I/home/enrico/Scrivania/GitHub/CC-SAT-solver/include -I/home/enrico/Scrivania/GitHub/CC-SAT-solver/lib    -std=c++14 -pthread -std=gnu++14 -o CMakeFiles/ccsat.dir/src/main.cpp.o -c /home/enrico/Scrivania/GitHub/CC-SAT-solver/src/main.cpp",
+  "command": "/usr/bin/c++   -I/home/enrico/Scrivania/GitHub/CC-SAT-solver/include    -std=c++14 -pthread -std=gnu++14 -o CMakeFiles/test.dir/tests/test.cpp.o -c /home/enrico/Scrivania/GitHub/CC-SAT-solver/tests/test.cpp",
+  "file": "/home/enrico/Scrivania/GitHub/CC-SAT-solver/tests/test.cpp"
+},
+{
+  "directory": "/home/enrico/Scrivania/GitHub/CC-SAT-solver/build",
+  "command": "/usr/bin/c++   -I/home/enrico/Scrivania/GitHub/CC-SAT-solver/include    -std=c++14 -pthread -std=gnu++14 -o CMakeFiles/benchmark.dir/src/benchmark.cpp.o -c /home/enrico/Scrivania/GitHub/CC-SAT-solver/src/benchmark.cpp",
+  "file": "/home/enrico/Scrivania/GitHub/CC-SAT-solver/src/benchmark.cpp"
+},
+{
+  "directory": "/home/enrico/Scrivania/GitHub/CC-SAT-solver/build",
+  "command": "/usr/bin/c++   -I/home/enrico/Scrivania/GitHub/CC-SAT-solver/include    -std=c++14 -pthread -std=gnu++14 -o CMakeFiles/ccsat.dir/src/main.cpp.o -c /home/enrico/Scrivania/GitHub/CC-SAT-solver/src/main.cpp",
   "file": "/home/enrico/Scrivania/GitHub/CC-SAT-solver/src/main.cpp"
 }
 ]

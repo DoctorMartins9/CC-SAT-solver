@@ -1,215 +1,73 @@
-#include "max_heap.hpp"
-#include "min_heap.hpp"
+#include <vector>           // vector utils     |   std::vector , ...
+#include <iostream>         // I/O operations   |   std::cout , ...
+#include <chrono>           // time keeping     |   std::chrono, ... 
+#include <cassert>
+#include <chrono>
+#include <algorithm>
+// Define the behaviour of the program
+#define TEST
 
-# define CATCH_CONFIG_MAIN
-# include "catch.hpp"
-#undef CATCH_CONFIG_MAIN
+#include "sat.hpp"     // Build formula     |   ccsat::Formula, ...
 
+int main(){
 
-bool areFloatEqual(float a, float b) {
-    const float epsilon = 0.00001f;
-    
-    if (a == b) 
-        return true;
-    
-    if (std::isnan(a) || std::isnan(b)) 
-        return false;
+    // TEST STRING
+    // Equality theory string -----------------------------------------------------------
+    assert(!ccsat::solve("a=b&a!=b"));
+    assert(ccsat::solve("a=b&c!=b"));
+    // function with one argument
+    assert(!ccsat::solve("f(a)=b&f(a)!=b"));
+    assert(ccsat::solve("f(a)=b&f(a)!=c"));
+    assert(!ccsat::solve("f(f(a))=f(b)&f(f(a))!=f(b)"));
+    assert(ccsat::solve("f(f(a))=f(b)&f(f(a))!=c"));
+    // function with multiple argument
+    assert(!ccsat::solve("f(a,b)=b&f(a,b)!=b"));
+    assert(ccsat::solve("f(a,b)=b&f(a,b)!=c"));
+    // Bradley-Manna strings
+    assert(ccsat::solve("f(x)=f(y)&x!=y"));
+    assert(!ccsat::solve("x=y&f(x)!=f(y)"));
+    assert(!ccsat::solve("f(a,b)=a&f(f(a,b),b)!=a"));
+    assert(!ccsat::solve("f(f(f(a)))=a&f(f(f(f(f(a)))))=a&f(a)!=a"));
+    assert(!ccsat::solve("f(f(f(a)))=f(f(a))&f(f(f(f(a))))=a&f(a)!=a"));
+    assert(ccsat::solve("f(x,y)=f(y,x)&f(a,y)!=f(y,a)"));
+    assert(!ccsat::solve("f(g(x))=g(f(x))&f(g(f(y)))=x&f(y)=x&g(f(x))!=x"));
+    // Z3 Benchmark (https://clc-gitlab.cs.uiowa.edu:2443/SMT-LIB-benchmarks/QF_UF/tree/master/TypeSafe)
+    assert(!ccsat::solve("f1!=f2&f3(f4,f5,f6,f7,f8(f9))!=f1&f3(f4,f5,f6,f7,f10)=f1&f10=f8(f9)&f10=f8(f9)&f3(f4,f5,f6,f7,f10)=f1"));
+    assert(!ccsat::solve("f1!=f2&f3(f4,f5,f6,f7,f8(f9))!=f1&f3(f4,f5,f6,f7,f10)=f1&f10=f8(f9)&f3(f4,f5,f6,f7,f10)=f1"));
+    assert(!ccsat::solve("f1!=f2&f3(f4,f5,f6,f7,f8(f9))!=f1&f3(f4,f5,f6,f7,f10)=f1&f10=f8(f9)"));    
+    // List theory strings --------------------------------------------------------------
+    // Reflexivity
+    assert(!ccsat::solve("x1=x2&y1=y2&cons(x1,y1)!=cons(x2,y2)"));
+    // Simmetry
+    assert(!ccsat::solve("x=y&car(x)!=car(y)"));
+    assert(!ccsat::solve("x=y&cdr(x)!=cdr(y)"));
+    // Left projection
+    assert(!ccsat::solve("car(cons(x,y))!=x"));
+    // Right projection
+    assert(!ccsat::solve("cdr(cons(x,y))!=y"));
+    // Atom
+    assert(ccsat::solve("!atom(cons(x,y))"));
+    assert(!ccsat::solve("atom(cons(x,y))"));
+    // Construction
+    assert(!ccsat::solve("atom(x)&cons(car(x),cdr(x))=x"));
+    assert(ccsat::solve("!atom(x)&cons(car(x),cdr(x))=x"));
+    // Bradley Manna example
+    assert(!ccsat::solve("car(x)=car(y)&cdr(x)=cdr(y)&f(x)!=f(y)&!atom(x)&!atom(y)"));
+    assert(ccsat::solve("car(x)=y&cdr(x)=z&x!=cons(y,z)"));
+    // Intermediate exam question
+    assert(!ccsat::solve("f(b)=b&f(f(b))!=car(cdr(cons(f(b),cons(b,d))))"));
+    // Array theory strings -------------------------------------------------------------
+    assert(!ccsat::solve("i=k&select(store(x,i,v),k)!=v"));
+    assert(!ccsat::solve("i!=k&select(store(x,i,v),k)!=select(x,k)"));
+    // Extensionality
+    assert(!ccsat::solve("x=y&select(x,z)!=select(y,z)"));
+    // Calce example
+    assert(!ccsat::solve("i1=j&i1!=i2&select(a,j)=v1&select(store(store(a,i1,v1),i2,v2),j)!=select(a,j)"));
+    // Intermediate exam question
+    assert(ccsat::solve("e=select(store(a,i,e),j)&select(a,j)!=e"));
 
-    float abs_a = std::abs(a);
-    float abs_b = std::abs(b);
-    float diff  = std::abs(a - b);
-    
-    return (diff / std::max(abs_a, abs_b)) < epsilon;
-}
+    // If core dump is not created
+    std::cout << "All test passed!" << std::endl;
 
-template<typename T>
-bool isIncreasing ( std::vector<T>& vec){    
-    for(uint64_t i = 1 ; i < vec.size() ; i++)
-        if(vec[i-1] > vec[i] )
-            return false;  
-    return true;
-}
-
-template<typename T>
-bool isPresent(hp::Heap<T>& heap, T value){
-    for(uint64_t i = 0; i < heap.size() ; i++){
-        if(heap[i] == value)
-            return true;
-        else if(std::is_floating_point<T>::value)
-            return areFloatEqual(heap[i],value);
-    }
-
-    return false;
-}
-
-template<typename T>
-bool isMinRoot(hp::Heap<T>& heap){
-    T root = heap[0];
-    for(uint64_t i = 1; i < heap.size() ; i++)
-        if(heap[i] < root)
-            return false;
-    return true; 
-}
-
-template<typename T>
-bool isMaxRoot(hp::Heap<T>& heap){
-    T root = heap[0];
-    for(uint64_t i = 1; i < heap.size() ; i++)
-        if(heap[i] > root)
-            return false;
-    return true; 
-}
-
-
-TEST_CASE("Integer Heap Test" , "[IntHeapMax]"){
-    
-    using T = int;
-    
-    std::vector<T> vec = {2, 4 , 234, 54,23, 3423, 324 , 34, 32,3};
-    const int SIZE = vec.size();
-
-    // Sorting 
-    hp::MaxHeap<T>::heapSort(vec);
-    REQUIRE( vec.size() == SIZE  );
-    REQUIRE( isIncreasing(vec) );
-
-    // Constructor
-    hp::MaxHeap<T> heap = hp::MaxHeap<T>(vec);
-    REQUIRE(heap.size() == vec.size() );
-
-    // Add element
-    heap.addElement(4);
-    REQUIRE(heap.size() == SIZE + 1 );
-    REQUIRE( isMaxRoot(heap) );
-    
-    // Erase element by index
-    heap.erase(0);
-    REQUIRE(heap.size() == SIZE);
-    REQUIRE( isMaxRoot(heap) );
-
-    // Add a vector to heap
-    std::vector<T> new_vec  = {3,4,24,54,657,32,654,462,6835};
-    heap.addVector(new_vec);
-    REQUIRE(heap.size() == SIZE + new_vec.size() );
-    REQUIRE( isMaxRoot(heap) );
-
-    // Erase element by value    
-    heap.eraseByValue(5);
-    REQUIRE(!isPresent(heap, 5));
-    REQUIRE( isMaxRoot(heap) );
-
-}
-
-TEST_CASE("Float Heap Test (MaxHeap)" , "[FloatHeapTestMax]"){
-    
-    using T = float;
-    
-    std::vector<T> vec = {2.0, 4.0 , 234.0, 54.0, 23.0, 3423.0, 324.0, 34.0, 32.0,3.0};
-    const int SIZE = vec.size();
-
-    // Sorting 
-    hp::MaxHeap<T>::heapSort(vec);
-    REQUIRE( vec.size() == SIZE  );
-    REQUIRE( isIncreasing(vec) );
-
-    // Constructor
-    hp::MaxHeap<T> heap = hp::MaxHeap<T>(vec);
-    REQUIRE(heap.size() == vec.size() );
-
-    // Add element
-    heap.addElement(4.0);
-    REQUIRE(heap.size() == SIZE + 1 );
-    REQUIRE( isMaxRoot(heap) );
-    
-    // Erase element by index
-    heap.erase(0);
-    REQUIRE(heap.size() == SIZE);
-    REQUIRE( isMaxRoot(heap) );
-
-    // Add a vector to heap
-    std::vector<T> new_vec  = {3,4,24,54,657,32,654,462,6835};
-    heap.addVector(new_vec);
-    REQUIRE(heap.size() == SIZE + new_vec.size() );
-    REQUIRE( isMaxRoot(heap) );
-
-    // Erase element by value    
-    heap.eraseByValue(5.0f);
-    REQUIRE(!isPresent(heap, 5.0f));
-    REQUIRE( isMaxRoot(heap) );
-
-}
-
-TEST_CASE("Double Heap Test (MaxHeap)" , "[DoubleHeapTestMax]"){
-    
-    using T = double;
-    std::vector<T> vec = {2.0, 4.0 , 234.0, 54.0, 23.0, 3423.0, 324.0, 34.0, 32.0,3.0};
-    const int SIZE = vec.size();
-
-    // Sorting 
-    hp::MaxHeap<T>::heapSort(vec);
-    REQUIRE( vec.size() == SIZE  );
-    REQUIRE( isIncreasing(vec) );
-
-    // Constructor
-    hp::MaxHeap<T> heap = hp::MaxHeap<T>(vec);
-    REQUIRE(heap.size() == vec.size() );
-
-    // Add element
-    heap.addElement(4.0);
-    REQUIRE(heap.size() == SIZE + 1 );
-    REQUIRE( isMaxRoot(heap) );
-    
-    // Erase element by index
-    heap.erase(0);
-    REQUIRE(heap.size() == SIZE);
-    REQUIRE( isMaxRoot(heap) );
-
-    // Add a vector to heap
-    std::vector<T> new_vec  = {3,4,24,54,657,32,654,462,6835};
-    heap.addVector(new_vec);
-    REQUIRE(heap.size() == SIZE + new_vec.size() );
-    REQUIRE( isMaxRoot(heap) );
-
-    // Erase element by value    
-    heap.eraseByValue(5.0);
-    REQUIRE(!isPresent(heap, 5.0));
-    REQUIRE( isMaxRoot(heap) );
-}
-
-
-
-TEST_CASE("Integer Heap Test (MinHeap)" , "[IntHeapTestMin]"){
-  
-    using T = int;
-    
-    std::vector<T> vec = {2, 4 , 234, 54,23, 3423, 324 , 34, 32,3};
-
-    const int SIZE = vec.size();
-
-
-    // Constructor
-    hp::MinHeap<T> heap = hp::MinHeap<T>(vec);
-    REQUIRE( heap.size() == SIZE );
-
-    // Add element
-    heap.addElement(4);
-    REQUIRE(heap.size() == SIZE + 1 );
-    REQUIRE( isMinRoot(heap) );
-    
-    // Erase element by index
-    heap.erase(0);
-    REQUIRE(heap.size() == SIZE);
-    REQUIRE( isMinRoot(heap) );
-
-    // Add a vector to heap
-    std::vector<T> new_vec  = {3,4,24,54,657,32,654,462,6835};
-    heap.addVector(new_vec);
-    REQUIRE(heap.size() == SIZE + new_vec.size() );
-    REQUIRE( isMinRoot(heap) );
-
-    // Erase element by value    
-    heap.eraseByValue(5);
-    REQUIRE(!isPresent(heap, 5));
-    REQUIRE( isMinRoot(heap) );
-
+    return 0;
 }
