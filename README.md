@@ -13,7 +13,7 @@ High performance parallel implementation of a satisfability solver for the congr
 std::string formula;
 
 // Run CC-Closure procedure
-bool isSAT = ccsat::SOLVE(formula,"S");
+bool is_sat = ccsat::SOLVE(formula,"S");
 ```
 
 ### Run the example (Release mode)
@@ -24,7 +24,7 @@ cmake ..
 make release
 ../bin/ccsat
 ```
-At this point you can insert the formula to see how the algorithm works. An example of formula accepted is:
+At this point you can insert the formula and see how the algorithm works. An example of formula accepted is:
 ```
 f(x)!=f(y)&x=y
 ```
@@ -33,7 +33,6 @@ Example of not allowed formulas:
 (a)=b   ->  a=b             : useless parenthesis are not allowed 
 a = b   ->  a=b             : space between literals are not allowed
 F&(G|H) ->  (F&G)|(F&H)     : CNF form is not allowed, only DNF
-
 ```
 ### Testing
 More than 30 test was done to check the correctness and the strength of the algorithm, including axioms. For real-time test, in build directory type:
@@ -55,7 +54,7 @@ Where *mode* is parallel ('P') or sequential ('S'), *path* is the path of the fi
 ./benchmark S ../utils/benchmarks_formula.txt 10
 ```
 ### Lisp parser
-For benchmarking needs, in utils directory there is a python script called lisp_parser.py that allows to translate the SMT-LIB formulas from lisp language to DNF formulas that are legal input of the SAT solver.
+For benchmarking needs, in utils directory there is a python script called lisp_parser.py that allows you to translate SMT-LIB formulas from lisp language to DNF formulas that are legal input of the SAT solver.
 
 ### Documentation
 LaTex documentation pre-compiled can be found in doc directory.

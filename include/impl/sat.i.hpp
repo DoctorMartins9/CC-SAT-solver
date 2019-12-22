@@ -731,8 +731,8 @@ namespace ccsat{
         // Parallel mode
         else if(mode == "P"){
             int cores = std::thread::hardware_concurrency();
+            cores = 16384;
             int run = int(formula.size()/cores);
-            std::cout << run << std::endl;
             for(int c = 0; c < run ; c++){
                 std::vector<std::future<bool>> futures;
                 for(int i = 0 ; i < cores ; i++ ){

@@ -1,0 +1,76 @@
+\documentclass{IEEEtran}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{booktabs}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+		T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+\title{Parallel Congruence Closure SAT solver}
+\author{Enrico Martini, VR445204}
+\maketitle
+\begin{abstract}
+ In this report is presented a parallel implementation of a satisfability solver for the congruence closure, able to solve a set of clauses in the quantifiers free fragment of first order logic, based on equality among variables, constants, function applications, recursive data structures with their elements and elements of arrays.
+\end{abstract}
+\section{Introduction}
+The first theory considered is the theory of equality with uninterpreted functions (EUF). It is the most important theory because its congruence closure algorithm is the core of the entire alghoritm. 
+\section{Implementation}
+
+
+\subsection{Algorithm}
+
+
+\subsection{Parser}
+
+
+\section{Validation}
+
+
+\section{Benchmarks}
+\begin{center}
+\begin{table}[htbp]
+	\begin{tabular}{@{}c|cccc@{}}
+		\toprule
+		\textbf{\#Clause} & \textbf{Classic CC} & \textbf{4 threads} & \textbf{128 threads} & \textbf{1024 threads} \\ \midrule
+		128               & 0,03                & 0,0136             & 0,0004               & 0,0005                \\
+		256               & 0,06                & 0,0309             & 0,0215               & 0,0006                \\
+		512               & 0,127               & 0,1395             & 0,0943               & 0,0044                \\
+		1024              & 0,309               & 0,2271             & 0,0789               & 0,0783                \\
+		2048              & 0,592               & 0,2725             & 0,1600               & 0,1967                \\
+		4096              & 1,179               & 0,8668             & 0,3725               & 0,3732                \\
+		8192              & 2,712               & 2,4027             & 0,9725               & 0,9700                \\
+		16384             & 6,507               & 6,5320             & 2,8630               & 2,7989                \\
+		32768             & 21,929              & 19,8379            & 13,9582              & 13,7665               \\ \bottomrule
+	\end{tabular}
+\end{table}
+
+\end{center}
+
+\section{Performance Analysis}
+
+
+\section{Conclusion}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

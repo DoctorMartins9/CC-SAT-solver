@@ -60,16 +60,8 @@ add_custom_target(release
 
 add_custom_target(clean-all
                   COMMAND rm -rf ${PROJECT_SOURCE_DIR}/build/*
-                  COMMAND rm -rf ${PROJECT_SOURCE_DIR}/doc/*
                   COMMAND rm -rf ${PROJECT_SOURCE_DIR}/bin/*
                   COMMENT "scan-build Static Analysis")
-
-find_program(DOXYGEN_FOUND doxygen)
-if (DOXYGEN_FOUND)
-    add_custom_target(doc
-                      COMMAND doxygen ${PROJECT_SOURCE_DIR}/doxygen.cfg
-                      COMMENT "Code documentation")
-endif()
 
 find_program(CLANGTIDY_FOUND clang-tidy)
 if (CLANGTIDY_FOUND)
