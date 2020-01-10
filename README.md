@@ -1,4 +1,5 @@
-#Congruence Closure parallel SAT-Solver 
+#CC parallel SAT-Solver
+
 High performance parallel implementation of a satisfability solver for the congruence closure, able to solve a set of literals in the quantifiers free fragment of first order logic, based on the union of the equality theory, list theory and array theory.
 
 ###### Author
