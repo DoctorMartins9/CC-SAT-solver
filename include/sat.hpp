@@ -42,8 +42,6 @@
 #include <thread>
 #include <future>
 
-
-
 namespace ccsat{
 
 class Sat{

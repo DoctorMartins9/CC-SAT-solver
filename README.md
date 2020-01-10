@@ -51,7 +51,8 @@ cd ../bin
 ```
 Where *mode* is parallel ('P') or sequential ('S'), *path* is the path of the file .txt where the clauses are placed and *number* is the number of the line. For running example of the benchmark in bin directory type:
 ```
-./benchmark S ../utils/benchmarks_formula.txt 10
+./benchmark S ../utils/benchmarks_formula_unsat.txt 10
+./benchmark S ../utils/benchmarks_formula_sat.txt 10
 ```
 ### Lisp parser
 For benchmarking needs, in utils directory there is a python script called lisp_parser.py that allows you to translate SMT-LIB formulas from lisp language to DNF formulas that are legal input of the SAT solver.

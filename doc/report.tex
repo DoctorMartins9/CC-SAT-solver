@@ -3,8 +3,34 @@
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{algorithmic}
 \usepackage{graphicx}
+\usepackage{pgfplots}
+\usepackage{tikz}
 \usepackage{textcomp}
 \usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor} % for setting colors
+\definecolor{vblue}{RGB}{49,49,255}
+\definecolor{vgreen}{RGB}{104,180,104}
+
+\definecolor{light-gray}{gray}{0.95} %the shade of grey that stack exchange uses
+% set the default code style
+\lstset{
+	basicstyle=\ttfamily,  
+	backgroundcolor=\color{light-gray}
+}
+ \lstdefinestyle{cpp}{
+ 	language=C++,
+ 	basicstyle=\small\ttfamily,
+ 	keywordstyle=\color{vblue},
+ 	identifierstyle=\color{black},
+ 	commentstyle=\color{vgreen},
+ 	numberstyle=\tiny\color{black},
+ 	numbersep=10pt,
+ 	tabsize=4,
+ 	moredelim=*[s][\colorIndex]{[}{]},
+ 	literate=*{:}{:}1
+ }
+
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
 		T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
@@ -16,11 +42,19 @@
 \end{abstract}
 \section{Introduction}
 The first theory considered is the theory of equality with uninterpreted functions (EUF). It is the most important theory because its congruence closure algorithm is the core of the entire alghoritm. 
-\section{Implementation}
+\section{Methodology}
 
 
 \subsection{Algorithm}
-
+\begin{lstlisting}[style=cpp]
+#include <iostream>
+int main()
+{
+// print hello to the console
+std::cout << "Hello, world!" << std::endl;
+return 0;
+}
+\end{lstlisting}
 
 \subsection{Parser}
 
@@ -29,26 +63,58 @@ The first theory considered is the theory of equality with uninterpreted functio
 
 
 \section{Benchmarks}
-\begin{center}
-\begin{table}[htbp]
-	\begin{tabular}{@{}c|cccc@{}}
-		\toprule
-		\textbf{\#Clause} & \textbf{Classic CC} & \textbf{4 threads} & \textbf{128 threads} & \textbf{1024 threads} \\ \midrule
-		128               & 0,03                & 0,0136             & 0,0004               & 0,0005                \\
-		256               & 0,06                & 0,0309             & 0,0215               & 0,0006                \\
-		512               & 0,127               & 0,1395             & 0,0943               & 0,0044                \\
-		1024              & 0,309               & 0,2271             & 0,0789               & 0,0783                \\
-		2048              & 0,592               & 0,2725             & 0,1600               & 0,1967                \\
-		4096              & 1,179               & 0,8668             & 0,3725               & 0,3732                \\
-		8192              & 2,712               & 2,4027             & 0,9725               & 0,9700                \\
-		16384             & 6,507               & 6,5320             & 2,8630               & 2,7989                \\
-		32768             & 21,929              & 19,8379            & 13,9582              & 13,7665               \\ \bottomrule
+\begin{table}[htpb]
+	\centering
+	\resizebox{\columnwidth}{!}{%
+	\begin{tabular}{|c|l|c|c|c|}
+		\hline
+		\textbf{Test} & \textbf{\#Formulas} & \textbf{Sequential (s)} & \textbf{Parallel (s)} & \textbf{Speedup} \\ \hline
+		7             & 128                 & 0,0117                  & 0,0001                & 82,1             \\ \hline
+		8             & 256                 & 0,0290                  & 0,0003                & 100,1            \\ \hline
+		9             & 512                 & 0,0612                  & 0,0008                & 78,8             \\ \hline
+		10            & 1024                & 0,1374                  & 0,0026                & 52,1             \\ \hline
+		11            & 2048                & 0,2988                  & 0,0103                & 29,1             \\ \hline
+		12            & 4096                & 0,6736                  & 0,0442                & 15,3             \\ \hline
+		13            & 8192                & 1,5526                  & 0,1968                & 7,9              \\ \hline
+		14            & 16384               & 3,7465                  & 1,6690                & 2,2              \\ \hline
+		15            & 32768               & 13,8530                 & 9,5786                & 1,4              \\ \hline
 	\end{tabular}
+	}
 \end{table}
 
-\end{center}
 
 \section{Performance Analysis}
+
+
+
+\begin{tikzpicture}
+\begin{axis}[
+title={Time},
+ylabel={Time Elapsed (s)},
+xlabel={Number of clauses},
+legend pos=north west,
+ymajorgrids=true,
+grid style=dashed,
+]
+
+\addplot[
+color=blue
+]
+coordinates {
+	(128,0.0117)(256,0.0290)(512,0.0612)(1024,0.1374)(2048,0.2988)(4096,0.6736)(8192,1.5526)(16384,3.7465)(32768,13.8530)
+};
+
+\addplot[
+color=green
+]
+coordinates {
+	(128,0.0001)(256,0.0003)(512,0.0008)(1024,0.0026)(2048,0.0103)(4096,0.0442)(8192,0.1968)(16384,1.6690)(32768,9.5786)
+};
+\legend{Sequential sat,Parallel sat}
+
+\end{axis}
+\end{tikzpicture}
+
 
 
 \section{Conclusion}

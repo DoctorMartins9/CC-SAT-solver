@@ -56,7 +56,6 @@ include CMakeFiles/clean-all.dir/progress.make
 CMakeFiles/clean-all:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "scan-build Static Analysis"
 	rm -rf /home/enrico/Scrivania/GitHub/CC-SAT-solver/build/*
-	rm -rf /home/enrico/Scrivania/GitHub/CC-SAT-solver/doc/*
 	rm -rf /home/enrico/Scrivania/GitHub/CC-SAT-solver/bin/*
 
 clean-all: CMakeFiles/clean-all
