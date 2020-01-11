@@ -206,6 +206,18 @@ namespace ccsat{
             input.erase(0,end+1);
         }
         a_clause.push_back(input);
+        
+        // Print final elements
+        #ifdef PARSER
+        std::cout << "clauses: { " ;
+        for(uint64_t i = 0; i < a_clause.size() ; i++ ){
+            std::cout << a_clause[i];
+            if(i != a_clause.size())
+                std::cout << " , ";
+        }
+        std::cout << " } " << std::endl ;
+        #endif        
+        
         // Divide variables_string of clause_string
         std::vector<std::string> a_node;
         std::vector<bool> a_sign;
@@ -269,6 +281,16 @@ namespace ccsat{
                } 
             }
         }
+        // Print final elements
+        #ifdef PARSER
+        std::cout << "nodes: { " ;
+        for(uint64_t i = 0; i < n_set.size() ; i++ ){
+            std::cout << n_set[i].get_fn();
+            if(i != n_set.size())
+                std::cout << " , ";
+        }
+        std::cout << " } " << std::endl ;
+        #endif
     }
 
     static std::vector<std::string> detect_store(std::string input){
@@ -411,19 +433,29 @@ namespace ccsat{
     void Sat::UNION(uint64_t i1, uint64_t i2){
 
         #ifdef DEBUG
-        std::cout << "UNION ";
-        std::cout << i1;
-        std::cout << " ";
-        std::cout << i2 << std::endl;
+        std::cout << "UNION " << i1 << " " << i2 << std::endl;
         #endif
+
         i1 = n_set[FIND(i1)].get_id();
         i2 = n_set[FIND(i2)].get_id();
+    
+    #ifndef EU1
         n_set[i2].set_find(n_set[i1].get_find());
         for(int i = 0; i < n_set[i2].get_ccpar().size();i++){
             n_set[i1].add_ccpar(n_set[i2].get_ccpar().at(i));
         }
         std::vector<uint64_t> empty_ccpar;
         n_set[i2].set_ccpar(empty_ccpar);
+    #endif
+    #ifdef EU1
+        n_set[i1].set_find(n_set[i2].get_find());
+        for(int i = 0; i < n_set[i1].get_ccpar().size();i++){
+            n_set[i2].add_ccpar(n_set[i1].get_ccpar().at(i));
+        }
+        std::vector<uint64_t> empty_ccpar;
+        n_set[i1].set_ccpar(empty_ccpar);
+    #endif
+    
     }
     
     // CCPAR i
@@ -711,6 +743,11 @@ namespace ccsat{
     }
 
     static bool SOLVE(std::string input,std::string mode){
+
+        // Only 1 formula
+        if(input.find_first_of("|") == std::string::npos)
+            return solve(input);
+
         // Count & split occurrence of "|"
         std::vector<std::string> formula;
         while(input.find_first_of("|") != std::string::npos){
@@ -722,6 +759,7 @@ namespace ccsat{
 
         // Sequential mode
         if(mode == "S"){
+            // Multiple formulas
             for(int i = 0; i < formula.size(); i++){
                 if(solve(formula[i].substr(1,formula[i].size()-2)))
                     return true;

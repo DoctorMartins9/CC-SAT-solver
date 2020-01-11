@@ -7,6 +7,7 @@
 // Define the behaviour of the program
 #define DEBUG
 //#define PARSER
+#define EU1
 
 #include "sat.hpp"     // Build formula     |   ccsat::Formula, ...
 
@@ -15,7 +16,7 @@ int main(){
     std::string str;
     std::cout << "Type a formula: " << std::endl;
     std::cin >> str;
-
+    
     // SAT solve
     if(ccsat::SOLVE(str,"S"))
         std::cout << "SAT" << std::endl;

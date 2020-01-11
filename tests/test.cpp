@@ -23,6 +23,9 @@ int main(){
     // function with multiple argument
     assert(!ccsat::solve("f(a,b)=b&f(a,b)!=b"));
     assert(ccsat::solve("f(a,b)=b&f(a,b)!=c"));
+    // IC Tests
+    assert(!ccsat::solve("b=d&f(b)=d&f(d)=a&a!=b"));
+    assert(!ccsat::solve("a=b1&b1=b2&b2=b3&b3=c&f(a1,a1)=a&f(c1,c1)=c&a1=c1&a!=c"));
     // Bradley-Manna strings
     assert(ccsat::solve("f(x)=f(y)&x!=y"));
     assert(!ccsat::solve("x=y&f(x)!=f(y)"));
