@@ -7,7 +7,7 @@
 // Define the behaviour of the program
 #define DEBUG
 //#define PARSER
-#define EU1
+//#define EU1
 
 #include "sat.hpp"     // Build formula     |   ccsat::Formula, ...
 

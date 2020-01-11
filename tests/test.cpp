@@ -38,6 +38,7 @@ int main(){
     assert(!ccsat::solve("f1!=f2&f3(f4,f5,f6,f7,f8(f9))!=f1&f3(f4,f5,f6,f7,f10)=f1&f10=f8(f9)&f10=f8(f9)&f3(f4,f5,f6,f7,f10)=f1"));
     assert(!ccsat::solve("f1!=f2&f3(f4,f5,f6,f7,f8(f9))!=f1&f3(f4,f5,f6,f7,f10)=f1&f10=f8(f9)&f3(f4,f5,f6,f7,f10)=f1"));
     assert(!ccsat::solve("f1!=f2&f3(f4,f5,f6,f7,f8(f9))!=f1&f3(f4,f5,f6,f7,f10)=f1&f10=f8(f9)"));    
+    
     // List theory strings --------------------------------------------------------------
     // Reflexivity
     assert(!ccsat::solve("x1=x2&y1=y2&cons(x1,y1)!=cons(x2,y2)"));
@@ -59,6 +60,7 @@ int main(){
     assert(ccsat::solve("car(x)=y&cdr(x)=z&x!=cons(y,z)"));
     // Intermediate exam question
     assert(!ccsat::solve("f(b)=b&f(f(b))!=car(cdr(cons(f(b),cons(b,d))))"));
+    
     // Array theory strings -------------------------------------------------------------
     assert(!ccsat::solve("i=k&select(store(x,i,v),k)!=v"));
     assert(!ccsat::solve("i!=k&select(store(x,i,v),k)!=select(x,k)"));
