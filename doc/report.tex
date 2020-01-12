@@ -43,14 +43,15 @@
 \author{Enrico Martini, VR445204}
 \maketitle
 \begin{abstract}
- In this report is presented a parallel implementation of a satisfability solver for the congruence closure, able to solve a set of clauses in the quantifiers free fragment of first order logic, based on equality among variables, constants, function applications, recursive data structures with their elements and elements of arrays.
+ In this report is presented a parallel implementation of a congruence closure algorithm for deduction in ground equational theories, able to solve a set of clauses in the quantifiers free fragment of first order logic, based on equality among variables, constants, function applications, recursive data structures with their elements and elements of arrays.
 \end{abstract}
 \section{Introduction}
-The first theory considered is the theory of equality with uninterpreted functions (EUF). It is the most important theory because its congruence closure algorithm is the core of the entire alghoritm. 
+The first theory considered is the class of SMT problems is called EUF (Equality with Uninterpreted Functions), containing atoms that are equalities between terms built over uninterpreted function symbols. EUF (i.e., SAT modulo the theory of congruences) is important in applications such as the verification of pipelined processors, where, if the control is verified, the concrete data operations can be abstracted by uninterpreted function symbols.\cite{NIEUWENHUIS2007557} It is the most important theory because its congruence closure algorithm is the core of the entire solver. The implemented algorithm also integrates the theory of lists $\mathcal{T}_{cons}$.
 \section{Methodology}
 
 
 \subsection{Algorithm}
+The most interesting feature of this implementation is the organization of the information within the data structures, shaped to be intuitive and efficient.
 \begin{lstlisting}[style=cpp]
 #include <iostream>
 int main(){
@@ -346,10 +347,32 @@ detected store
 1: e=e&j=i&select(a,j)!=e
 2: e=select(a,j)&j!=i&select(a,j)!=e
 \end{lstlisting}
-\begin{lstlisting}
-e=e&j=i&select(a,j)!=e
-e=select(a,j)&j!=i&select(a,j)!=e
-\end{lstlisting}
+
+
+\begin {center}
+\resizebox{3.5cm}{!}{
+	\begin {tikzpicture}[-latex ,auto ,node distance =1.5 cm and 1cm ,on grid ,
+	semithick ,
+	state/.style ={ circle ,top color =white , bottom color = white ,
+		draw,black , text=black , minimum width =0.5 cm}]
+	\node[state] (N0) {e};
+	\node[state] (N1) [right=of N0]{j};
+	\node[state] (N2) [right=of N1]{i};
+	\node[state] (N3) [right =of N2] {a};
+	\node[state] (N4) [above left=of N3]{select};
+	\path (N4) edge [above] node[left] {} (N3);
+	\path (N4) edge [above] node[left] {} (N1);
+	%\path (N3) edge [above] node[left] {} (N1);
+	%\path (N3) edge [above] node[left] {} (N2);
+	%\path (N4) edge [above] node[left] {} (N3);
+	%\path (N5) edge [above] node[left] {} (N3);
+	%\path (N2) edge[,-,densely dotted] [above] node[left] {} (N5);
+	%\path (N1) edge[,-,densely dotted] [above] node[left] {} (N4);
+	%\path (N3) edge[,-,densely dotted] [above] node[left] {} (N0);
+\end{tikzpicture}
+}
+\end{center}
+
 \begin{lstlisting}
 node		find		ccpar
 ________________________________________
@@ -364,6 +387,31 @@ MERGE 0 0
 MERGE 1 2
 UNION 1 2
 \end{lstlisting}
+
+\begin {center}
+\resizebox{3.5cm}{!}{
+	\begin {tikzpicture}[-latex ,auto ,node distance =1.5 cm and 1cm ,on grid ,
+	semithick ,
+	state/.style ={ circle ,top color =white , bottom color = white ,
+		draw,black , text=black , minimum width =0.5 cm}]
+	\node[state] (N0) {e};
+	\node[state] (N1) [right=of N0]{j};
+	\node[state] (N2) [right=of N1]{i};
+	\node[state] (N3) [right =of N2] {a};
+	\node[state] (N4) [above left=of N3]{select};
+	\path (N4) edge [above] node[left] {} (N3);
+	\path (N4) edge [above] node[left] {} (N1);
+	%\path (N3) edge [above] node[left] {} (N1);
+	%\path (N3) edge [above] node[left] {} (N2);
+	%\path (N4) edge [above] node[left] {} (N3);
+	%\path (N5) edge [above] node[left] {} (N3);
+	\path (N1) edge[,-,densely dotted] [above] node[left] {} (N2);
+	%\path (N1) edge[,-,densely dotted] [above] node[left] {} (N4);
+	%\path (N3) edge[,-,densely dotted] [above] node[left] {} (N0);
+\end{tikzpicture}
+}
+\end{center}
+
 \begin{lstlisting}
 node		find		ccpar
 ________________________________________
@@ -373,6 +421,31 @@ ________________________________________
 3a		3		4
 4select->31	4		-
 \end{lstlisting}
+
+\begin {center}
+\resizebox{3.5cm}{!}{
+	\begin {tikzpicture}[-latex ,auto ,node distance =1.5 cm and 1cm ,on grid ,
+	semithick ,
+	state/.style ={ circle ,top color =white , bottom color = white ,
+		draw,black , text=black , minimum width =0.5 cm}]
+	\node[state] (N0) {e};
+	\node[state] (N1) [blue,right=of N0]{j};
+	\node[state] (N2) [blue,right=of N1]{i};
+	\node[state] (N3) [blue,right =of N2] {a};
+	\node[state] (N4) [blue,above left=of N3]{select};
+	\path (N4) edge [blue,above] node[left] {} (N3);
+	\path (N4) edge [blue,above] node[left] {} (N1);
+	%\path (N3) edge [above] node[left] {} (N1);
+	%\path (N3) edge [above] node[left] {} (N2);
+	%\path (N4) edge [above] node[left] {} (N3);
+	%\path (N5) edge [above] node[left] {} (N3);
+	\path (N1) edge[,-,densely dotted] [above] node[left] {} (N2);
+	%\path (N1) edge[,-,densely dotted] [above] node[left] {} (N4);
+	%\path (N3) edge[,-,densely dotted] [above] node[left] {} (N0);
+\end{tikzpicture}
+}
+\end{center}
+
 \begin{lstlisting}
 Euality theory passed
 SAT
@@ -457,6 +530,7 @@ coordinates {
 
 
 
-
+\bibliography{biblio}
+\bibliographystyle{ieeetr}
 
 \end{document}
