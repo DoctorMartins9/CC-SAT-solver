@@ -367,17 +367,15 @@ namespace ccsat{
         std::vector<std::string> formulas;
         for(int i = 0; i < a_node.size(); i++){
             // Change select(store) -> 1 | 2
-            if(a_node[i].find("select(store(")!= std::string::npos ){
+            if(a_node[i].find("select(store(") != std::string::npos ){
                 #ifdef DEBUG
                 std::cout << a_node[i] << std::endl;
                 #endif
-                
                 // Split into -> store(...),j
                 int start_sel = a_node[i].find_first_of("(")+1;
                 int end_sel = a_node[i].find_last_of(")");
                 std::string select_string = a_node[i].substr(start_sel,end_sel-start_sel);
                 std::vector<std::string> select_args = split(select_string);
-                
                 // Split into -> x,i,v
                 int start_sto = select_args[0].find_first_of("(")+1;
                 int end_sto = select_args[0].find_last_of(")");
@@ -387,7 +385,6 @@ namespace ccsat{
                 std::cout << store_string << std::endl;
                 std::cout << store_args[0] << " " << store_args[1] << " " << store_args[2] << std::endl;
                 #endif
-
                 // Detect the place to inject new clauses
                 int init = initial.find(a_node[i]);
                 int length = a_node[i].size();
@@ -522,6 +519,15 @@ namespace ccsat{
         std::cout << " ";
         std::cout << i2 << std::endl;
         #endif
+        #ifdef F_LIST
+        // Check if it is in forbidden list
+        for(uint_fast16_t i = 0; i < forbidden_list.size() ; i++)
+            if( forbidden_list[i].get_first().get_id() == i1 && forbidden_list[i].get_second().get_id() == i2 || 
+                forbidden_list[i].get_first().get_id() == i2 && forbidden_list[i].get_second().get_id() == i1){
+                is_sat = false;
+                return;
+            }
+        #endif
         // if i1 and i2 are not the same
         if(FIND(i1) != FIND(i2) ){
             std::vector<uint_fast16_t> P1 = CCPAR(i1);
@@ -554,6 +560,11 @@ namespace ccsat{
 
     // Theory of list
     bool Sat::list_congruence_closure(){
+        
+        // Type_checking
+        if(!is_legal())
+            assert(false);
+
         // Pre-process
         for(uint_fast16_t i = 0; i < n_set.size() ; i++ ){
             if(n_set[i].get_fn() == "cons"){
@@ -620,10 +631,28 @@ namespace ccsat{
         print_status();
         std::cout << "------------" << std::endl;
         #endif
+        #ifdef F_LIST
+        for(uint_fast16_t i = 0; i < clause.size(); i++){
+            if(!clause[i].get_equal()){
+                Clause c = Clause(clause[i].get_first(), clause[i].get_second(), true );
+                forbidden_list.push_back(c);
+            }
+        }
+        #endif
         // For every equality in formula merge
         for(uint_fast16_t i = 0; i < clause.size(); i++){
+            #ifdef F_LIST
+            if(clause[i].get_equal() && forbidden_list.size() != 0 )
+                for(uint_fast16_t j = 0; j < forbidden_list.size() ; j++)
+                    if( forbidden_list.at(j).equal(clause[i]) )
+                        return false;
+            #endif
             if(clause[i].get_equal()){
                 MERGE(clause[i].get_first().get_id(),clause[i].get_second().get_id());
+                #ifdef F_LIST
+                if (!is_sat)
+                    return false;
+                #endif
             }
         }
         #ifdef DEBUG
@@ -691,6 +720,23 @@ namespace ccsat{
 
         if(open != close)
             return false;
+        return true;
+    }
+
+    bool Sat::is_legal(){
+        // Detect array
+        for(uint_fast16_t i = 0; i < n_set.size() ; i++ )
+            if(n_set[i].get_fn() == "select")
+                arrays.push_back(n_set[i].get_args().at(0));
+        
+        // Detect if it is at left or right side of a formulas
+        
+        for(uint_fast16_t i = 0; i < get_formula().get_formula().size() ; i++ )
+            for(uint_fast16_t j = 0; j < arrays.size() ; j++ )
+                if( arrays[j] ==  get_formula().get_formula().at(i).get_first().get_id() ||
+                    arrays[j] ==  get_formula().get_formula().at(i).get_second().get_id() )
+                    return false;
+        
         return true;
     }
 

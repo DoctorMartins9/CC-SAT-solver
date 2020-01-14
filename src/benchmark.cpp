@@ -7,6 +7,7 @@
 #include <fstream>
 #define BENCHMARK
 #define EU1
+#define F_LIST
 #include "sat.hpp"     // Build formula     |   ccsat::Formula, ...
 
 int main(int argc, char **argv){

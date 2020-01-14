@@ -63,6 +63,7 @@ class Node{
         void set_find(uint_fast16_t find_i);
         void set_ccpar(std::vector<uint_fast16_t> ccpar_i);
         void add_ccpar(uint_fast16_t ccpar_i);
+        bool is_equal(Node input);
 };
 
 }   // namespace 'ccsat'

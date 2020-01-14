@@ -58,6 +58,7 @@ class Clause{
         Node get_first();
         Node get_second();
         bool get_equal();
+        bool equal(Clause input);
 };
 
 }   // namespace 'ccsat'

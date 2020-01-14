@@ -29,4 +29,8 @@ namespace ccsat{
         return is_equal;
     }
 
+    bool Clause::equal(Clause input){
+        return n1.is_equal(input.get_first()) && n2.is_equal(input.get_second()) && is_equal == input.get_equal();
+    }
+
 }   // namespace 'ccsat'

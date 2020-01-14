@@ -6,6 +6,7 @@
 #include <algorithm>
 // Define the behaviour of the program
 #define TEST
+#define F_LIST
 
 #include "sat.hpp"     // Build formula     |   ccsat::Formula, ...
 
@@ -64,8 +65,6 @@ int main(){
     // Array theory strings -------------------------------------------------------------
     assert(!ccsat::solve("i=k&select(store(x,i,v),k)!=v"));
     assert(!ccsat::solve("i!=k&select(store(x,i,v),k)!=select(x,k)"));
-    // Extensionality
-    assert(!ccsat::solve("x=y&select(x,z)!=select(y,z)"));
     // Calce example
     assert(!ccsat::solve("i1=j&i1!=i2&select(a,j)=v1&select(store(store(a,i1,v1),i2,v2),j)!=select(a,j)"));
     // Intermediate exam question

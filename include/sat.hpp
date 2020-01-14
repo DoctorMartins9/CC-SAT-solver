@@ -49,14 +49,17 @@ class Sat{
         // Variables
         Formula f;
         std::vector<Node> n_set;
+        #ifdef F_LIST
+        bool is_sat = true;
+        #endif
         // Sorte
         std::vector<uint_fast16_t> atoms;
-        
+        std::vector<uint_fast16_t> arrays;
+        std::vector<Clause> forbidden_list;
         // Methods
+        bool is_legal();
         uint_fast16_t transform_node(std::string n);
         void initialize_DAG(std::string input);
-        // Classic Congruence Closure algorithm
-
         // FIND i
         uint_fast16_t FIND(uint_fast16_t index);
         // UNION i1 i2

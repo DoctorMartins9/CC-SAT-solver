@@ -46,4 +46,8 @@ void Node::add_ccpar(uint_fast16_t ccpar_i){
     ccpar.push_back(ccpar_i);
 }
 
+bool Node::is_equal(Node input){
+    return fn == input.get_fn() && id == input.get_id() && args == input.get_args() && find == input.get_find() && ccpar == input.get_ccpar();
+}
+
 }   // namespace 'ccsat'
