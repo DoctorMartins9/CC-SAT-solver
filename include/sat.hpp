@@ -50,23 +50,23 @@ class Sat{
         Formula f;
         std::vector<Node> n_set;
         // Sorte
-        std::vector<uint64_t> atoms;
+        std::vector<uint_fast16_t> atoms;
         
         // Methods
-        uint64_t transform_node(std::string n);
+        uint_fast16_t transform_node(std::string n);
         void initialize_DAG(std::string input);
         // Classic Congruence Closure algorithm
 
         // FIND i
-        uint64_t FIND(uint64_t index);
+        uint_fast16_t FIND(uint_fast16_t index);
         // UNION i1 i2
-        void UNION(uint64_t i1, uint64_t i2);
+        void UNION(uint_fast16_t i1, uint_fast16_t i2);
         // CCPAR i
-        std::vector<uint64_t> CCPAR(uint64_t index);
+        std::vector<uint_fast16_t> CCPAR(uint_fast16_t index);
         // CONGRUENT i1 i2
-        bool CONGRUENT(uint64_t i1, uint64_t i2);
+        bool CONGRUENT(uint_fast16_t i1, uint_fast16_t i2);
         // MERGE i1 i2
-        void MERGE(uint64_t i1, uint64_t i2);
+        void MERGE(uint_fast16_t i1, uint_fast16_t i2);
 
     public:
         // Constructors

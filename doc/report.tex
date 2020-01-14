@@ -53,12 +53,14 @@ The first theory considered is the class of SMT problems is called EUF (Equality
 \subsection{Algorithm}
 The most interesting feature of this implementation is the organization of the information within the data structures, shaped to be intuitive and efficient.
 \begin{lstlisting}[style=cpp]
-#include <iostream>
-int main(){
-	// print hello to the console
-	std::cout << "Hello, world!" << std::endl;
-	return 0;
-}
+class Node{
+private:
+	std::string fn;                  
+	uint_fast16_t id;                
+	std::vector<uint_fast16_t> args; 
+	uint_fast16_t find;              
+	std::vector<uint_fast16_t> ccpar;
+};
 \end{lstlisting}
 
 \subsection{Equality theory congruence closure example}

@@ -7,7 +7,7 @@ namespace ccsat{
         n2 = n_2;
         is_equal = is_equal_i;
     }
-
+    
     void Clause::set_second(Node input){
     }
 

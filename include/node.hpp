@@ -42,27 +42,27 @@ namespace ccsat{
 class Node{
     private:
         std::string fn;                   // Costant or symbol function name
-        uint64_t id;                      // Node's unique identification number
-        std::vector<uint64_t> args;       // If node is function here there are its arguments
-        uint64_t find;                    // Representative of his congruent class
-        std::vector<uint64_t> ccpar;      // Congruence closure parents list 
+        uint_fast16_t id;                      // Node's unique identification number
+        std::vector<uint_fast16_t> args;       // If node is function here there are its arguments
+        uint_fast16_t find;                    // Representative of his congruent class
+        std::vector<uint_fast16_t> ccpar;      // Congruence closure parents list 
 
     public:
 
         // Constructor
         Node();
-        Node(std::string fn_i, uint64_t id_i, std::vector<uint64_t> args_i, 
-                               uint64_t find_i,std::vector<uint64_t> ccpar_i);
+        Node(std::string fn_i, uint_fast16_t id_i, std::vector<uint_fast16_t> args_i, 
+                               uint_fast16_t find_i,std::vector<uint_fast16_t> ccpar_i);
 
         // Methods
         std::string get_fn();
-        uint64_t get_id();
-        std::vector<uint64_t> get_args();
-        std::vector<uint64_t> get_ccpar();
-        uint64_t get_find();
-        void set_find(uint64_t find_i);
-        void set_ccpar(std::vector<uint64_t> ccpar_i);
-        void add_ccpar(uint64_t ccpar_i);
+        uint_fast16_t get_id();
+        std::vector<uint_fast16_t> get_args();
+        std::vector<uint_fast16_t> get_ccpar();
+        uint_fast16_t get_find();
+        void set_find(uint_fast16_t find_i);
+        void set_ccpar(std::vector<uint_fast16_t> ccpar_i);
+        void add_ccpar(uint_fast16_t ccpar_i);
 };
 
 }   // namespace 'ccsat'

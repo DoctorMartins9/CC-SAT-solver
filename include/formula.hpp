@@ -51,7 +51,7 @@ class Formula{
         Formula(std::vector<Clause> input );
 
         // Methods
-        uint64_t get_size();
+        uint_fast16_t get_size();
         void add_clause(Clause input);
         std::vector<Clause> get_formula();
         std::string get_string(); 
