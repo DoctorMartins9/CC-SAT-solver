@@ -54,7 +54,7 @@ add_custom_target(release
                   COMMAND mkdir -p ${PROJECT_SOURCE_DIR}/bin
                   COMMAND make all
                   COMMAND cp ${PROJECT_SOURCE_DIR}/build/ccsat ${PROJECT_SOURCE_DIR}/bin/
-                  COMMAND cp ${PROJECT_SOURCE_DIR}/build/test ${PROJECT_SOURCE_DIR}/bin/
+                  COMMAND cp ${PROJECT_SOURCE_DIR}/build/validation ${PROJECT_SOURCE_DIR}/bin/
                   COMMAND cp ${PROJECT_SOURCE_DIR}/build/benchmark ${PROJECT_SOURCE_DIR}/bin/
                   COMMENT "The example files are aviable in bin directory")
 
@@ -90,8 +90,8 @@ add_executable( ccsat ${SRCS} )
 target_link_libraries (ccsat ${CMAKE_THREAD_LIBS_INIT})
 
 file(GLOB_RECURSE SRCS ${PROJECT_SOURCE_DIR}/tests/test.cpp)
-add_executable( test ${SRCS} )
-target_link_libraries (test ${CMAKE_THREAD_LIBS_INIT})
+add_executable( validation ${SRCS} )
+target_link_libraries (validation ${CMAKE_THREAD_LIBS_INIT})
 
 file(GLOB_RECURSE SRCS ${PROJECT_SOURCE_DIR}/src/benchmark.cpp)
 add_executable( benchmark ${SRCS} )
