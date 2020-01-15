@@ -460,6 +460,8 @@ SAT
 \section{Benchmarks}
 \begin{table}[htpb]
 	\centering
+	\caption{Performance results with simple algorithm.}
+	\label{tab:norm}
 	\resizebox{\columnwidth}{!}{%
 	\begin{tabular}{|c|l|r|r|r|}
 		\hline
@@ -477,6 +479,28 @@ SAT
 	}
 \end{table}
 
+% Please add the following required packages to your document preamble:
+% \usepackage{graphicx}
+\begin{table}[htpb]
+	\centering
+	\caption{Performance results with use of forbidden list}
+	\label{tab:fl}
+	\resizebox{\columnwidth}{!}{%
+		\begin{tabular}{|c|l|r|r|r|}
+			\hline
+			\textbf{Test} & \textbf{\#Formulas} & \textbf{Sequential (s)} & \textbf{Parallel (s)} & \textbf{Speedup} \\ \hline
+			7             & 128                 & 0,0128              & 0,0001            & 97,3             \\ \hline
+			8             & 256                 & 0,0273              & 0,0003            & 107,6            \\ \hline
+			9             & 512                 & 0,0605              & 0,0007            & 88,6             \\ \hline
+			10            & 1024                & 0,1341              & 0,0024            & 57,0             \\ \hline
+			11            & 2048                & 0,2964              & 0,0099            & 29,9             \\ \hline
+			12            & 4096                & 0,6639              & 0,0430            & 15,5             \\ \hline
+			13            & 8192                & 1,5309              & 0,1854            & 8,3              \\ \hline
+			14            & 16384               & 3,7426              & 1,7264            & 2,2              \\ \hline
+			15            & 32768               & 13,8145             & 9,4844            & 1,5              \\ \hline
+		\end{tabular}%
+	}
+\end{table}
 
 \section{Performance Analysis}
 
@@ -486,7 +510,7 @@ SAT
 \begin{axis}[
 title={Time},
 ylabel={Time Elapsed (s)},
-xlabel={Number of clauses},
+xlabel={Number of formulas},
 legend pos=north west,
 ymajorgrids=true,
 grid style=dashed,
@@ -505,11 +529,43 @@ color=green
 coordinates {
 	(128,0.0001)(256,0.0003)(512,0.0008)(1024,0.0026)(2048,0.0103)(4096,0.0442)(8192,0.1968)(16384,1.6690)(32768,9.5786)
 };
+
 \legend{Sequential sat,Parallel sat}
 
 \end{axis}
 \end{tikzpicture}
 
+
+
+\begin{tikzpicture}
+\begin{axis}[
+x tick label style={
+	/pgf/number format/1000 sep=},
+ylabel=Time (s),
+enlargelimits=0.15,
+legend style={at={(0.5,-0.2)},
+	anchor=north,legend columns=-1},
+ybar,
+bar width=7pt,
+xlabel=Cores\\
+]
+\addplot[color=blue,domain=15:15]
+coordinates {(4,13.8530)(8,13.8530)(16,13.8530)};
+
+\addplot 
+coordinates {(4,13.8145)(8,13.8145)(16,13.8145)};
+
+\addplot 
+coordinates {(4,9.5786)(8,9.5786)(16,9.5786)};
+
+\addplot 
+coordinates {(4,9.4844)(8,9.4844)(16,9.4844)};
+
+
+
+\legend{Seq,Seq w. FL ,Parallel, Parallel w. FL}
+\end{axis}
+\end{tikzpicture}
 
 
 \section{Conclusion}
