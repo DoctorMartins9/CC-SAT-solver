@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/enrico/Scrivania/GitHub/CC-SAT-solver/src/benchmark.cpp" "/home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles/cc_sat.dir/src/benchmark.cpp.o"
+  "/home/parco04/CC-SAT-solver/src/benchmark.cpp" "/home/parco04/CC-SAT-solver/build/CMakeFiles/cc_sat.dir/src/benchmark.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

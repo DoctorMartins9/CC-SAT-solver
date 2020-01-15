@@ -54,7 +54,7 @@ future
 impl/sat.i.hpp
 ../include/impl/sat.i.hpp
 
-/home/enrico/Scrivania/GitHub/CC-SAT-solver/src/benchmark.cpp
+/home/parco04/CC-SAT-solver/src/benchmark.cpp
 vector
 -
 iostream
@@ -70,5 +70,5 @@ algorithm
 fstream
 -
 sat.hpp
-/home/enrico/Scrivania/GitHub/CC-SAT-solver/src/sat.hpp
+/home/parco04/CC-SAT-solver/src/sat.hpp
 
