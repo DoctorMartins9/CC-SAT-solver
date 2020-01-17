@@ -54,7 +54,7 @@ future
 impl/sat.i.hpp
 ../include/impl/sat.i.hpp
 
-/home/emartini/Documenti/CC-SAT-solver/src/main.cpp
+/home/enrico/Scrivania/GitHub/CC-SAT-solver/src/main.cpp
 vector
 -
 iostream
@@ -68,5 +68,5 @@ chrono
 algorithm
 -
 sat.hpp
-/home/emartini/Documenti/CC-SAT-solver/src/sat.hpp
+/home/enrico/Scrivania/GitHub/CC-SAT-solver/src/sat.hpp
 

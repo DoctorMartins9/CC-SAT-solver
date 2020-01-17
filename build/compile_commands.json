@@ -1,22 +1,22 @@
 [
 {
-  "directory": "/home/emartini/Documenti/CC-SAT-solver/build",
-  "command": "/usr/bin/c++   -I/home/emartini/Documenti/CC-SAT-solver/include    -std=c++14 -pthread -std=gnu++14 -o CMakeFiles/benchmark.dir/src/benchmark.cpp.o -c /home/emartini/Documenti/CC-SAT-solver/src/benchmark.cpp",
-  "file": "/home/emartini/Documenti/CC-SAT-solver/src/benchmark.cpp"
+  "directory": "/home/enrico/Scrivania/GitHub/CC-SAT-solver/build",
+  "command": "/usr/bin/c++   -I/home/enrico/Scrivania/GitHub/CC-SAT-solver/include    -std=c++14 -pthread -std=gnu++14 -o CMakeFiles/cc_sat.dir/src/benchmark.cpp.o -c /home/enrico/Scrivania/GitHub/CC-SAT-solver/src/benchmark.cpp",
+  "file": "/home/enrico/Scrivania/GitHub/CC-SAT-solver/src/benchmark.cpp"
 },
 {
-  "directory": "/home/emartini/Documenti/CC-SAT-solver/build",
-  "command": "/usr/bin/c++   -I/home/emartini/Documenti/CC-SAT-solver/include    -std=c++14 -pthread -std=gnu++14 -o CMakeFiles/cc_sat.dir/src/benchmark.cpp.o -c /home/emartini/Documenti/CC-SAT-solver/src/benchmark.cpp",
-  "file": "/home/emartini/Documenti/CC-SAT-solver/src/benchmark.cpp"
+  "directory": "/home/enrico/Scrivania/GitHub/CC-SAT-solver/build",
+  "command": "/usr/bin/c++   -I/home/enrico/Scrivania/GitHub/CC-SAT-solver/include    -std=c++14 -pthread -std=gnu++14 -o CMakeFiles/validation.dir/tests/test.cpp.o -c /home/enrico/Scrivania/GitHub/CC-SAT-solver/tests/test.cpp",
+  "file": "/home/enrico/Scrivania/GitHub/CC-SAT-solver/tests/test.cpp"
 },
 {
-  "directory": "/home/emartini/Documenti/CC-SAT-solver/build",
-  "command": "/usr/bin/c++   -I/home/emartini/Documenti/CC-SAT-solver/include    -std=c++14 -pthread -std=gnu++14 -o CMakeFiles/ccsat.dir/src/main.cpp.o -c /home/emartini/Documenti/CC-SAT-solver/src/main.cpp",
-  "file": "/home/emartini/Documenti/CC-SAT-solver/src/main.cpp"
+  "directory": "/home/enrico/Scrivania/GitHub/CC-SAT-solver/build",
+  "command": "/usr/bin/c++   -I/home/enrico/Scrivania/GitHub/CC-SAT-solver/include    -std=c++14 -pthread -std=gnu++14 -o CMakeFiles/benchmark.dir/src/benchmark.cpp.o -c /home/enrico/Scrivania/GitHub/CC-SAT-solver/src/benchmark.cpp",
+  "file": "/home/enrico/Scrivania/GitHub/CC-SAT-solver/src/benchmark.cpp"
 },
 {
-  "directory": "/home/emartini/Documenti/CC-SAT-solver/build",
-  "command": "/usr/bin/c++   -I/home/emartini/Documenti/CC-SAT-solver/include    -std=c++14 -pthread -std=gnu++14 -o CMakeFiles/validation.dir/tests/test.cpp.o -c /home/emartini/Documenti/CC-SAT-solver/tests/test.cpp",
-  "file": "/home/emartini/Documenti/CC-SAT-solver/tests/test.cpp"
+  "directory": "/home/enrico/Scrivania/GitHub/CC-SAT-solver/build",
+  "command": "/usr/bin/c++   -I/home/enrico/Scrivania/GitHub/CC-SAT-solver/include    -std=c++14 -pthread -std=gnu++14 -o CMakeFiles/ccsat.dir/src/main.cpp.o -c /home/enrico/Scrivania/GitHub/CC-SAT-solver/src/main.cpp",
+  "file": "/home/enrico/Scrivania/GitHub/CC-SAT-solver/src/main.cpp"
 }
 ]

@@ -1,8 +1,38 @@
 import os 
 import re
+import parse
 sat = []
 info = []
 string_final = ""
+
+def get_args(input):
+    par = 0
+    first = ""
+    second = ""
+    for i in range(0,len(input)):
+        if input[i] == '(':
+            par += 1
+        elif input[i] == ')':
+            par -= 1
+        elif input[i] == ',' and par == 0:
+            first = input[0:i]
+            second = input[i+1:len(input)]
+    return [first, second]
+
+def parse_e(array):
+    global string_final
+    for i in range(0,len(array)-1):
+        r = get_args(array[i])
+        r[1] =r[1].replace('),','')
+        string_final += r[0] + "=" + r[1] + "&"
+
+def parse_n(array):
+    global string_final
+    for i in range(0,len(array)-1):
+        rip = array[i].split(',')
+        string_final += rip[0] + "!=" + rip[1] + "&"
+    last = array[len(array)-1].split(',select')
+    string_final += last[0] + "!=select" + last[1]
 
 def single_parser(path):
     x = []
@@ -10,45 +40,31 @@ def single_parser(path):
     for f in file:
         x.append(f)
     file.close()
-    input_string = ""
-    for row in x:
-        input_string += row
-    print(input_string)
+    screm = []
+    for i in range(0,len(x)):
+        x[i] = x[i].replace(' ','')
+        x[i] = x[i].replace('\n','')
+        x[i] = x[i].replace('\t','')
+        if x[i][0] == '[':
+            x[i] = x[i].replace(')]).','')
+            x[i] = x[i].replace('[','')
+            screm.append(x[i])
     
-    '''
-    input_string = input_string.replace('\t','')
-    input_string = input_string.replace('\n','')
-    array = re.split('\[|\]',input_string)
-    eq_div = []
-    neq_div = []
-    eq_parser = []
-    neq_parser = []
-    for a in array:
-        if a[0] == '+':
-            eq_div.append(a.split('++equal'))
-        elif a[0] == '-':
-            neq_div.append(a.split('++equal'))
-    for i in eq_div:
-        for j in range (1, len(i)):
-            eq_parser.append(i[j])
-    for i in neq_div:
-        for j in range (1, len(i)):
-            neq_parser.append(i[j])
-    print(eq_parser)
-        
-
-     out = open("benchmarks_info.txt",'a')
-    for i in range(len(info)):
-        out.write(info[i]+'\n')
-    out.close()
-    out = open("benchmarks_formula.txt",'a')
-    for i in range(len(sat)):
-        out.write(sat[i]+'\n')
-    out.close()
-    '''
+    eq = []
+    neq = []
+    for i in range(0,len(x)):
+        if x[i][0] == '+':
+            x[i] = x[i].replace('++equal(','')
+            eq.append(x[i])
+        elif x[i][0] == '-':
+            x[i] = x[i].replace('--equal(','')
+            neq.append(x[i])
+    parse_e(eq)
+    parse_n(neq)
+    print(string_final)
 
 def main():
-    single_parser("../benchmarks/array_benchmarks/storeinv_invalid_t1_pp_sf_ai_00002_001.cvc")
+    single_parser("../benchmarks/array_benchmarks/storecomm_invalid_t1_pp_nf_ai_00010_009.tptp")
 
 
 if __name__ == '__main__':

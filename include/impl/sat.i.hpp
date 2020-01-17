@@ -197,7 +197,6 @@ namespace ccsat{
     }
 
     void Sat::initialize_DAG(std::string input){
-        
         // Divide clauses_string of formula_string
         std::vector<std::string> a_clause;
         while(input.find_first_of("&") != std::string::npos){
@@ -206,7 +205,6 @@ namespace ccsat{
             input.erase(0,end+1);
         }
         a_clause.push_back(input);
-        
         // Print final elements
         #ifdef PARSER
         std::cout << "clauses: { " ;
@@ -217,7 +215,6 @@ namespace ccsat{
         }
         std::cout << " } " << std::endl ;
         #endif        
-        
         // Divide variables_string of clause_string
         std::vector<std::string> a_node;
         std::vector<bool> a_sign;
@@ -284,19 +281,16 @@ namespace ccsat{
                 a_sign.push_back(false);
             }
         }
-
         // From node string to Node class in n_set
         std::vector<uint_fast16_t> id_set;
         for(int i = 0; i < a_node.size();i++){
             id_set.push_back(transform_node(a_node[i]));
         }
-
         // Create formula
         for(int i = 0; i < a_sign.size(); i++){
             Clause c = Clause(n_set[id_set[2*i]],n_set[id_set[2*i+1]],a_sign[i]);
             f.add_clause(c);
         }
-
         // Now we have to assign ccpar
         for(uint_fast16_t i = 0; i < n_set.size() ; i++ ){
             // If is a function
@@ -497,7 +491,6 @@ namespace ccsat{
         }
 
         bool congruent = congruent1 & congruent2;
-
         #ifdef DEBUG
         std::cout << "CONGRUENT ";
         std::cout << i1;
@@ -506,13 +499,11 @@ namespace ccsat{
         std::cout << " = ";
         std::cout << congruent << std::endl;
         #endif
-
         return congruent;
     }
     
     // MERGE i1 i2
     void Sat::MERGE(uint_fast16_t i1, uint_fast16_t i2){
-
         #ifdef DEBUG
         std::cout << "MERGE ";
         std::cout << i1;
@@ -536,7 +527,6 @@ namespace ccsat{
             // Search for son
             for(uint_fast16_t i = 0; i < P1.size();i++){
                 for(uint_fast16_t j = 0; j < P2.size();j++){
-
                     #ifdef DEBUG
                     std::cout << "MERGE ";
                     std::cout << P1[i];
@@ -544,7 +534,6 @@ namespace ccsat{
                     std::cout << P2[j];
                     std::cout << " ?" << std::endl;
                     #endif
-
                     if(FIND(P1[i]) != FIND(P2[j]) && CONGRUENT(P1[i], P2[j]) ){
                         #ifdef DEBUG
                         std::cout << "------------" << std::endl;
@@ -564,7 +553,6 @@ namespace ccsat{
         // Type_checking
         if(!is_legal())
             assert(false);
-
         // Pre-process
         for(uint_fast16_t i = 0; i < n_set.size() ; i++ ){
             if(n_set[i].get_fn() == "cons"){
@@ -607,17 +595,16 @@ namespace ccsat{
             #ifdef DEBUG
             std::cout << "Euality theory passed" << std::endl;
             #endif 
-            for(uint_fast16_t i = 0; i < atoms.size();i++){
+            for(uint_fast16_t i = 0; i < atoms.size();i++)
                 // Check if an atom is in the same cc of cons
                 for(uint_fast16_t j = 0; j < n_set.size();j++){
                     #ifdef DEBUG
                     std::cout << FIND(atoms[i]) << "--" << FIND(j) << std::endl;
                     #endif
-                    if(FIND(atoms[i]) == FIND(j) && n_set[j].get_fn()=="cons"){
+                    if(FIND(atoms[i]) == FIND(j) && n_set[j].get_fn()=="cons")
                         return false;
-                    }
+                    
                 }
-            }
             return true;
         }
         return false;
@@ -632,12 +619,11 @@ namespace ccsat{
         std::cout << "------------" << std::endl;
         #endif
         #ifdef F_LIST
-        for(uint_fast16_t i = 0; i < clause.size(); i++){
+        for(uint_fast16_t i = 0; i < clause.size(); i++)
             if(!clause[i].get_equal()){
                 Clause c = Clause(clause[i].get_first(), clause[i].get_second(), true );
                 forbidden_list.push_back(c);
             }
-        }
         #endif
         // For every equality in formula merge
         for(uint_fast16_t i = 0; i < clause.size(); i++){
@@ -662,10 +648,10 @@ namespace ccsat{
         #endif
         // Check not equality
         for(uint_fast16_t i = 0; i < clause.size(); i++){
-            if(!clause[i].get_equal()){
+            if(!clause[i].get_equal())
                 if(FIND(clause[i].get_first().get_id()) == FIND(clause[i].get_second().get_id()))
                     return false;
-            }
+            
         }
         return true;
     }
@@ -677,7 +663,6 @@ namespace ccsat{
         for(int i = 0; i < nodi.size() ; i++){
             std::cout << nodi[i].get_id();
             std::cout << nodi[i].get_fn();
-
             // ARGS PRINT
             if(nodi[i].get_args().size()>0){
                 std::cout << "->";
@@ -685,23 +670,16 @@ namespace ccsat{
                     std::cout << nodi[i].get_args().at(h);
             }
             std::cout << "\t\t";
-
             // FIND PRINT
             std::cout << nodi[i].get_find();
             std::cout << "\t\t";
-
-
             // CCPAR PRINT
-            if(nodi[i].get_ccpar().size() > 0){
-                for (int  h = 0; h < nodi[i].get_ccpar().size(); h++){
+            if(nodi[i].get_ccpar().size() > 0)
+                for (int  h = 0; h < nodi[i].get_ccpar().size(); h++)
                     std::cout << nodi[i].get_ccpar().at(h);
-                }
-            }
-            else{
+            else
                 std::cout << "-";
-            }
             std::cout << std::endl;
-            
         }
         std::cout << "________________________________________"<<std::endl;
     }
@@ -728,15 +706,12 @@ namespace ccsat{
         for(uint_fast16_t i = 0; i < n_set.size() ; i++ )
             if(n_set[i].get_fn() == "select")
                 arrays.push_back(n_set[i].get_args().at(0));
-        
         // Detect if it is at left or right side of a formulas
-        
         for(uint_fast16_t i = 0; i < get_formula().get_formula().size() ; i++ )
             for(uint_fast16_t j = 0; j < arrays.size() ; j++ )
                 if( arrays[j] ==  get_formula().get_formula().at(i).get_first().get_id() ||
                     arrays[j] ==  get_formula().get_formula().at(i).get_second().get_id() )
                     return false;
-        
         return true;
     }
 
@@ -760,7 +735,7 @@ namespace ccsat{
             return false;
         }
         // Raise error
-        assert(false);
+        assert(("NOT WELL FORMED",false));
         return true;
     }
     static void solve_threads(std::promise<bool> result , std::string s){
@@ -782,7 +757,7 @@ namespace ccsat{
             }
             result.set_value(false);
         }
-        assert(false);
+        assert(("NOT WELL FORMED",false));
     }
     static bool solve_parallel(std::string s){
         if(well_formed(s)){

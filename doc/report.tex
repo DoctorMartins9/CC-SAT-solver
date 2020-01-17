@@ -46,49 +46,46 @@
  In this report is presented a parallel implementation of a congruence closure algorithm for deduction in ground equational theories, able to solve a set of clauses in the quantifiers free fragment of first order logic, based on equality among variables, constants, function applications, recursive data structures with their elements and elements of arrays.
 \end{abstract}
 \section{Introduction}
-The first theory considered is the class of SMT problems is called EUF (Equality with Uninterpreted Functions), containing atoms that are equalities between terms built over uninterpreted function symbols. EUF (i.e., SAT modulo the theory of congruences) is important in applications such as the verification of pipelined processors, where, if the control is verified, the concrete data operations can be abstracted by uninterpreted function symbols.\cite{NIEUWENHUIS2007557} It is the most important theory because its congruence closure algorithm is the core of the entire solver. The implemented algorithm also integrates the theory of lists $\mathcal{T}_{cons}$.
+The first theory considered is the class of SMT problems is called EUF (Equality with Uninterpreted Functions), containing atoms that are equalities between terms built over uninterpreted function symbols. EUF (i.e., SAT modulo the theory of congruences) is important in applications such as the verification of pipelined processors, where, if the control is verified, the concrete data operations can be abstracted by uninterpreted function symbols.\cite{NIEUWENHUIS2007557} It is the most important theory because its congruence closure algorithm is the core of the entire solver. The implemented algorithm also integrates the theory of lists $\mathcal{T}_{cons}$. 
 \section{Methodology}
 
 
 \subsection{Algorithm}
-The most interesting feature of this implementation is the organization of the information within the data structures, shaped to be intuitive and efficient.
+The most interesting feature of this implementation is the organization of the information within the data structures, shaped to be efficient.
 \begin{lstlisting}[style=cpp]
 class Node{
 private:
-	std::string fn;                  
-	uint_fast16_t id;                
-	std::vector<uint_fast16_t> args; 
-	uint_fast16_t find;              
-	std::vector<uint_fast16_t> ccpar;
+	std::string 				fn;                  
+	uint_fast16_t 				id;                
+	std::vector<uint_fast16_t> 	args; 
+	uint_fast16_t 				find;              
+	std::vector<uint_fast16_t> 	ccpar;
 };
 \end{lstlisting}
+The type used to represents indexes is \verb|uint_fast16_t|, that is the fastest available unsigned integer with at least 16 bits.
+
 
 \subsection{Equality theory congruence closure example}
-
+\begin{align*}
+	\mathcal{F} : x = y \land f(x) \ne f(y)
+\end{align*}
 
 \begin{lstlisting}
 x=y&f(x)!=f(y)
 \end{lstlisting}
 
 \begin {center}
-\resizebox{2.5cm}{!}{
-\begin {tikzpicture}[-latex ,auto ,node distance =1 cm and 1cm ,on grid ,
+\resizebox{3.5cm}{!}{
+\begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
 semithick ,
 state/.style ={ circle ,top color =white , bottom color = white ,
 	draw,black , text=black , minimum width =0.5 cm}]
-\node[state] (N0) {x};
-\node[state] (N1) [right=of N0]{y};
-\node[state] (N2) [above =of N0]{f};
-\node[state] (N3) [above right=of N0] {f};
+\node[state] (N0) {0 : x};
+\node[state] (N1) [right=of N0]{1 : y};
+\node[state] (N2) [above =of N0]{2 : f};
+\node[state] (N3) [above right=of N0] {3 : f};
 \path (N2) edge [above] node[left] {} (N0);
 \path (N3) edge [above] node[left] {} (N1);
-%\path (N2) edge[thin,-,densely dotted] [above] node[left] {} (N0);
-%\path (C) edge [bend left =25] node[below =0.15 cm] {$1/2$} (A);
-%\path (A) edge [bend right = -15] node[below =0.15 cm] {$1/2$} (C);
-%\path (A) edge [bend left =25] node[above] {$1/4$} (B);
-%\path (B) edge [bend left =15] node[below =0.15 cm] {$1/2$} (A);
-%\path (C) edge [bend left =15] node[below =0.15 cm] {$1/2$} (B);
-%\path (B) edge [bend right = -25] node[below =0.15 cm] {$1/2$} (C);
 \end{tikzpicture}
 }
 \end{center}
@@ -111,15 +108,15 @@ CONGRUENT 2 3 = 1
 
 
 \begin {center}
-\resizebox{2.5cm}{!}{
-	\begin {tikzpicture}[-latex ,auto ,node distance =1 cm and 1cm ,on grid ,
+\resizebox{3.5cm}{!}{
+	\begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
 	semithick ,
 	state/.style ={ circle ,top color =white , bottom color = white ,
 		draw,black , text=black , minimum width =0.5 cm}]
-	\node[state] (N0) {x};
-	\node[state] (N1) [right=of N0]{y};
-	\node[state] (N2) [above =of N0]{f};
-	\node[state] (N3) [above right=of N0] {f};
+	\node[state] (N0) {0 : x};
+	\node[state] (N1) [right=of N0]{1 : y};
+	\node[state] (N2) [above =of N0]{2 : f};
+	\node[state] (N3) [above right=of N0] {3 : f};
 	\path (N2) edge [above] node[left] {} (N0);
 	\path (N3) edge [above] node[left] {} (N0);
 	\path (N0) edge[,-,densely dotted] [above] node[left] {} (N1);
@@ -142,15 +139,15 @@ UNION 2 3
 \end{lstlisting}
 
 \begin {center}
-\resizebox{2.5cm}{!}{
-	\begin {tikzpicture}[-latex ,auto ,node distance =1 cm and 1cm ,on grid ,
+\resizebox{3.5cm}{!}{
+	\begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
 	semithick ,
 	state/.style ={ circle ,top color =white , bottom color = white ,
 		draw,black , text=black , minimum width =0.5 cm}]
-	\node[state] (N0) {x};
-	\node[state] (N1) [right=of N0]{y};
-	\node[state] (N2) [above =of N0]{f};
-	\node[state] (N3) [above right=of N0] {f};
+	\node[state] (N0) {0 : x};
+	\node[state] (N1) [right=of N0]{1 : y};
+	\node[state] (N2) [above =of N0]{2 : f};
+	\node[state] (N3) [above right=of N0] {3 : f};
 	\path (N2) edge [above] node[left] {} (N0);
 	\path (N3) edge [above] node[left] {} (N0);
 	\path (N0) edge[,-,densely dotted] [above] node[left] {} (N1);		\path (N2) edge[,-,densely dotted] [above] node[left] {} (N3);
@@ -168,15 +165,15 @@ ________________________________________
 \end{lstlisting}
 
 \begin {center}
-\resizebox{2.5cm}{!}{
-	\begin {tikzpicture}[-latex ,auto ,node distance =1 cm and 1cm ,on grid ,
+\resizebox{3.5cm}{!}{
+	\begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
 	semithick ,
 	state/.style ={ circle ,top color =white , bottom color = white ,
 		draw,black , text=black , minimum width =0.5 cm}]
-	\node[state] (N0) {x};
-	\node[state] (N1) [right=of N0]{y};
-	\node[state] (N2) [above =of N0]{f};
-	\node[state] (N3) [above right=of N0] {f};
+	\node[state] (N0) {0 : x};
+	\node[state] (N1) [right=of N0]{1 : y};
+	\node[state] (N2) [above =of N0]{2 : f};
+	\node[state] (N3) [above right=of N0] {3 : f};
 	\path (N2) edge [above] node[left] {} (N0);
 	\path (N3) edge [above] node[left] {} (N0);
 	\path (N0) edge[,-,densely dotted] [above] node[left] {} (N1);		\path (N2) edge[,-,red] [above] node[left] {} (N3);
@@ -190,23 +187,27 @@ UNSAT
 
 \subsection{List theory congruence closure example}
 
+\begin{align*}
+\mathcal{F} : cons(car(x),cdr(x)) = x \land atom(x) 
+\end{align*}
+
 \begin{lstlisting}
 atom(x)&cons(car(x),cdr(x))=x
 \end{lstlisting}
 
 
 \begin {center}
-\resizebox{2.5cm}{!}{
-	\begin {tikzpicture}[-latex ,auto ,node distance =1 cm and 1cm ,on grid ,
+\resizebox{4.5cm}{!}{
+	\begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
 	semithick ,
 	state/.style ={ circle ,top color =white , bottom color = white ,
 		draw,black , text=black , minimum width =0.5 cm}]
-	\node[state] (N0) {x};
-	\node[state] (N1) [above left=of N0]{car};
-	\node[state] (N2) [above right=of N0]{cdr};
-	\node[state] (N3) [above right =of N1] {cons};
-	\node[state] (N4) [above left=of N3]{car};
-	\node[state] (N5) [above right=of N3]{cdr};
+	\node[state] (N0) {0 : x};
+	\node[state] (N1) [above left=of N0]{1 : car};
+	\node[state] (N2) [above right=of N0]{2 : cdr};
+	\node[state] (N3) [above right =of N1] {3 : cons};
+	\node[state] (N4) [above left=of N3]{4 : car};
+	\node[state] (N5) [above right=of N3]{5 : cdr};
 	\path (N1) edge [above] node[left] {} (N0);
 	\path (N2) edge [above] node[left] {} (N0);
 	\path (N3) edge [above] node[left] {} (N1);
@@ -226,17 +227,17 @@ UNION 5 2
 \end{lstlisting}
 
 \begin {center}
-\resizebox{2.5cm}{!}{
-	\begin {tikzpicture}[-latex ,auto ,node distance =1 cm and 1cm ,on grid ,
+\resizebox{4.5cm}{!}{
+	\begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
 	semithick ,
 	state/.style ={ circle ,top color =white , bottom color = white ,
 		draw,black , text=black , minimum width =0.5 cm}]
-	\node[state] (N0) {x};
-	\node[state] (N1) [above left=of N0]{car};
-	\node[state] (N2) [above right=of N0]{cdr};
-	\node[state] (N3) [above right =of N1] {cons};
-	\node[state] (N4) [above left=of N3]{car};
-	\node[state] (N5) [above right=of N3]{cdr};
+	\node[state] (N0) {0 : x};
+	\node[state] (N1) [above left=of N0]{1 : car};
+	\node[state] (N2) [above right=of N0]{2 : cdr};
+	\node[state] (N3) [above right =of N1] {3 : cons};
+	\node[state] (N4) [above left=of N3]{4 : car};
+	\node[state] (N5) [above right=of N3]{5 : cdr};
 	\path (N1) edge [above] node[left] {} (N0);
 	\path (N2) edge [above] node[left] {} (N0);
 	\path (N3) edge [above] node[left] {} (N1);
@@ -274,17 +275,17 @@ MERGE 5 2 ?
 \end{lstlisting}
 
 \begin {center}
-\resizebox{2.5cm}{!}{
-	\begin {tikzpicture}[-latex ,auto ,node distance =1 cm and 1cm ,on grid ,
+\resizebox{4.5cm}{!}{
+	\begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
 	semithick ,
 	state/.style ={ circle ,top color =white , bottom color = white ,
 		draw,black , text=black , minimum width =0.5 cm}]
-	\node[state] (N0) {x};
-	\node[state] (N1) [above left=of N0]{car};
-	\node[state] (N2) [above right=of N0]{cdr};
-	\node[state] (N3) [above right =of N1] {cons};
-	\node[state] (N4) [above left=of N3]{car};
-	\node[state] (N5) [above right=of N3]{cdr};
+	\node[state] (N0) {0 : x};
+	\node[state] (N1) [above left=of N0]{1 : car};
+	\node[state] (N2) [above right=of N0]{2 : cdr};
+	\node[state] (N3) [above right =of N1] {3 : cons};
+	\node[state] (N4) [above left=of N3]{4 : car};
+	\node[state] (N5) [above right=of N3]{5 : cdr};
 	\path (N1) edge [above] node[left] {} (N0);
 	\path (N2) edge [above] node[left] {} (N0);
 	\path (N3) edge [above] node[left] {} (N1);
@@ -309,17 +310,17 @@ ________________________________________
 5cdr->3		5		3
 \end{lstlisting}
 \begin {center}
-\resizebox{2.5cm}{!}{
-	\begin {tikzpicture}[-latex ,auto ,node distance =1 cm and 1cm ,on grid ,
+\resizebox{4.5cm}{!}{
+	\begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
 	semithick ,
 	state/.style ={ circle ,top color =white , bottom color = white ,
 		draw,black , text=black , minimum width =0.5 cm}]
-	\node[state] (N0) {x};
-	\node[state] (N1) [above left=of N0]{car};
-	\node[state] (N2) [above right=of N0]{cdr};
-	\node[state] (N3) [above right =of N1] {cons};
-	\node[state] (N4) [above left=of N3]{car};
-	\node[state] (N5) [above right=of N3]{cdr};
+	\node[state] (N0) {0 : x};
+	\node[state] (N1) [above left=of N0]{1 : car};
+	\node[state] (N2) [above right=of N0]{2 : cdr};
+	\node[state] (N3) [above right =of N1] {3 : cons};
+	\node[state] (N4) [above left=of N3]{4 : car};
+	\node[state] (N5) [above right=of N3]{5 : cdr};
 	\path (N1) edge [red,above] node[left] {} (N0);
 	\path (N2) edge [red,above] node[left] {} (N0);
 	\path (N3) edge [above] node[left] {} (N1);
@@ -339,12 +340,25 @@ UNSAT
 
 
 \subsection{Array theory congruence closure example}
+
+\begin{align*}
+\mathcal{F} : e=select(store(a,i,e),j) \land select(a,j) \ne e
+\end{align*}
+
 \begin{lstlisting}
 e=select(store(a,i,e),j)&select(a,j)!=e
 \end{lstlisting}
+
 \begin{lstlisting}
 detected store
 \end{lstlisting}
+
+\begin{align*}
+&\mathcal{F}_1 : e=e \land j=i \land select(a,j) \ne e\\
+&\mathcal{F}_2 : e=select(a,j) \land j \ne i \land select(a,j) \ne e
+\end{align*}
+
+
 \begin{lstlisting}
 1: e=e&j=i&select(a,j)!=e
 2: e=select(a,j)&j!=i&select(a,j)!=e
@@ -352,25 +366,18 @@ detected store
 
 
 \begin {center}
-\resizebox{3.5cm}{!}{
-	\begin {tikzpicture}[-latex ,auto ,node distance =1.5 cm and 1cm ,on grid ,
+\resizebox{7.5cm}{!}{
+	\begin {tikzpicture}[-latex ,auto ,node distance =2cm and 2cm ,on grid ,
 	semithick ,
 	state/.style ={ circle ,top color =white , bottom color = white ,
 		draw,black , text=black , minimum width =0.5 cm}]
-	\node[state] (N0) {e};
-	\node[state] (N1) [right=of N0]{j};
-	\node[state] (N2) [right=of N1]{i};
-	\node[state] (N3) [right =of N2] {a};
-	\node[state] (N4) [above left=of N3]{select};
+	\node[state] (N0) {0 : e};
+	\node[state] (N1) [right=of N0]{1 : j};
+	\node[state] (N2) [right=of N1]{2 : i};
+	\node[state] (N3) [right =of N2] {3 : a};
+	\node[state] (N4) [above left=of N3]{4 : select};
 	\path (N4) edge [above] node[left] {} (N3);
 	\path (N4) edge [above] node[left] {} (N1);
-	%\path (N3) edge [above] node[left] {} (N1);
-	%\path (N3) edge [above] node[left] {} (N2);
-	%\path (N4) edge [above] node[left] {} (N3);
-	%\path (N5) edge [above] node[left] {} (N3);
-	%\path (N2) edge[,-,densely dotted] [above] node[left] {} (N5);
-	%\path (N1) edge[,-,densely dotted] [above] node[left] {} (N4);
-	%\path (N3) edge[,-,densely dotted] [above] node[left] {} (N0);
 \end{tikzpicture}
 }
 \end{center}
@@ -391,25 +398,19 @@ UNION 1 2
 \end{lstlisting}
 
 \begin {center}
-\resizebox{3.5cm}{!}{
-	\begin {tikzpicture}[-latex ,auto ,node distance =1.5 cm and 1cm ,on grid ,
+\resizebox{7.5cm}{!}{
+	\begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
 	semithick ,
 	state/.style ={ circle ,top color =white , bottom color = white ,
 		draw,black , text=black , minimum width =0.5 cm}]
-	\node[state] (N0) {e};
-	\node[state] (N1) [right=of N0]{j};
-	\node[state] (N2) [right=of N1]{i};
-	\node[state] (N3) [right =of N2] {a};
-	\node[state] (N4) [above left=of N3]{select};
+	\node[state] (N0) {0 : e};
+	\node[state] (N1) [right=of N0]{1 : j};
+	\node[state] (N2) [right=of N1]{2 : i};
+	\node[state] (N3) [right =of N2] {3 : a};
+	\node[state] (N4) [above left=of N3]{4 : select};
 	\path (N4) edge [above] node[left] {} (N3);
 	\path (N4) edge [above] node[left] {} (N1);
-	%\path (N3) edge [above] node[left] {} (N1);
-	%\path (N3) edge [above] node[left] {} (N2);
-	%\path (N4) edge [above] node[left] {} (N3);
-	%\path (N5) edge [above] node[left] {} (N3);
 	\path (N1) edge[,-,densely dotted] [above] node[left] {} (N2);
-	%\path (N1) edge[,-,densely dotted] [above] node[left] {} (N4);
-	%\path (N3) edge[,-,densely dotted] [above] node[left] {} (N0);
 \end{tikzpicture}
 }
 \end{center}
@@ -425,25 +426,19 @@ ________________________________________
 \end{lstlisting}
 
 \begin {center}
-\resizebox{3.5cm}{!}{
-	\begin {tikzpicture}[-latex ,auto ,node distance =1.5 cm and 1cm ,on grid ,
+\resizebox{7.5cm}{!}{
+	\begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
 	semithick ,
 	state/.style ={ circle ,top color =white , bottom color = white ,
 		draw,black , text=black , minimum width =0.5 cm}]
-	\node[state] (N0) {e};
-	\node[state] (N1) [blue,right=of N0]{j};
-	\node[state] (N2) [blue,right=of N1]{i};
-	\node[state] (N3) [blue,right =of N2] {a};
-	\node[state] (N4) [blue,above left=of N3]{select};
+	\node[state] (N0) {0 : e};
+	\node[state] (N1) [blue,right=of N0]{1 : j};
+	\node[state] (N2) [blue,right=of N1]{2 : i};
+	\node[state] (N3) [blue,right =of N2] {3 : a};
+	\node[state] (N4) [blue,above left=of N3]{4 : select};
 	\path (N4) edge [blue,above] node[left] {} (N3);
 	\path (N4) edge [blue,above] node[left] {} (N1);
-	%\path (N3) edge [above] node[left] {} (N1);
-	%\path (N3) edge [above] node[left] {} (N2);
-	%\path (N4) edge [above] node[left] {} (N3);
-	%\path (N5) edge [above] node[left] {} (N3);
-	\path (N1) edge[,-,densely dotted] [above] node[left] {} (N2);
-	%\path (N1) edge[,-,densely dotted] [above] node[left] {} (N4);
-	%\path (N3) edge[,-,densely dotted] [above] node[left] {} (N0);
+	\path (N1) edge[blue,-,densely dotted] [above] node[left] {} (N2);
 \end{tikzpicture}
 }
 \end{center}
@@ -516,16 +511,11 @@ ymajorgrids=true,
 grid style=dashed,
 ]
 
-\addplot[
-color=blue
-]
+\addplot[color=blue]
 coordinates {
 	(128,0.0117)(256,0.0290)(512,0.0612)(1024,0.1374)(2048,0.2988)(4096,0.6736)(8192,1.5526)(16384,3.7465)(32768,13.8530)
 };
-
-\addplot[
-color=green
-]
+\addplot[color=green]
 coordinates {
 	(128,0.0001)(256,0.0003)(512,0.0008)(1024,0.0026)(2048,0.0103)(4096,0.0442)(8192,0.1968)(16384,1.6690)(32768,9.5786)
 };
@@ -534,8 +524,6 @@ coordinates {
 
 \end{axis}
 \end{tikzpicture}
-
-
 
 \begin{tikzpicture}
 \begin{axis}[
@@ -550,19 +538,13 @@ bar width=7pt,
 xlabel=Cores\\
 ]
 \addplot[color=blue,domain=15:15]
-coordinates {(4,13.8530)(8,13.8530)(16,13.8530)};
-
+coordinates {(4,47.4944)(8,13.8530)(16,37.3613)};
 \addplot 
-coordinates {(4,13.8145)(8,13.8145)(16,13.8145)};
-
+coordinates {(4,47.5747)(8,13.8145)(16,5.8145)};
 \addplot 
-coordinates {(4,9.5786)(8,9.5786)(16,9.5786)};
-
+coordinates {(4,19.7812)(8,9.5786)(16,38.5786)};
 \addplot 
-coordinates {(4,9.4844)(8,9.4844)(16,9.4844)};
-
-
-
+coordinates {(4,20.1922)(8,9.4844)(16,5.9145)};
 \legend{Seq,Seq w. FL ,Parallel, Parallel w. FL}
 \end{axis}
 \end{tikzpicture}
