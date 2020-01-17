@@ -41,28 +41,28 @@ namespace ccsat{
 
 class Node{
     private:
-        std::string fn;                   // Costant or symbol function name
-        uint_fast16_t id;                      // Node's unique identification number
-        std::vector<uint_fast16_t> args;       // If node is function here there are its arguments
-        uint_fast16_t find;                    // Representative of his congruent class
-        std::vector<uint_fast16_t> ccpar;      // Congruence closure parents list 
+        std::string fn;              // Costant or symbol function name
+        int id;                      // Node's unique identification number
+        std::vector<int> args;       // If node is function here there are its arguments
+        int find;                    // Representative of his congruent class
+        std::vector<int> ccpar;      // Congruence closure parents list 
 
     public:
 
         // Constructor
         Node();
-        Node(std::string fn_i, uint_fast16_t id_i, std::vector<uint_fast16_t> args_i, 
-                               uint_fast16_t find_i,std::vector<uint_fast16_t> ccpar_i);
+        Node(std::string fn_i, int id_i, std::vector<int> args_i, 
+                               int find_i,std::vector<int> ccpar_i);
 
         // Methods
         std::string get_fn();
-        uint_fast16_t get_id();
-        std::vector<uint_fast16_t> get_args();
-        std::vector<uint_fast16_t> get_ccpar();
-        uint_fast16_t get_find();
-        void set_find(uint_fast16_t find_i);
-        void set_ccpar(std::vector<uint_fast16_t> ccpar_i);
-        void add_ccpar(uint_fast16_t ccpar_i);
+        int get_id();
+        std::vector<int> get_args();
+        std::vector<int> get_ccpar();
+        int get_find();
+        void set_find(int find_i);
+        void set_ccpar(std::vector<int> ccpar_i);
+        void add_ccpar(int ccpar_i);
         bool is_equal(Node input);
 };
 

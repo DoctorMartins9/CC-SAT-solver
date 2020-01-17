@@ -2,8 +2,8 @@ namespace ccsat{
 
 Node::Node(){}
 
-Node::Node(std::string fn_i, uint_fast16_t id_i, std::vector<uint_fast16_t> args_i, 
-                             uint_fast16_t find_i,std::vector<uint_fast16_t> ccpar_i){
+Node::Node(std::string fn_i, int id_i, std::vector<int> args_i, 
+                             int find_i,std::vector<int> ccpar_i){
     fn = fn_i;
     id = id_i;
     args = args_i;
@@ -15,31 +15,31 @@ std::string Node::get_fn(){
     return fn;
 }
 
-uint_fast16_t Node::get_id(){
+int Node::get_id(){
     return id;
 }
 
-std::vector<uint_fast16_t> Node::get_args(){
+std::vector<int> Node::get_args(){
     return args;
 }
 
-std::vector<uint_fast16_t> Node::get_ccpar(){
+std::vector<int> Node::get_ccpar(){
     return ccpar;
 }
 
-uint_fast16_t Node::get_find(){
+int Node::get_find(){
     return find;
 }
 
-void Node::set_find(uint_fast16_t find_i){
+void Node::set_find(int find_i){
     find = find_i;
 }
 
-void Node::set_ccpar(std::vector<uint_fast16_t> ccpar_i){
+void Node::set_ccpar(std::vector<int> ccpar_i){
     ccpar = ccpar_i;
 }
 
-void Node::add_ccpar(uint_fast16_t ccpar_i){
+void Node::add_ccpar(int ccpar_i){
     for(int i = 0; i < ccpar.size();i++)
         if(ccpar[i]==ccpar_i)
             return;

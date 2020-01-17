@@ -53,23 +53,23 @@ class Sat{
         bool is_sat = true;
         #endif
         // Sorte
-        std::vector<uint_fast16_t> atoms;
-        std::vector<uint_fast16_t> arrays;
+        std::vector<int> atoms;
+        std::vector<int> arrays;
         std::vector<Clause> forbidden_list;
         // Methods
         bool is_legal();
-        uint_fast16_t transform_node(std::string n);
+        int transform_node(std::string n);
         void initialize_DAG(std::string input);
         // FIND i
-        uint_fast16_t FIND(uint_fast16_t index);
+        int FIND(int index);
         // UNION i1 i2
-        void UNION(uint_fast16_t i1, uint_fast16_t i2);
+        void UNION(int i1, int i2);
         // CCPAR i
-        std::vector<uint_fast16_t> CCPAR(uint_fast16_t index);
+        std::vector<int> CCPAR(int index);
         // CONGRUENT i1 i2
-        bool CONGRUENT(uint_fast16_t i1, uint_fast16_t i2);
+        bool CONGRUENT(int i1, int i2);
         // MERGE i1 i2
-        void MERGE(uint_fast16_t i1, uint_fast16_t i2);
+        void MERGE(int i1, int i2);
 
     public:
         // Constructors

@@ -52,17 +52,88 @@ The first theory considered is the class of SMT problems is called EUF (Equality
 
 \subsection{Algorithm}
 The most interesting feature of this implementation is the organization of the information within the data structures, shaped to be efficient.
+\paragraph{Node} 
+The design of the \verb|Node| structure was mainly inspired by the interpretation of  \textit{'The Calculus of Computation'}\cite{10.5555/1324777}, which describes a resolution procedure for the above mentioned theories. The \verb|id| field holds the node’s unique identification number; the \verb|fn| field holds the constant or function symbol and the \verb|args| field holds a list of identification numbers representing the function arguments. The \verb|find| field holds the identification number of another node (possibly itself) in its congruence class. Following a chain of \verb|find| references leads to the representative of the congruence class. A representative node’s find field points to the node itself. If a node is the representative for its congruence class, then its \verb|ccpar| (for congruence closure parents) field stores the set of all parents of all nodes in its congruence class.
 \begin{lstlisting}[style=cpp]
 class Node{
 private:
-	std::string 				fn;                  
-	uint_fast16_t 				id;                
-	std::vector<uint_fast16_t> 	args; 
-	uint_fast16_t 				find;              
-	std::vector<uint_fast16_t> 	ccpar;
+	std::string 		fn;                  
+	int			 		id;                
+	std::vector<int> 	args; 
+	int			 		find;              
+	std::vector<int>	ccpar;
 };
 \end{lstlisting}
-The type used to represents indexes is \verb|uint_fast16_t|, that is the fastest available unsigned integer with at least 16 bits.
+
+\paragraph{Clause} 
+The \verb|Clause| class is used to save nodes while maintaining the given input relationship. It allows two nodes to be related but has no methods to compare them, as they are used in another class.
+\begin{lstlisting}[style=cpp]
+class Clause{
+private:
+	Node n1;
+	Node n2;
+	bool is_equal;
+}
+\end{lstlisting}
+
+\paragraph{Formula}
+The \verb|Formula| class contains a single vector of clauses. This structure is the exact transposition of the given input string to be resolved. Once the formula is created the initial string can be discarded because all relevant information has been saved.
+\begin{lstlisting}[style=cpp]
+class Formula{
+private:
+	std::vector<Clause> v_set;
+};
+\end{lstlisting}
+
+\paragraph{Sat}
+The \verb|Sat| class acts as a wrapper for the entire program. It contains methods for interfacing with the solver and methods for string parsing. Inside it is saved the initial translated formula and the set of nodes on which the congruence closure will be performed. There are also two index vectors, useful for checking the type of elements. In this case, since the array theory is also included, it has been mandatory to introduce a type checking system that is able to detect any errors in the provided string, such as the comparison between two arrays that is not possible to do in the array theory without extensionality, due to the decision procedure for T$_A$-satisfiability of quantifier-free $\sum_A$-formula F is based on a reduction to T$_E$-satisfiability via applications of the (read-over-write) axioms. 
+
+\begin{lstlisting}[style=cpp]
+class Sat{
+private:
+	Formula 			f;
+	std::vector<Node> 	n_set;
+	std::vector<int> 	atoms;
+	std::vector<int> 	arrays;
+
+	bool	is_legal();
+	int 	transform_node(std::string n);
+	void 	initialize_DAG(std::string input);
+	bool 	classic_congruence_closure();
+	bool 	list_congruence_closure();
+	std::vector<std::string> 
+			split_arguments(std::string s);
+
+	int 			 FIND(int index);
+	void 			 UNION(int i1, int i2);
+	std::vector<int> CCPAR(int index);
+	bool 			 CONGRUENT(int i1, int i2);
+	void 			 MERGE(int i1, int i2);
+
+public:
+	static std::vector<std::string> 
+					split(std::string s);
+	static bool well_formed(std::string s);
+	static bool solve(std::string s);
+	static std::vector<std::string> 
+			detect_store(std::string input);
+};
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 \subsection{Equality theory congruence closure example}
@@ -451,6 +522,9 @@ SAT
 
 \section{Validation}
 
+\begin{verbatim}
+
+\end{verbatim}
 
 \section{Benchmarks}
 \begin{table}[htpb]
@@ -552,25 +626,68 @@ coordinates {(4,20.1922)(8,9.4844)(16,5.9145)};
 
 \section{Conclusion}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 \bibliography{biblio}
 \bibliographystyle{ieeetr}
+
+
+\appendix
+
+\newpage
+\newpage
+% Please add the following required packages to your document preamble:
+% \usepackage{booktabs}
+% \usepackage{graphicx}
+\begin{table}[htpb]
+	\centering
+	\caption{}
+	\label{tab:my-table}
+	\resizebox{\textwidth}{!}{%
+		\begin{tabular}{@{}cclc@{}}
+			\toprule
+			\textbf{Theory} & \textbf{Source}   & \textbf{Formula}                                                                                           & \textbf{Result} \\ \midrule
+			Equality        & Bradley-Manna     & f(x)=f(y)\&x!=y                                                                                            & SAT             \\
+			&                   & x=y\&f(x)!=f(y)                                                                                            & UNSAT           \\
+			&                   & f(a,b)=a\&f(f(a,b),b)!=a                                                                                   & UNSAT           \\
+			&                   & f(f(f(a)))=a\&f(f(f(f(f(a)))))=a\&f(a)!=a                                                                  & UNSAT           \\
+			&                   & f(f(f(a)))=f(f(a))\&f(f(f(f(a))))=a\&f(a)!=a                                                               & UNSAT           \\
+			&                   & f(x,y)=f(y,x)\&f(a,y)!=f(y,a)                                                                              & SAT             \\
+			&                   & f(g(x))=g(f(x))\&f(g(f(y)))=x\&f(y)=x\&g(f(x))!=x                                                          & UNSAT           \\
+			& IC Tests          & b=d\&f(b)=d\&f(d)=a\&a!=b                                                                                  & UNSAT           \\
+			&                   & a=b1\&b1=b2\&b2=b3\&b3=c\&f(a1,a1)=a\&f(c1,c1)=c\&a1=c1\&a!=c                                              & UNSAT           \\
+			& Z3 Benchmark      & f1!=f2\&f3(f4,f5,f6,f7,f8(f9))!=f1\&f3(f4,f5,f6,f7,f10)=f1\&f10=f8(f9)\&f10=f8(f9)\&f3(f4,f5,f6,f7,f10)=f1 & UNSAT           \\
+			&                   & f1!=f2\&f3(f4,f5,f6,f7,f8(f9))!=f1\&f3(f4,f5,f6,f7,f10)=f1\&f10=f8(f9)\&f3(f4,f5,f6,f7,f10)=f1             & UNSAT           \\
+			&                   & f1!=f2\&f3(f4,f5,f6,f7,f8(f9))!=f1\&f3(f4,f5,f6,f7,f10)=f1\&f10=f8(f9)                                     & UNSAT           \\
+			List            & Bradley Manna     & x1=x2\&y1=y2\&cons(x1,y1)!=cons(x2,y2)                                                                     & UNSAT           \\
+			&                   & x=y\&car(x)!=car(y)                                                                                        & UNSAT           \\
+			&                   & x=y\&cdr(x)!=cdr(y)                                                                                        & UNSAT           \\
+			&                   & car(cons(x,y))!=x                                                                                          & UNSAT           \\
+			&                   & cdr(cons(x,y))!=y                                                                                          & UNSAT           \\
+			&                   & !atom(cons(x,y))                                                                                           & SAT             \\
+			&                   & atom(x)\&cons(car(x),cdr(x))=x                                                                             & UNSAT           \\
+			&                   & car(x)=car(y)\&cdr(x)=cdr(y)\&f(x)!=f(y)\&!atom(x)\&!atom(y)                                               & UNSAT           \\
+			&                   & car(x)=y\&cdr(x)=z\&x!=cons(y,z)                                                                           & SAT             \\
+			& Intermediate exam & f(b)=b\&f(f(b))!=car(cdr(cons(f(b),cons(b,d))))                                                            & UNSAT           \\
+			Array           & Bradley-Manna     & i=k\&select(store(x,i,v),k)!=v                                                                             & UNSAT           \\
+			&                   & i!=k\&select(store(x,i,v),k)!=select(x,k)                                                                  & UNSAT           \\
+			&                   & i1=j\&i1!=i2\&select(a,j)=v1\&select(store(store(a,i1,v1),i2,v2),j)!=select(a,j)                           & UNSAT           \\
+			& Intermediate exam & e=select(store(a,i,e),j)\&select(a,j)!=e                                                                   & SAT             \\ \bottomrule
+		\end{tabular}%
+	}
+\end{table}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \end{document}

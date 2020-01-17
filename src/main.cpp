@@ -9,7 +9,6 @@
 //#define PARSER
 #define F_LIST
 //#define EU1
-
 #include "sat.hpp"     // Build formula     |   ccsat::Formula, ...
 
 int main(){

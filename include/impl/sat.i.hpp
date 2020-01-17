@@ -32,10 +32,10 @@ namespace ccsat{
         }
         
         // If there is a comma
-        uint_fast16_t level = 0;
-        std::vector<uint_fast16_t> comma_pos;
+        int level = 0;
+        std::vector<int> comma_pos;
         comma_pos.push_back(0);
-        for(uint_fast16_t i = 0; i < s.size(); i++){
+        for(int i = 0; i < s.size(); i++){
             if(s[i] == '('){
                 level++;
             }
@@ -55,8 +55,8 @@ namespace ccsat{
         }
         // 2 commas
         if(comma_pos.size()==2){
-            for(uint_fast16_t i = 1; i < comma_pos.size();i++){
-                uint_fast16_t delta = comma_pos[i] - comma_pos[i-1];
+            for(int i = 1; i < comma_pos.size();i++){
+                int delta = comma_pos[i] - comma_pos[i-1];
                 std::string string = s.substr(comma_pos[i-1],delta);
                 splitted.push_back(string);
             }
@@ -67,8 +67,8 @@ namespace ccsat{
         // Split the first
         splitted.push_back(s.substr(0,comma_pos[1]));
         // Split the n-1
-        for(uint_fast16_t i = 2; i < comma_pos.size();i++){
-            uint_fast16_t delta = comma_pos[i] -1 - comma_pos[i-1];
+        for(int i = 2; i < comma_pos.size();i++){
+            int delta = comma_pos[i] -1 - comma_pos[i-1];
             std::string string = s.substr(comma_pos[i-1] +1 ,delta);
             splitted.push_back(string);
         }
@@ -87,10 +87,10 @@ namespace ccsat{
         }
         
         // If there is a comma
-        uint_fast16_t level = 0;
-        std::vector<uint_fast16_t> comma_pos;
+        int level = 0;
+        std::vector<int> comma_pos;
         comma_pos.push_back(0);
-        for(uint_fast16_t i = 0; i < s.size(); i++){
+        for(int i = 0; i < s.size(); i++){
             if(s[i] == '('){
                 level++;
             }
@@ -110,8 +110,8 @@ namespace ccsat{
         }
         // 2 commas
         if(comma_pos.size()==2){
-            for(uint_fast16_t i = 1; i < comma_pos.size();i++){
-                uint_fast16_t delta = comma_pos[i] - comma_pos[i-1];
+            for(int i = 1; i < comma_pos.size();i++){
+                int delta = comma_pos[i] - comma_pos[i-1];
                 std::string string = s.substr(comma_pos[i-1],delta);
                 splitted.push_back(string);
             }
@@ -122,8 +122,8 @@ namespace ccsat{
         // Split the first
         splitted.push_back(s.substr(0,comma_pos[1]));
         // Split the n-1
-        for(uint_fast16_t i = 2; i < comma_pos.size();i++){
-            uint_fast16_t delta = comma_pos[i] -1 - comma_pos[i-1];
+        for(int i = 2; i < comma_pos.size();i++){
+            int delta = comma_pos[i] -1 - comma_pos[i-1];
             std::string string = s.substr(comma_pos[i-1] +1 ,delta);
             splitted.push_back(string);
         }
@@ -133,7 +133,7 @@ namespace ccsat{
     }
 
     // Transforma a string into a node
-    uint_fast16_t Sat::transform_node(std::string n){
+    int Sat::transform_node(std::string n){
             #ifdef PARSER
             std::cout << "transform_node -> "<< n << std::endl;
             #endif
@@ -149,9 +149,9 @@ namespace ccsat{
                     }
                 }
                 // Add the node
-                uint_fast16_t id = static_cast<uint_fast16_t>(n_set.size());
-                std::vector<uint_fast16_t> args;
-                std::vector<uint_fast16_t> ccpar;
+                int id = static_cast<int>(n_set.size());
+                std::vector<int> args;
+                std::vector<int> ccpar;
                 Node node = Node(n,id,args,id,ccpar);
                 n_set.push_back(node);
                 return id;
@@ -173,20 +173,20 @@ namespace ccsat{
                 std::vector<std::string> args_list = split_arguments(fun_argument);
                 
                 // Now we have to capture the arguments id
-                std::vector<uint_fast16_t> id_args;
+                std::vector<int> id_args;
                 for(int i = 0; i < args_list.size();i++){
                     id_args.push_back(transform_node(args_list[i]));
                 }
                 // Find if exists already this function
-                for(uint_fast16_t i = 0; i < n_set.size() ; i++ ){
+                for(int i = 0; i < n_set.size() ; i++ ){
                     if(fun_name == n_set[i].get_fn()){
                         if( id_args == n_set[i].get_args() )
                             return i;
                     }
                 }
                 // Finally we can create the function node with the right arguments
-                uint_fast16_t id = n_set.size();
-                std::vector<uint_fast16_t> ccpar;
+                int id = n_set.size();
+                std::vector<int> ccpar;
                 Node node = Node(fun_name,id,id_args,id,ccpar);
                 n_set.push_back(node);
                 return id;
@@ -200,7 +200,7 @@ namespace ccsat{
         // Divide clauses_string of formula_string
         std::vector<std::string> a_clause;
         while(input.find_first_of("&") != std::string::npos){
-            uint_fast16_t end = input.find_first_of("&");
+            int end = input.find_first_of("&");
             a_clause.push_back(input.substr(0,end));
             input.erase(0,end+1);
         }
@@ -208,7 +208,7 @@ namespace ccsat{
         // Print final elements
         #ifdef PARSER
         std::cout << "clauses: { " ;
-        for(uint_fast16_t i = 0; i < a_clause.size() ; i++ ){
+        for(int i = 0; i < a_clause.size() ; i++ ){
             std::cout << a_clause[i];
             if(i != a_clause.size())
                 std::cout << " , ";
@@ -233,7 +233,7 @@ namespace ccsat{
             // atom(x)
             else if(a_clause[i].find("atom") != std::string::npos ){
                 std::string s = a_clause[i].substr(5,a_clause[i].rfind(")")-5);
-                uint_fast16_t id = transform_node(s);
+                int id = transform_node(s);
                 atoms.push_back(id);
                 #ifdef PARSER
                 std::cout << "atom <- " << id << std::endl;
@@ -250,14 +250,14 @@ namespace ccsat{
                 std::string fun_name = "";
                 if(a_clause[i][0] == '!'){
                     fun_name = "f_" + a_clause[i].substr(1,a_clause[i].size()-1) + "!=p_cond";
-                    uint_fast16_t end = fun_name.find_first_of("!");
+                    int end = fun_name.find_first_of("!");
                     a_node.push_back(fun_name.substr(0,end));
                     a_node.push_back(fun_name.substr(end+2,fun_name.size()-1));
                     a_sign.push_back(false);
                 }
                 else{
                     fun_name = "f_" + a_clause[i] + "=p_cond";
-                    uint_fast16_t end = fun_name.find_first_of("=");
+                    int end = fun_name.find_first_of("=");
                     a_node.push_back(fun_name.substr(0,end));
                     a_node.push_back(fun_name.substr(end+1,fun_name.size()-1));
                     a_sign.push_back(true);
@@ -268,21 +268,21 @@ namespace ccsat{
             }
             // equal
             else if(a_clause[i].find_first_of("!") == std::string::npos){
-                uint_fast16_t end = a_clause[i].find_first_of("=");
+                int end = a_clause[i].find_first_of("=");
                 a_node.push_back(a_clause[i].substr(0,end));
                 a_node.push_back(a_clause[i].substr(end+1,a_clause[i].size()-1));
                 a_sign.push_back(true);
             }
             // not-equal
             else{
-                uint_fast16_t end = a_clause[i].find_first_of("!");
+                int end = a_clause[i].find_first_of("!");
                 a_node.push_back(a_clause[i].substr(0,end));
                 a_node.push_back(a_clause[i].substr(end+2,a_clause[i].size()-1));
                 a_sign.push_back(false);
             }
         }
         // From node string to Node class in n_set
-        std::vector<uint_fast16_t> id_set;
+        std::vector<int> id_set;
         for(int i = 0; i < a_node.size();i++){
             id_set.push_back(transform_node(a_node[i]));
         }
@@ -292,10 +292,10 @@ namespace ccsat{
             f.add_clause(c);
         }
         // Now we have to assign ccpar
-        for(uint_fast16_t i = 0; i < n_set.size() ; i++ ){
+        for(int i = 0; i < n_set.size() ; i++ ){
             // If is a function
             if(n_set[i].get_args().size() != 0){
-               std::vector<uint_fast16_t> id_sons = n_set[i].get_args();
+               std::vector<int> id_sons = n_set[i].get_args();
                for(int j = 0; j < id_sons.size();j++){
                    n_set[id_sons[j]].add_ccpar(i);
                } 
@@ -304,7 +304,7 @@ namespace ccsat{
         // Print final elements
         #ifdef PARSER
         std::cout << "nodes: { " ;
-        for(uint_fast16_t i = 0; i < n_set.size() ; i++ ){
+        for(int i = 0; i < n_set.size() ; i++ ){
             std::cout << n_set[i].get_fn();
             if(i != n_set.size())
                 std::cout << " , ";
@@ -321,7 +321,7 @@ namespace ccsat{
         // Divide clauses_string of formula_string
         std::vector<std::string> a_clause;
         while(input.find_first_of("&") != std::string::npos){
-            uint_fast16_t end = input.find_first_of("&");
+            int end = input.find_first_of("&");
             a_clause.push_back(input.substr(0,end));
             input.erase(0,end+1);
         }
@@ -343,14 +343,14 @@ namespace ccsat{
             }
             // equal
             else if(a_clause[i].find_first_of("!") == std::string::npos){
-                uint_fast16_t end = a_clause[i].find_first_of("=");
+                int end = a_clause[i].find_first_of("=");
                 a_node.push_back(a_clause[i].substr(0,end));
                 a_node.push_back(a_clause[i].substr(end+1,a_clause[i].size()-1));
                 a_sign.push_back(true);
             }
             // not-equal
             else{
-                uint_fast16_t end = a_clause[i].find_first_of("!");
+                int end = a_clause[i].find_first_of("!");
                 a_node.push_back(a_clause[i].substr(0,end));
                 a_node.push_back(a_clause[i].substr(end+2,a_clause[i].size()-1));
                 a_sign.push_back(false);
@@ -440,14 +440,14 @@ namespace ccsat{
     // Classic Congruence Closure algorithm
 
     // FIND i
-    uint_fast16_t Sat::FIND(uint_fast16_t index){
+    int Sat::FIND(int index){
         if(n_set[index].get_find() == index)
             return index;
         return FIND(n_set[index].get_find());
     }
     
     // UNION i1 i2
-    void Sat::UNION(uint_fast16_t i1, uint_fast16_t i2){
+    void Sat::UNION(int i1, int i2){
 
         #ifdef DEBUG
         std::cout << "UNION " << i1 << " " << i2 << std::endl;
@@ -461,7 +461,7 @@ namespace ccsat{
         for(int i = 0; i < n_set[i2].get_ccpar().size();i++){
             n_set[i1].add_ccpar(n_set[i2].get_ccpar().at(i));
         }
-        std::vector<uint_fast16_t> empty_ccpar;
+        std::vector<int> empty_ccpar;
         n_set[i2].set_ccpar(empty_ccpar);
         #endif
         #ifdef EU1
@@ -469,23 +469,23 @@ namespace ccsat{
         for(int i = 0; i < n_set[i1].get_ccpar().size();i++){
             n_set[i2].add_ccpar(n_set[i1].get_ccpar().at(i));
         }
-        std::vector<uint_fast16_t> empty_ccpar;
+        std::vector<int> empty_ccpar;
         n_set[i1].set_ccpar(empty_ccpar);
         #endif
     }
     
     // CCPAR i
-    std::vector<uint_fast16_t> Sat::CCPAR(uint_fast16_t index){
+    std::vector<int> Sat::CCPAR(int index){
         return n_set[(FIND(index))].get_ccpar();
     }
     
     // CONGRUENT i1 i2
-    bool Sat::CONGRUENT(uint_fast16_t i1, uint_fast16_t i2){
+    bool Sat::CONGRUENT(int i1, int i2){
         bool congruent1 = ( n_set[i1].get_fn() == n_set[i2].get_fn() ) &&
                          ( n_set[i1].get_args().size() == n_set[i2].get_args().size() );
         
         bool congruent2 = true;
-        for(uint_fast16_t i = 0; i < n_set[i1].get_args().size();i++){
+        for(int i = 0; i < n_set[i1].get_args().size();i++){
             if (FIND(n_set[i1].get_args().at(i)) != FIND(n_set[i1].get_args().at(i)))
                 congruent2 = false;
         }
@@ -503,7 +503,7 @@ namespace ccsat{
     }
     
     // MERGE i1 i2
-    void Sat::MERGE(uint_fast16_t i1, uint_fast16_t i2){
+    void Sat::MERGE(int i1, int i2){
         #ifdef DEBUG
         std::cout << "MERGE ";
         std::cout << i1;
@@ -512,7 +512,7 @@ namespace ccsat{
         #endif
         #ifdef F_LIST
         // Check if it is in forbidden list
-        for(uint_fast16_t i = 0; i < forbidden_list.size() ; i++)
+        for(int i = 0; i < forbidden_list.size() ; i++)
             if( forbidden_list[i].get_first().get_id() == i1 && forbidden_list[i].get_second().get_id() == i2 || 
                 forbidden_list[i].get_first().get_id() == i2 && forbidden_list[i].get_second().get_id() == i1){
                 is_sat = false;
@@ -521,12 +521,12 @@ namespace ccsat{
         #endif
         // if i1 and i2 are not the same
         if(FIND(i1) != FIND(i2) ){
-            std::vector<uint_fast16_t> P1 = CCPAR(i1);
-            std::vector<uint_fast16_t> P2 = CCPAR(i2);
+            std::vector<int> P1 = CCPAR(i1);
+            std::vector<int> P2 = CCPAR(i2);
             UNION(i1,i2);
             // Search for son
-            for(uint_fast16_t i = 0; i < P1.size();i++){
-                for(uint_fast16_t j = 0; j < P2.size();j++){
+            for(int i = 0; i < P1.size();i++){
+                for(int j = 0; j < P2.size();j++){
                     #ifdef DEBUG
                     std::cout << "MERGE ";
                     std::cout << P1[i];
@@ -554,17 +554,17 @@ namespace ccsat{
         if(!is_legal())
             assert(false);
         // Pre-process
-        for(uint_fast16_t i = 0; i < n_set.size() ; i++ ){
+        for(int i = 0; i < n_set.size() ; i++ ){
             if(n_set[i].get_fn() == "cons"){
                 // Add car(n) and cdr(n) to DAG (IF NOT EXIST!)
-                uint_fast16_t id = n_set.size();
-                std::vector<uint_fast16_t> cons_args = n_set[i].get_args();
-                std::vector<uint_fast16_t> args;
-                std::vector<uint_fast16_t> ccpar;
+                int id = n_set.size();
+                std::vector<int> cons_args = n_set[i].get_args();
+                std::vector<int> args;
+                std::vector<int> ccpar;
                 args.push_back(i);
                 // Search if the node car already exists
                 // CAR
-                for(uint_fast16_t j = 0; j < n_set.size(); j++){
+                for(int j = 0; j < n_set.size(); j++){
                     if(n_set[j].get_fn() == "car" && n_set[j].get_args().at(0) == i ){
                         id = j;
                     }
@@ -577,7 +577,7 @@ namespace ccsat{
                 MERGE(id, n_set[i].get_args().at(0));
                 // CDR
                 id = n_set.size();
-                for(uint_fast16_t j = 0; j < n_set.size(); j++){
+                for(int j = 0; j < n_set.size(); j++){
                     if(n_set[j].get_fn() == "cdr" && n_set[j].get_args().at(0) == i ){
                         id = j;
                     }
@@ -595,9 +595,9 @@ namespace ccsat{
             #ifdef DEBUG
             std::cout << "Euality theory passed" << std::endl;
             #endif 
-            for(uint_fast16_t i = 0; i < atoms.size();i++)
+            for(int i = 0; i < atoms.size();i++)
                 // Check if an atom is in the same cc of cons
-                for(uint_fast16_t j = 0; j < n_set.size();j++){
+                for(int j = 0; j < n_set.size();j++){
                     #ifdef DEBUG
                     std::cout << FIND(atoms[i]) << "--" << FIND(j) << std::endl;
                     #endif
@@ -619,17 +619,17 @@ namespace ccsat{
         std::cout << "------------" << std::endl;
         #endif
         #ifdef F_LIST
-        for(uint_fast16_t i = 0; i < clause.size(); i++)
+        for(int i = 0; i < clause.size(); i++)
             if(!clause[i].get_equal()){
                 Clause c = Clause(clause[i].get_first(), clause[i].get_second(), true );
                 forbidden_list.push_back(c);
             }
         #endif
         // For every equality in formula merge
-        for(uint_fast16_t i = 0; i < clause.size(); i++){
+        for(int i = 0; i < clause.size(); i++){
             #ifdef F_LIST
             if(clause[i].get_equal() && forbidden_list.size() != 0 )
-                for(uint_fast16_t j = 0; j < forbidden_list.size() ; j++)
+                for(int j = 0; j < forbidden_list.size() ; j++)
                     if( forbidden_list.at(j).equal(clause[i]) )
                         return false;
             #endif
@@ -647,7 +647,7 @@ namespace ccsat{
         std::cout << "------------" << std::endl;
         #endif
         // Check not equality
-        for(uint_fast16_t i = 0; i < clause.size(); i++){
+        for(int i = 0; i < clause.size(); i++){
             if(!clause[i].get_equal())
                 if(FIND(clause[i].get_first().get_id()) == FIND(clause[i].get_second().get_id()))
                     return false;
@@ -686,8 +686,8 @@ namespace ccsat{
 
     static bool well_formed(std::string s){
         // Check if all parentesis are closed
-        uint_fast16_t open = 0;
-        uint_fast16_t close = 0;
+        int open = 0;
+        int close = 0;
         for(int i = 0; i < s.size() ; i++)
             if(s[i]=='(')
                 open++;
@@ -703,12 +703,12 @@ namespace ccsat{
 
     bool Sat::is_legal(){
         // Detect array
-        for(uint_fast16_t i = 0; i < n_set.size() ; i++ )
+        for(int i = 0; i < n_set.size() ; i++ )
             if(n_set[i].get_fn() == "select")
                 arrays.push_back(n_set[i].get_args().at(0));
         // Detect if it is at left or right side of a formulas
-        for(uint_fast16_t i = 0; i < get_formula().get_formula().size() ; i++ )
-            for(uint_fast16_t j = 0; j < arrays.size() ; j++ )
+        for(int i = 0; i < get_formula().get_formula().size() ; i++ )
+            for(int j = 0; j < arrays.size() ; j++ )
                 if( arrays[j] ==  get_formula().get_formula().at(i).get_first().get_id() ||
                     arrays[j] ==  get_formula().get_formula().at(i).get_second().get_id() )
                     return false;
@@ -797,7 +797,7 @@ namespace ccsat{
         // Count & split occurrence of "|"
         std::vector<std::string> formula;
         while(input.find_first_of("|") != std::string::npos){
-            uint_fast16_t pos = input.find_first_of("|");
+            int pos = input.find_first_of("|");
             formula.push_back(input.substr(0,pos));
             input = input.substr(pos+1,input.size()-pos);
         }

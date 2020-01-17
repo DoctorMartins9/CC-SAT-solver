@@ -6,7 +6,7 @@ namespace ccsat{
         v_set = input;
     }
 
-    uint_fast16_t Formula::get_size(){
+    int Formula::get_size(){
         return v_set.size();
     }
 
