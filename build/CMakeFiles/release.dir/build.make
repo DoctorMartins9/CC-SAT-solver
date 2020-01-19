@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/enrico/Scrivania/GitHub/CC-SAT-solver
+CMAKE_SOURCE_DIR = /home/enrico/Scrivania/git/CC-SAT-solver
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/enrico/Scrivania/GitHub/CC-SAT-solver/build
+CMAKE_BINARY_DIR = /home/enrico/Scrivania/git/CC-SAT-solver/build
 
 # Utility rule file for release.
 
@@ -54,12 +54,12 @@ CMAKE_BINARY_DIR = /home/enrico/Scrivania/GitHub/CC-SAT-solver/build
 include CMakeFiles/release.dir/progress.make
 
 CMakeFiles/release:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "The example files are aviable in bin directory"
-	mkdir -p /home/enrico/Scrivania/GitHub/CC-SAT-solver/bin
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/enrico/Scrivania/git/CC-SAT-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "The example files are aviable in bin directory"
+	mkdir -p /home/enrico/Scrivania/git/CC-SAT-solver/bin
 	make all
-	cp /home/enrico/Scrivania/GitHub/CC-SAT-solver/build/ccsat /home/enrico/Scrivania/GitHub/CC-SAT-solver/bin/
-	cp /home/enrico/Scrivania/GitHub/CC-SAT-solver/build/validation /home/enrico/Scrivania/GitHub/CC-SAT-solver/bin/
-	cp /home/enrico/Scrivania/GitHub/CC-SAT-solver/build/benchmark /home/enrico/Scrivania/GitHub/CC-SAT-solver/bin/
+	cp /home/enrico/Scrivania/git/CC-SAT-solver/build/ccsat /home/enrico/Scrivania/git/CC-SAT-solver/bin/
+	cp /home/enrico/Scrivania/git/CC-SAT-solver/build/validation /home/enrico/Scrivania/git/CC-SAT-solver/bin/
+	cp /home/enrico/Scrivania/git/CC-SAT-solver/build/benchmark /home/enrico/Scrivania/git/CC-SAT-solver/bin/
 
 release: CMakeFiles/release
 release: CMakeFiles/release.dir/build.make
@@ -76,6 +76,6 @@ CMakeFiles/release.dir/clean:
 .PHONY : CMakeFiles/release.dir/clean
 
 CMakeFiles/release.dir/depend:
-	cd /home/enrico/Scrivania/GitHub/CC-SAT-solver/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/enrico/Scrivania/GitHub/CC-SAT-solver /home/enrico/Scrivania/GitHub/CC-SAT-solver /home/enrico/Scrivania/GitHub/CC-SAT-solver/build /home/enrico/Scrivania/GitHub/CC-SAT-solver/build /home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles/release.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/enrico/Scrivania/git/CC-SAT-solver/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/enrico/Scrivania/git/CC-SAT-solver /home/enrico/Scrivania/git/CC-SAT-solver /home/enrico/Scrivania/git/CC-SAT-solver/build /home/enrico/Scrivania/git/CC-SAT-solver/build /home/enrico/Scrivania/git/CC-SAT-solver/build/CMakeFiles/release.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/release.dir/depend
 

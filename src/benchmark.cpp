@@ -28,12 +28,13 @@ int main(int argc, char **argv){
         }
     }
     else{
-        std::cout << "Wrong arguments" << std::endl;
+        std::cout << "I/O Error: Wrong arguments" << std::endl;
         return 0;
     }
     // Print number of formulas involved
     std::cout << "Number of formulas:" << std::count(str.begin(), str.end(), '|') + 1 << std::endl;
-    
+    // Print number of formulas involved
+    std::cout << "#Clauses:" << std::count(str.begin(), str.end(), '=') << std::endl;
     // Record the time elapsed to solve
     auto start_time = std::chrono::system_clock::now();
     bool res = ccsat::SOLVE(str,mode);

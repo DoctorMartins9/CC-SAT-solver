@@ -46,10 +46,8 @@
  In this report is presented a parallel implementation of a congruence closure algorithm for deduction in ground equational theories, able to solve a set of clauses in the quantifiers free fragment of first order logic, based on equality among variables, constants, function applications, recursive data structures with their elements and elements of arrays.
 \end{abstract}
 \section{Introduction}
-The first theory considered is the class of SMT problems is called EUF (Equality with Uninterpreted Functions), containing atoms that are equalities between terms built over uninterpreted function symbols. EUF (i.e., SAT modulo the theory of congruences) is important in applications such as the verification of pipelined processors, where, if the control is verified, the concrete data operations can be abstracted by uninterpreted function symbols.\cite{NIEUWENHUIS2007557} It is the most important theory because its congruence closure algorithm is the core of the entire solver. The implemented algorithm also integrates the theory of lists $\mathcal{T}_{cons}$. 
+The first theory considered is the class of SMT problems is called EUF (Equality with Uninterpreted Functions), containing atoms that are equalities between terms built over uninterpreted function symbols. EUF (i.e., SAT modulo the theory of congruences) is important in applications such as the verification of pipelined processors, where, if the control is verified, the concrete data operations can be abstracted by uninterpreted function symbols.\cite{NIEUWENHUIS2007557} It is the most important theory because its congruence closure algorithm is the core of the entire solver. The implemented algorithm also integrates the theory of lists $\mathcal{T}_{cons}$ and the theory of array without extensionality $\mathcal{T}_A$. In order to reduce the computational complexity of the alghoritm, a parallel version of the solver has been implemented.
 \section{Methodology}
-
-
 \subsection{Algorithm}
 The most interesting feature of this implementation is the organization of the information within the data structures, shaped to be efficient.
 \paragraph{Node} 
@@ -64,7 +62,6 @@ private:
 	std::vector<int>	ccpar;
 };
 \end{lstlisting}
-
 \paragraph{Clause} 
 The \verb|Clause| class is used to save nodes while maintaining the given input relationship. It allows two nodes to be related but has no methods to compare them, as they are used in another class.
 \begin{lstlisting}[style=cpp]
@@ -75,7 +72,6 @@ private:
 	bool is_equal;
 }
 \end{lstlisting}
-
 \paragraph{Formula}
 The \verb|Formula| class contains a single vector of clauses. This structure is the exact transposition of the given input string to be resolved. Once the formula is created the initial string can be discarded because all relevant information has been saved.
 \begin{lstlisting}[style=cpp]
@@ -84,10 +80,22 @@ private:
 	std::vector<Clause> v_set;
 };
 \end{lstlisting}
-
 \paragraph{Sat}
-The \verb|Sat| class acts as a wrapper for the entire program. It contains methods for interfacing with the solver and methods for string parsing. Inside it is saved the initial translated formula and the set of nodes on which the congruence closure will be performed. There are also two index vectors, useful for checking the type of elements. In this case, since the array theory is also included, it has been mandatory to introduce a type checking system that is able to detect any errors in the provided string, such as the comparison between two arrays that is not possible to do in the array theory without extensionality, due to the decision procedure for T$_A$-satisfiability of quantifier-free $\sum_A$-formula F is based on a reduction to T$_E$-satisfiability via applications of the (read-over-write) axioms. 
+The \verb|Sat| class acts as a wrapper for the entire library. It contains methods for interfacing with the solver and methods for string parsing. Inside it is saved the initial translated formula and the set of nodes on which the congruence closure will be performed. There are also two index vectors, useful for checking the type of elements. In this case, since the array theory is also included, it has been mandatory to introduce a type checking system that is able to detect any errors in the provided string, such as the comparison between two arrays that is not possible to do in the array theory without extensionality, due to the fact that the decision procedure for T$_A$-satisfiability of quantifier-free $\sum_A$-formula $\mathcal{F}$ is based on a reduction to T$_E$-satisfiability via applications of the \textit{(read-over-write)} axioms \cite{10.5555/1324777}, shown in equations \ref{read-over-write} and \ref{read-over-write2}.
 
+\begin{align}
+	\label{read-over-write}
+	&\forall a,v,i,j. i = j \to select(store(a,i,e),j) = e \\
+	\label{read-over-write2}
+	&\forall a,v,i,j. i \ne j \to select(store(a,i,e),j) = select(a,j)
+\end{align}
+
+There are two functions to check that the string is acceptable to the parser and then to the solver. While the \verb|is_legal| function checks that an array type element is not in an equal relationship, the \verb|well_formed| function checks that the syntax accepted as input is valid, for example by checking the number of open and closed brackets. The \verb|transform_node|, \verb|initialize_DAG|, \verb|split| and \verb|split_arguments| functions are used to populate the node vector and reconstruct the formula, preparing the necessary for resolution. The \verb|classic_congruence_closure| function performs the congruence closure by calling the functions \verb|FIND|, \verb|UNION|, \verb|CCPAR|, \verb|CONGRUENT| and \verb|MERGE|. These methods are a realization of the algorithm explained in chapter 9 of the Bradley-Manna book \cite{10.5555/1324777}, which consists of calling the recursive function \verb|MERGE| for each equation in order to build the congruence classes. Once the equalities are completed, it is checked that for each inequality the two elements that must be different are not in the same class of equivalence. The \verb|list_congruence_closure| function makes strings that also belong to list theory acceptable to the solver. After initializing the DAG, for each node $n$ such that \verb|n.fn| $=$ \textit{'cons'}, it adds \verb|car(n)| to the DAG and merge \verb|car(n)| with \verb|n.args[1]| and \verb|cdr(n)| to the DAG and merge \verb|cdr(n)| with \verb|n.args[2]|. After doing this pre-processing operation, the \verb|classic_congruence_closure| is performed. If the procedure fails, then the formula is unsatisfable, but if the procedure is successful, there is another check to see if there are both atoms and lists in the same congruence class. In that case the formula will be unsatisfable by axiom \textit{(atom)} shown in equation \ref{atom}, otherwise satisfable.
+\begin{equation}
+	\label{atom}
+	\forall x,y. \neg atom(cons(x,y))
+\end{equation}
+The \verb|detect_store| function is executed before parsing the formula. According to the axioms, for each \verb|select(store(a,i,e),j)| two formulas are created, one in case \verb|i| is equal to \verb|j| and one in case \verb|i| is different from \verb|j|. The recursive \verb|solve| function after checking that the string is properly formatted, if the string does not contain the $store$ keyword, the congruence closure is performed, while if the $store$ keyword is detected, \verb|solve| is called on the formulas generated by \verb|detect_store|. The \verb|SOLVE| function solves a formula in disjunctive normal form. A formula is in disjunctive normal form (DNF) if it is a disjunction of conjunctions of literals. The function divides the formula into a vector of disjointed conjunctions. Once the strings have been prepared, they are divided into batches of variable size depending on the processor on which the solver is running. Each core the processor is equipped with takes charge of a batch, going to call the \verb|solve| function in parallel. If only one of these formulas is satisfable, the procedure ends.
 \begin{lstlisting}[style=cpp]
 class Sat{
 private:
@@ -97,10 +105,12 @@ private:
 	std::vector<int> 	arrays;
 
 	bool	is_legal();
+	bool 	well_formed(std::string s);
+	
 	int 	transform_node(std::string n);
 	void 	initialize_DAG(std::string input);
-	bool 	classic_congruence_closure();
-	bool 	list_congruence_closure();
+	std::vector<std::string> 
+			split(std::string s);
 	std::vector<std::string> 
 			split_arguments(std::string s);
 
@@ -110,41 +120,30 @@ private:
 	bool 			 CONGRUENT(int i1, int i2);
 	void 			 MERGE(int i1, int i2);
 
+	bool 	classic_congruence_closure();
+	bool 	list_congruence_closure();
+	
 public:
 	static std::vector<std::string> 
-					split(std::string s);
-	static bool well_formed(std::string s);
-	static bool solve(std::string s);
-	static std::vector<std::string> 
 			detect_store(std::string input);
+	static bool solve(std::string s);
+	static bool 
+	SOLVE(std::string input,std::string mode);
 };
 \end{lstlisting}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Finally, a heuristic was introduced trying to achieve further improvements in performance. After initializing the DAG, a forbidden list is created in which all the inequality clauses are present. Before performing the congruence closure, it is checked if equality and inequality with the same nodes are present. In this way it is possible to decide that the formula is unsatisfactory without even performing the congruence closure. In case the procedure starts, at each merge it is checked if the elements to be merged are part of the list of clauses contained in the forbidden list. If so, the procedure ends before it is even finished.
 
 \subsection{Equality theory congruence closure example}
-\begin{align*}
+Let's see now with a practical example how congruence closure is performed.
+The formula \ref{example} is passed as an argument to the \verb|solve| function. 
+\begin{equation}
+	\label{example}
 	\mathcal{F} : x = y \land f(x) \ne f(y)
-\end{align*}
-
+\end{equation}
 \begin{lstlisting}
 x=y&f(x)!=f(y)
 \end{lstlisting}
-
+The string is well formatted and contains no \textit{store} keyword, so the parser creates four nodes: two constants ($x$ and $y$) and two functions ($f(x)$ and $f(y)$). At this point there are four congruence classes, one for each element. Every element is therefore representative of its own class.
 \begin {center}
 \resizebox{3.5cm}{!}{
 \begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
@@ -170,14 +169,12 @@ ________________________________________
 3f->1		3		-
 \end{lstlisting}
 
+Initially, the $x=y$ clause is taken into account. The \verb|merge| between $x$ and $y$ is made. 
 \begin{lstlisting}
 MERGE 0 1
 UNION 0 1
-MERGE 2 3 ?
-CONGRUENT 2 3 = 1
 \end{lstlisting}
-
-
+Now $x$ and $y$ are part of the same congruence class and the class representative is $x$. The \verb|ccpar| of $y$ have been moved to $x$, which now contains all the useful information for the congruence class.
 \begin {center}
 \resizebox{3.5cm}{!}{
 	\begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
@@ -204,7 +201,10 @@ ________________________________________
 3f->1		3		-
 \end{lstlisting}
 
+Indeed, the \verb|merge| is recursively done between $f(x)$ and $f(y)$, since they are parents of $x$ and $y$, have the same name, the same number of arguments and the arguments belong to the same congruence class.
 \begin{lstlisting}
+MERGE 2 3 ?
+CONGRUENT 2 3 = 1
 MERGE 2 3
 UNION 2 3
 \end{lstlisting}
@@ -217,11 +217,11 @@ UNION 2 3
 		draw,black , text=black , minimum width =0.5 cm}]
 	\node[state] (N0) {0 : x};
 	\node[state] (N1) [right=of N0]{1 : y};
-	\node[state] (N2) [above =of N0]{2 : f};
-	\node[state] (N3) [above right=of N0] {3 : f};
+	\node[state] (N2) [blue,above =of N0]{2 : f};
+	\node[state] (N3) [blue,above right=of N0] {3 : f};
 	\path (N2) edge [above] node[left] {} (N0);
 	\path (N3) edge [above] node[left] {} (N0);
-	\path (N0) edge[,-,densely dotted] [above] node[left] {} (N1);		\path (N2) edge[,-,densely dotted] [above] node[left] {} (N3);
+	\path (N0) edge[,-,densely dotted] [above] node[left] {} (N1);		\path (N2) edge[,blue,-,densely dotted] [above] node[left] {} (N3);
 \end{tikzpicture}
 }
 \end{center}
@@ -235,6 +235,8 @@ ________________________________________
 3f->1		2		-
 \end{lstlisting}
 
+At this point the equalities are solved. We begin to see for each inequality if its elements belong to the same congruence class. In this case $f(x)!=f(y)$, but from the last merge it can be seen that $f(x)$ and $f(y)$ belong to the same congruence class, so the formula is unsatisfable. 
+
 \begin {center}
 \resizebox{3.5cm}{!}{
 	\begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
@@ -243,8 +245,8 @@ ________________________________________
 		draw,black , text=black , minimum width =0.5 cm}]
 	\node[state] (N0) {0 : x};
 	\node[state] (N1) [right=of N0]{1 : y};
-	\node[state] (N2) [above =of N0]{2 : f};
-	\node[state] (N3) [above right=of N0] {3 : f};
+	\node[state] (N2) [blue,above =of N0]{2 : f};
+	\node[state] (N3) [blue,above right=of N0] {3 : f};
 	\path (N2) edge [above] node[left] {} (N0);
 	\path (N3) edge [above] node[left] {} (N0);
 	\path (N0) edge[,-,densely dotted] [above] node[left] {} (N1);		\path (N2) edge[,-,red] [above] node[left] {} (N3);
@@ -256,268 +258,268 @@ ________________________________________
 UNSAT
 \end{lstlisting}
 
-\subsection{List theory congruence closure example}
-
-\begin{align*}
-\mathcal{F} : cons(car(x),cdr(x)) = x \land atom(x) 
-\end{align*}
-
-\begin{lstlisting}
-atom(x)&cons(car(x),cdr(x))=x
-\end{lstlisting}
-
-
-\begin {center}
-\resizebox{4.5cm}{!}{
-	\begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
-	semithick ,
-	state/.style ={ circle ,top color =white , bottom color = white ,
-		draw,black , text=black , minimum width =0.5 cm}]
-	\node[state] (N0) {0 : x};
-	\node[state] (N1) [above left=of N0]{1 : car};
-	\node[state] (N2) [above right=of N0]{2 : cdr};
-	\node[state] (N3) [above right =of N1] {3 : cons};
-	\node[state] (N4) [above left=of N3]{4 : car};
-	\node[state] (N5) [above right=of N3]{5 : cdr};
-	\path (N1) edge [above] node[left] {} (N0);
-	\path (N2) edge [above] node[left] {} (N0);
-	\path (N3) edge [above] node[left] {} (N1);
-	\path (N3) edge [above] node[left] {} (N2);
-	\path (N4) edge [above] node[left] {} (N3);
-	\path (N5) edge [above] node[left] {} (N3);
-\end{tikzpicture}
-}
-\end{center}
-
-
-\begin{lstlisting}
-MERGE 4 1
-UNION 4 1
-MERGE 5 2
-UNION 5 2
-\end{lstlisting}
-
-\begin {center}
-\resizebox{4.5cm}{!}{
-	\begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
-	semithick ,
-	state/.style ={ circle ,top color =white , bottom color = white ,
-		draw,black , text=black , minimum width =0.5 cm}]
-	\node[state] (N0) {0 : x};
-	\node[state] (N1) [above left=of N0]{1 : car};
-	\node[state] (N2) [above right=of N0]{2 : cdr};
-	\node[state] (N3) [above right =of N1] {3 : cons};
-	\node[state] (N4) [above left=of N3]{4 : car};
-	\node[state] (N5) [above right=of N3]{5 : cdr};
-	\path (N1) edge [above] node[left] {} (N0);
-	\path (N2) edge [above] node[left] {} (N0);
-	\path (N3) edge [above] node[left] {} (N1);
-	\path (N3) edge [above] node[left] {} (N2);
-	\path (N4) edge [above] node[left] {} (N3);
-	\path (N5) edge [above] node[left] {} (N3);
-	\path (N2) edge[,-,densely dotted] [above] node[left] {} (N5);
-	\path (N1) edge[,-,densely dotted] [above] node[left] {} (N4);
-\end{tikzpicture}
-}
-\end{center}
-
-\begin{lstlisting}
-node		find		ccpar
-________________________________________
-0x		0		12
-1car->0		4		-
-2cdr->0		5		-
-3cons->12	3		45
-4car->3		4		3
-5cdr->3		5		3
-\end{lstlisting}
-
-
-
-\begin{lstlisting}
-MERGE 3 0
-UNION 3 0
-MERGE 4 1 ?
-MERGE 4 2 ?
-CONGRUENT 4 2 = 0
-MERGE 5 1 ?
-CONGRUENT 5 1 = 0
-MERGE 5 2 ?
-\end{lstlisting}
-
-\begin {center}
-\resizebox{4.5cm}{!}{
-	\begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
-	semithick ,
-	state/.style ={ circle ,top color =white , bottom color = white ,
-		draw,black , text=black , minimum width =0.5 cm}]
-	\node[state] (N0) {0 : x};
-	\node[state] (N1) [above left=of N0]{1 : car};
-	\node[state] (N2) [above right=of N0]{2 : cdr};
-	\node[state] (N3) [above right =of N1] {3 : cons};
-	\node[state] (N4) [above left=of N3]{4 : car};
-	\node[state] (N5) [above right=of N3]{5 : cdr};
-	\path (N1) edge [above] node[left] {} (N0);
-	\path (N2) edge [above] node[left] {} (N0);
-	\path (N3) edge [above] node[left] {} (N1);
-	\path (N3) edge [above] node[left] {} (N2);
-	\path (N4) edge [above] node[left] {} (N3);
-	\path (N5) edge [above] node[left] {} (N3);
-	\path (N2) edge[,-,densely dotted] [above] node[left] {} (N5);
-	\path (N1) edge[,-,densely dotted] [above] node[left] {} (N4);
-	\path (N3) edge[,-,densely dotted] [above] node[left] {} (N0);
-\end{tikzpicture}
-}
-\end{center}
-
-\begin{lstlisting}
-node		find		ccpar
-________________________________________
-0x		3		-
-1car->0		4		-
-2cdr->0		5		-
-3cons->12	3		4512
-4car->3		4		3
-5cdr->3		5		3
-\end{lstlisting}
-\begin {center}
-\resizebox{4.5cm}{!}{
-	\begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
-	semithick ,
-	state/.style ={ circle ,top color =white , bottom color = white ,
-		draw,black , text=black , minimum width =0.5 cm}]
-	\node[state] (N0) {0 : x};
-	\node[state] (N1) [above left=of N0]{1 : car};
-	\node[state] (N2) [above right=of N0]{2 : cdr};
-	\node[state] (N3) [above right =of N1] {3 : cons};
-	\node[state] (N4) [above left=of N3]{4 : car};
-	\node[state] (N5) [above right=of N3]{5 : cdr};
-	\path (N1) edge [red,above] node[left] {} (N0);
-	\path (N2) edge [red,above] node[left] {} (N0);
-	\path (N3) edge [above] node[left] {} (N1);
-	\path (N3) edge [above] node[left] {} (N2);
-	\path (N4) edge [above] node[left] {} (N3);
-	\path (N5) edge [above] node[left] {} (N3);
-	\path (N2) edge[,-,densely dotted] [above] node[left] {} (N5);
-	\path (N1) edge[,-,densely dotted] [above] node[left] {} (N4);
-	\path (N3) edge[,-,densely dotted] [above] node[left] {} (N0);
-\end{tikzpicture}
-}
-\end{center}
-\begin{lstlisting}
-Euality theory passed
-UNSAT
-\end{lstlisting}
-
-
-\subsection{Array theory congruence closure example}
-
-\begin{align*}
-\mathcal{F} : e=select(store(a,i,e),j) \land select(a,j) \ne e
-\end{align*}
-
-\begin{lstlisting}
-e=select(store(a,i,e),j)&select(a,j)!=e
-\end{lstlisting}
-
-\begin{lstlisting}
-detected store
-\end{lstlisting}
-
-\begin{align*}
-&\mathcal{F}_1 : e=e \land j=i \land select(a,j) \ne e\\
-&\mathcal{F}_2 : e=select(a,j) \land j \ne i \land select(a,j) \ne e
-\end{align*}
+%\subsection{List theory congruence closure example}
+%
+%\begin{align*}
+%\mathcal{F} : cons(car(x),cdr(x)) = x \land atom(x) 
+%\end{align*}
+%
+%\begin{lstlisting}
+%atom(x)&cons(car(x),cdr(x))=x
+%\end{lstlisting}
+%
+%
+%\begin {center}
+%\resizebox{4.5cm}{!}{
+%	\begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
+%	semithick ,
+%	state/.style ={ circle ,top color =white , bottom color = white ,
+%		draw,black , text=black , minimum width =0.5 cm}]
+%	\node[state] (N0) {0 : x};
+%	\node[state] (N1) [above left=of N0]{1 : car};
+%	\node[state] (N2) [above right=of N0]{2 : cdr};
+%	\node[state] (N3) [above right =of N1] {3 : cons};
+%	\node[state] (N4) [above left=of N3]{4 : car};
+%	\node[state] (N5) [above right=of N3]{5 : cdr};
+%	\path (N1) edge [above] node[left] {} (N0);
+%	\path (N2) edge [above] node[left] {} (N0);
+%	\path (N3) edge [above] node[left] {} (N1);
+%	\path (N3) edge [above] node[left] {} (N2);
+%	\path (N4) edge [above] node[left] {} (N3);
+%	\path (N5) edge [above] node[left] {} (N3);
+%\end{tikzpicture}
+%}
+%\end{center}
+%
+%
+%\begin{lstlisting}
+%MERGE 4 1
+%UNION 4 1
+%MERGE 5 2
+%UNION 5 2
+%\end{lstlisting}
+%
+%\begin {center}
+%\resizebox{4.5cm}{!}{
+%	\begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
+%	semithick ,
+%	state/.style ={ circle ,top color =white , bottom color = white ,
+%		draw,black , text=black , minimum width =0.5 cm}]
+%	\node[state] (N0) {0 : x};
+%	\node[state] (N1) [above left=of N0]{1 : car};
+%	\node[state] (N2) [above right=of N0]{2 : cdr};
+%	\node[state] (N3) [above right =of N1] {3 : cons};
+%	\node[state] (N4) [above left=of N3]{4 : car};
+%	\node[state] (N5) [above right=of N3]{5 : cdr};
+%	\path (N1) edge [above] node[left] {} (N0);
+%	\path (N2) edge [above] node[left] {} (N0);
+%	\path (N3) edge [above] node[left] {} (N1);
+%	\path (N3) edge [above] node[left] {} (N2);
+%	\path (N4) edge [above] node[left] {} (N3);
+%	\path (N5) edge [above] node[left] {} (N3);
+%	\path (N2) edge[,-,densely dotted] [above] node[left] {} (N5);
+%	\path (N1) edge[,-,densely dotted] [above] node[left] {} (N4);
+%\end{tikzpicture}
+%}
+%\end{center}
+%
+%\begin{lstlisting}
+%node		find		ccpar
+%________________________________________
+%0x		0		12
+%1car->0		4		-
+%2cdr->0		5		-
+%3cons->12	3		45
+%4car->3		4		3
+%5cdr->3		5		3
+%\end{lstlisting}
+%
+%
+%
+%\begin{lstlisting}
+%MERGE 3 0
+%UNION 3 0
+%MERGE 4 1 ?
+%MERGE 4 2 ?
+%CONGRUENT 4 2 = 0
+%MERGE 5 1 ?
+%CONGRUENT 5 1 = 0
+%MERGE 5 2 ?
+%\end{lstlisting}
+%
+%\begin {center}
+%\resizebox{4.5cm}{!}{
+%	\begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
+%	semithick ,
+%	state/.style ={ circle ,top color =white , bottom color = white ,
+%		draw,black , text=black , minimum width =0.5 cm}]
+%	\node[state] (N0) {0 : x};
+%	\node[state] (N1) [above left=of N0]{1 : car};
+%	\node[state] (N2) [above right=of N0]{2 : cdr};
+%	\node[state] (N3) [above right =of N1] {3 : cons};
+%	\node[state] (N4) [above left=of N3]{4 : car};
+%	\node[state] (N5) [above right=of N3]{5 : cdr};
+%	\path (N1) edge [above] node[left] {} (N0);
+%	\path (N2) edge [above] node[left] {} (N0);
+%	\path (N3) edge [above] node[left] {} (N1);
+%	\path (N3) edge [above] node[left] {} (N2);
+%	\path (N4) edge [above] node[left] {} (N3);
+%	\path (N5) edge [above] node[left] {} (N3);
+%	\path (N2) edge[,-,densely dotted] [above] node[left] {} (N5);
+%	\path (N1) edge[,-,densely dotted] [above] node[left] {} (N4);
+%	\path (N3) edge[,-,densely dotted] [above] node[left] {} (N0);
+%\end{tikzpicture}
+%}
+%\end{center}
+%
+%\begin{lstlisting}
+%node		find		ccpar
+%________________________________________
+%0x		3		-
+%1car->0		4		-
+%2cdr->0		5		-
+%3cons->12	3		4512
+%4car->3		4		3
+%5cdr->3		5		3
+%\end{lstlisting}
+%\begin {center}
+%\resizebox{4.5cm}{!}{
+%	\begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
+%	semithick ,
+%	state/.style ={ circle ,top color =white , bottom color = white ,
+%		draw,black , text=black , minimum width =0.5 cm}]
+%	\node[state] (N0) {0 : x};
+%	\node[state] (N1) [above left=of N0]{1 : car};
+%	\node[state] (N2) [above right=of N0]{2 : cdr};
+%	\node[state] (N3) [above right =of N1] {3 : cons};
+%	\node[state] (N4) [above left=of N3]{4 : car};
+%	\node[state] (N5) [above right=of N3]{5 : cdr};
+%	\path (N1) edge [red,above] node[left] {} (N0);
+%	\path (N2) edge [red,above] node[left] {} (N0);
+%	\path (N3) edge [above] node[left] {} (N1);
+%	\path (N3) edge [above] node[left] {} (N2);
+%	\path (N4) edge [above] node[left] {} (N3);
+%	\path (N5) edge [above] node[left] {} (N3);
+%	\path (N2) edge[,-,densely dotted] [above] node[left] {} (N5);
+%	\path (N1) edge[,-,densely dotted] [above] node[left] {} (N4);
+%	\path (N3) edge[,-,densely dotted] [above] node[left] {} (N0);
+%\end{tikzpicture}
+%}
+%\end{center}
+%\begin{lstlisting}
+%Euality theory passed
+%UNSAT
+%\end{lstlisting}
 
 
-\begin{lstlisting}
-1: e=e&j=i&select(a,j)!=e
-2: e=select(a,j)&j!=i&select(a,j)!=e
-\end{lstlisting}
-
-
-\begin {center}
-\resizebox{7.5cm}{!}{
-	\begin {tikzpicture}[-latex ,auto ,node distance =2cm and 2cm ,on grid ,
-	semithick ,
-	state/.style ={ circle ,top color =white , bottom color = white ,
-		draw,black , text=black , minimum width =0.5 cm}]
-	\node[state] (N0) {0 : e};
-	\node[state] (N1) [right=of N0]{1 : j};
-	\node[state] (N2) [right=of N1]{2 : i};
-	\node[state] (N3) [right =of N2] {3 : a};
-	\node[state] (N4) [above left=of N3]{4 : select};
-	\path (N4) edge [above] node[left] {} (N3);
-	\path (N4) edge [above] node[left] {} (N1);
-\end{tikzpicture}
-}
-\end{center}
-
-\begin{lstlisting}
-node		find		ccpar
-________________________________________
-0e		0		-
-1j		1		4
-2i		2		-
-3a		3		4
-4select->31	4		-
-\end{lstlisting}
-\begin{lstlisting}
-MERGE 0 0
-MERGE 1 2
-UNION 1 2
-\end{lstlisting}
-
-\begin {center}
-\resizebox{7.5cm}{!}{
-	\begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
-	semithick ,
-	state/.style ={ circle ,top color =white , bottom color = white ,
-		draw,black , text=black , minimum width =0.5 cm}]
-	\node[state] (N0) {0 : e};
-	\node[state] (N1) [right=of N0]{1 : j};
-	\node[state] (N2) [right=of N1]{2 : i};
-	\node[state] (N3) [right =of N2] {3 : a};
-	\node[state] (N4) [above left=of N3]{4 : select};
-	\path (N4) edge [above] node[left] {} (N3);
-	\path (N4) edge [above] node[left] {} (N1);
-	\path (N1) edge[,-,densely dotted] [above] node[left] {} (N2);
-\end{tikzpicture}
-}
-\end{center}
-
-\begin{lstlisting}
-node		find		ccpar
-________________________________________
-0e		0		-
-1j		1		4
-2i		1		-
-3a		3		4
-4select->31	4		-
-\end{lstlisting}
-
-\begin {center}
-\resizebox{7.5cm}{!}{
-	\begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
-	semithick ,
-	state/.style ={ circle ,top color =white , bottom color = white ,
-		draw,black , text=black , minimum width =0.5 cm}]
-	\node[state] (N0) {0 : e};
-	\node[state] (N1) [blue,right=of N0]{1 : j};
-	\node[state] (N2) [blue,right=of N1]{2 : i};
-	\node[state] (N3) [blue,right =of N2] {3 : a};
-	\node[state] (N4) [blue,above left=of N3]{4 : select};
-	\path (N4) edge [blue,above] node[left] {} (N3);
-	\path (N4) edge [blue,above] node[left] {} (N1);
-	\path (N1) edge[blue,-,densely dotted] [above] node[left] {} (N2);
-\end{tikzpicture}
-}
-\end{center}
-
-\begin{lstlisting}
-Euality theory passed
-SAT
-\end{lstlisting}
+%\subsection{Array theory congruence closure example}
+%
+%\begin{align*}
+%\mathcal{F} : e=select(store(a,i,e),j) \land select(a,j) \ne e
+%\end{align*}
+%
+%\begin{lstlisting}
+%e=select(store(a,i,e),j)&select(a,j)!=e
+%\end{lstlisting}
+%
+%\begin{lstlisting}
+%detected store
+%\end{lstlisting}
+%
+%\begin{align*}
+%&\mathcal{F}_1 : e=e \land j=i \land select(a,j) \ne e\\
+%&\mathcal{F}_2 : e=select(a,j) \land j \ne i \land select(a,j) \ne e
+%\end{align*}
+%
+%
+%\begin{lstlisting}
+%1: e=e&j=i&select(a,j)!=e
+%2: e=select(a,j)&j!=i&select(a,j)!=e
+%\end{lstlisting}
+%
+%
+%\begin {center}
+%\resizebox{7.5cm}{!}{
+%	\begin {tikzpicture}[-latex ,auto ,node distance =2cm and 2cm ,on grid ,
+%	semithick ,
+%	state/.style ={ circle ,top color =white , bottom color = white ,
+%		draw,black , text=black , minimum width =0.5 cm}]
+%	\node[state] (N0) {0 : e};
+%	\node[state] (N1) [right=of N0]{1 : j};
+%	\node[state] (N2) [right=of N1]{2 : i};
+%	\node[state] (N3) [right =of N2] {3 : a};
+%	\node[state] (N4) [above left=of N3]{4 : select};
+%	\path (N4) edge [above] node[left] {} (N3);
+%	\path (N4) edge [above] node[left] {} (N1);
+%\end{tikzpicture}
+%}
+%\end{center}
+%
+%\begin{lstlisting}
+%node		find		ccpar
+%________________________________________
+%0e		0		-
+%1j		1		4
+%2i		2		-
+%3a		3		4
+%4select->31	4		-
+%\end{lstlisting}
+%\begin{lstlisting}
+%MERGE 0 0
+%MERGE 1 2
+%UNION 1 2
+%\end{lstlisting}
+%
+%\begin {center}
+%\resizebox{7.5cm}{!}{
+%	\begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
+%	semithick ,
+%	state/.style ={ circle ,top color =white , bottom color = white ,
+%		draw,black , text=black , minimum width =0.5 cm}]
+%	\node[state] (N0) {0 : e};
+%	\node[state] (N1) [right=of N0]{1 : j};
+%	\node[state] (N2) [right=of N1]{2 : i};
+%	\node[state] (N3) [right =of N2] {3 : a};
+%	\node[state] (N4) [above left=of N3]{4 : select};
+%	\path (N4) edge [above] node[left] {} (N3);
+%	\path (N4) edge [above] node[left] {} (N1);
+%	\path (N1) edge[,-,densely dotted] [above] node[left] {} (N2);
+%\end{tikzpicture}
+%}
+%\end{center}
+%
+%\begin{lstlisting}
+%node		find		ccpar
+%________________________________________
+%0e		0		-
+%1j		1		4
+%2i		1		-
+%3a		3		4
+%4select->31	4		-
+%\end{lstlisting}
+%
+%\begin {center}
+%\resizebox{7.5cm}{!}{
+%	\begin {tikzpicture}[-latex ,auto ,node distance =2 cm and 2cm ,on grid ,
+%	semithick ,
+%	state/.style ={ circle ,top color =white , bottom color = white ,
+%		draw,black , text=black , minimum width =0.5 cm}]
+%	\node[state] (N0) {0 : e};
+%	\node[state] (N1) [blue,right=of N0]{1 : j};
+%	\node[state] (N2) [blue,right=of N1]{2 : i};
+%	\node[state] (N3) [blue,right =of N2] {3 : a};
+%	\node[state] (N4) [blue,above left=of N3]{4 : select};
+%	\path (N4) edge [blue,above] node[left] {} (N3);
+%	\path (N4) edge [blue,above] node[left] {} (N1);
+%	\path (N1) edge[blue,-,densely dotted] [above] node[left] {} (N2);
+%\end{tikzpicture}
+%}
+%\end{center}
+%
+%\begin{lstlisting}
+%Euality theory passed
+%SAT
+%\end{lstlisting}
 
 
 \section{Validation}
@@ -529,44 +531,21 @@ SAT
 \section{Benchmarks}
 \begin{table}[htpb]
 	\centering
-	\caption{Performance results with simple algorithm.}
-	\label{tab:norm}
-	\resizebox{\columnwidth}{!}{%
-	\begin{tabular}{|c|l|r|r|r|}
-		\hline
-		\textbf{Test} & \textbf{\#Formulas} & \textbf{Sequential (s)} & \textbf{Parallel (s)} & \textbf{Speedup} \\ \hline
-		7             & 128                 & 0,0117                  & 0,0001                & 82,1             \\ \hline
-		8             & 256                 & 0,0290                  & 0,0003                & 100,1            \\ \hline
-		9             & 512                 & 0,0612                  & 0,0008                & 78,8             \\ \hline
-		10            & 1024                & 0,1374                  & 0,0026                & 52,1             \\ \hline
-		11            & 2048                & 0,2988                  & 0,0103                & 29,1             \\ \hline
-		12            & 4096                & 0,6736                  & 0,0442                & 15,3             \\ \hline
-		13            & 8192                & 1,5526                  & 0,1968                & 7,9              \\ \hline
-		14            & 16384               & 3,7465                  & 1,6690                & 2,2              \\ \hline
-		15            & 32768               & 13,8530                 & 9,5786                & 1,4              \\ \hline
-	\end{tabular}
-	}
-\end{table}
-
-% Please add the following required packages to your document preamble:
-% \usepackage{graphicx}
-\begin{table}[htpb]
-	\centering
 	\caption{Performance results with use of forbidden list}
 	\label{tab:fl}
 	\resizebox{\columnwidth}{!}{%
-		\begin{tabular}{|c|l|r|r|r|}
+		\begin{tabular}{|c|l|l|r|r|r|}
 			\hline
-			\textbf{Test} & \textbf{\#Formulas} & \textbf{Sequential (s)} & \textbf{Parallel (s)} & \textbf{Speedup} \\ \hline
-			7             & 128                 & 0,0128              & 0,0001            & 97,3             \\ \hline
-			8             & 256                 & 0,0273              & 0,0003            & 107,6            \\ \hline
-			9             & 512                 & 0,0605              & 0,0007            & 88,6             \\ \hline
-			10            & 1024                & 0,1341              & 0,0024            & 57,0             \\ \hline
-			11            & 2048                & 0,2964              & 0,0099            & 29,9             \\ \hline
-			12            & 4096                & 0,6639              & 0,0430            & 15,5             \\ \hline
-			13            & 8192                & 1,5309              & 0,1854            & 8,3              \\ \hline
-			14            & 16384               & 3,7426              & 1,7264            & 2,2              \\ \hline
-			15            & 32768               & 13,8145             & 9,4844            & 1,5              \\ \hline
+			\textbf{Test} & \textbf{\#Formulas} & \textbf{\#Equations} & \textbf{Sequential (s)} & \textbf{Parallel (s)} & \textbf{Speedup} \\ \hline
+			7             & 128       &1920          & 0,0128              & 0,0001            & 97,3             \\ \hline
+			8             & 256       &4352          & 0,0273              & 0,0003            & 107,6            \\ \hline
+			9             & 512       &9728          & 0,0605              & 0,0007            & 88,6             \\ \hline
+			10            & 1024      &21504          & 0,1341              & 0,0024            & 57,0             \\ \hline
+			11            & 2048      &47104          & 0,2964              & 0,0099            & 29,9             \\ \hline
+			12            & 4096      &102400          & 0,6639              & 0,0430            & 15,5             \\ \hline
+			13            & 8192      &221184           & 1,5309              & 0,1854            & 8,3              \\ \hline
+			14            & 16384     &475136          & 3,7426              & 1,7264            & 2,2              \\ \hline
+			15            & 32768     &1015808          & 13,8145             & 9,4844            & 1,5              \\ \hline
 		\end{tabular}%
 	}
 \end{table}
@@ -631,9 +610,6 @@ coordinates {(4,20.1922)(8,9.4844)(16,5.9145)};
 
 
 \appendix
-
-\newpage
-\newpage
 % Please add the following required packages to your document preamble:
 % \usepackage{booktabs}
 % \usepackage{graphicx}

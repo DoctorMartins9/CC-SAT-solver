@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/enrico/Scrivania/GitHub/CC-SAT-solver
+CMAKE_SOURCE_DIR = /home/enrico/Scrivania/git/CC-SAT-solver
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/enrico/Scrivania/GitHub/CC-SAT-solver/build
+CMAKE_BINARY_DIR = /home/enrico/Scrivania/git/CC-SAT-solver/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/cc_sat.dir/depend.make
@@ -59,16 +59,16 @@ include CMakeFiles/cc_sat.dir/flags.make
 
 CMakeFiles/cc_sat.dir/src/benchmark.cpp.o: CMakeFiles/cc_sat.dir/flags.make
 CMakeFiles/cc_sat.dir/src/benchmark.cpp.o: ../src/benchmark.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/cc_sat.dir/src/benchmark.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cc_sat.dir/src/benchmark.cpp.o -c /home/enrico/Scrivania/GitHub/CC-SAT-solver/src/benchmark.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/enrico/Scrivania/git/CC-SAT-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/cc_sat.dir/src/benchmark.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cc_sat.dir/src/benchmark.cpp.o -c /home/enrico/Scrivania/git/CC-SAT-solver/src/benchmark.cpp
 
 CMakeFiles/cc_sat.dir/src/benchmark.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/cc_sat.dir/src/benchmark.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/enrico/Scrivania/GitHub/CC-SAT-solver/src/benchmark.cpp > CMakeFiles/cc_sat.dir/src/benchmark.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/enrico/Scrivania/git/CC-SAT-solver/src/benchmark.cpp > CMakeFiles/cc_sat.dir/src/benchmark.cpp.i
 
 CMakeFiles/cc_sat.dir/src/benchmark.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cc_sat.dir/src/benchmark.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/enrico/Scrivania/GitHub/CC-SAT-solver/src/benchmark.cpp -o CMakeFiles/cc_sat.dir/src/benchmark.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/enrico/Scrivania/git/CC-SAT-solver/src/benchmark.cpp -o CMakeFiles/cc_sat.dir/src/benchmark.cpp.s
 
 # Object files for target cc_sat
 cc_sat_OBJECTS = \
@@ -80,7 +80,7 @@ cc_sat_EXTERNAL_OBJECTS =
 libcc_sat.a: CMakeFiles/cc_sat.dir/src/benchmark.cpp.o
 libcc_sat.a: CMakeFiles/cc_sat.dir/build.make
 libcc_sat.a: CMakeFiles/cc_sat.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX static library libcc_sat.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/enrico/Scrivania/git/CC-SAT-solver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX static library libcc_sat.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/cc_sat.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/cc_sat.dir/link.txt --verbose=$(VERBOSE)
 
@@ -94,6 +94,6 @@ CMakeFiles/cc_sat.dir/clean:
 .PHONY : CMakeFiles/cc_sat.dir/clean
 
 CMakeFiles/cc_sat.dir/depend:
-	cd /home/enrico/Scrivania/GitHub/CC-SAT-solver/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/enrico/Scrivania/GitHub/CC-SAT-solver /home/enrico/Scrivania/GitHub/CC-SAT-solver /home/enrico/Scrivania/GitHub/CC-SAT-solver/build /home/enrico/Scrivania/GitHub/CC-SAT-solver/build /home/enrico/Scrivania/GitHub/CC-SAT-solver/build/CMakeFiles/cc_sat.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/enrico/Scrivania/git/CC-SAT-solver/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/enrico/Scrivania/git/CC-SAT-solver /home/enrico/Scrivania/git/CC-SAT-solver /home/enrico/Scrivania/git/CC-SAT-solver/build /home/enrico/Scrivania/git/CC-SAT-solver/build /home/enrico/Scrivania/git/CC-SAT-solver/build/CMakeFiles/cc_sat.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/cc_sat.dir/depend
 
