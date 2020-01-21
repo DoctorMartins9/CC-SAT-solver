@@ -8,6 +8,7 @@
 \usepackage{textcomp}
 \usepackage{booktabs}
 \usepackage{listings}
+\usepackage{url}
 \usepackage{xcolor} % for setting colors
 \definecolor{vblue}{RGB}{49,49,255}
 \definecolor{vgreen}{RGB}{104,180,104}
@@ -43,7 +44,7 @@
 \author{Enrico Martini, VR445204}
 \maketitle
 \begin{abstract}
- In this report is presented a parallel implementation of a congruence closure algorithm for deduction in ground equational theories, able to solve a set of clauses in the quantifiers free fragment of first order logic, based on equality among variables, constants, function applications, recursive data structures with their elements and elements of arrays.
+ In this report is presented a parallel C++ implementation of a congruence closure algorithm for deduction in ground equational theories, able to solve a set of clauses in the quantifiers free fragment of first order logic, based on equality among variables, constants, function applications, recursive data structures with their elements and elements of arrays.
 \end{abstract}
 \section{Introduction}
 The first theory considered is the class of SMT problems is called EUF (Equality with Uninterpreted Functions), containing atoms that are equalities between terms built over uninterpreted function symbols. EUF (i.e., SAT modulo the theory of congruences) is important in applications such as the verification of pipelined processors, where, if the control is verified, the concrete data operations can be abstracted by uninterpreted function symbols.\cite{NIEUWENHUIS2007557} It is the most important theory because its congruence closure algorithm is the core of the entire solver. The implemented algorithm also integrates the theory of lists $\mathcal{T}_{cons}$ and the theory of array without extensionality $\mathcal{T}_A$. In order to reduce the computational complexity of the alghoritm, a parallel version of the solver has been implemented.
@@ -131,7 +132,7 @@ public:
 	SOLVE(std::string input,std::string mode);
 };
 \end{lstlisting}
-Finally, a heuristic was introduced trying to achieve further improvements in performance. After initializing the DAG, a forbidden list is created in which all the inequality clauses are present. Before performing the congruence closure, it is checked if equality and inequality with the same nodes are present. In this way it is possible to decide that the formula is unsatisfactory without even performing the congruence closure. In case the procedure starts, at each merge it is checked if the elements to be merged are part of the list of clauses contained in the forbidden list. If so, the procedure ends before it is even finished.
+Finally, a heuristic was introduced trying to achieve further improvements in performance. After initializing the DAG, a forbidden list is created in which all the inequality clauses are present. Before performing the congruence closure, it is checked if equality and inequality with the same nodes are present. In this way it is possible to decide that the formula is unsatisfable without even performing the congruence closure. In case the procedure starts, at each merge it is checked if the elements to be merged are part of the list of clauses contained in the forbidden list. If so, the procedure ends before it is even finished.
 
 \subsection{Equality theory congruence closure example}
 Let's see now with a practical example how congruence closure is performed.
@@ -259,9 +260,12 @@ UNSAT
 \end{lstlisting}
 
 \section{Validation}
-
+Throughout the implementation phase of the algorithm and the study of heuristics, in order to ensure the correct functionality of the library, a program has been created to runtime test the solver, providing in input many strings of varying complexity, in order to verify the consistency with the main axioms of all the theories taken in the study. A significant subset of the tests used is shown in Table \ref{tab:my-table}. For the quantifier-free fragment theory of equality with uninterpreted functions, axioms and examples have been taken from the Bradley-Manna book\cite{10.5555/1324777} and the article Nieuwenhuis-Oliveras\cite{NIEUWENHUIS2007557}. The benchmarking set that was used in the article Blanchette-B\"{o}hme-Paulson\cite{Blanchette2013} present in the SMT-LIB benchmark library\cite{Z3}, is also used. For the $\mathcal{T}_{cons}$ theory and the $\mathcal{T}_{A}$ theory, axioms and examples have been taken from the Bradley-Manna book\cite{10.5555/1324777} and from the intermediate exam of the \textit{Automatic Reasoning} course. 
 
 \section{Benchmarks}
+To measure the impact of heuristics within the algorithm, the \textit{eq\_diamond}\cite{Z3} formulas set was used as a benchmark. The most noticeable differences can be seen in file 15, which contains a formula composed of more than a million equations and negated equations. Since the benchmark file is in \verb|smt2| format, a python parser called \verb|smt2_parser.py| has been created that takes the \verb|smt2| file as input, transforms it into $DNF$ form and returns it as a string in a text file. In this way any official \textit{SMT-LIB} file is made readable by the solver.  The experiments were performed on a 3.40GHz Intel\textregistered i5-7400 PC with 8GB 2400MHz DDR4 RAM, a 4.30GHz Intel\textregistered i7-8565U PC with 16GB 2133MHz DDR3 RAM and a 3.90GHz AMD\textregistered Ryzen7 1700X PC with 8GB 2400MHz DDR4 RAM. 
+The performance results are shown in Table \ref{tab:fl}.
+
 \begin{table}[htpb]
 	\centering
 	\caption{Performance results with use of forbidden list}
@@ -278,15 +282,15 @@ UNSAT
 			     12       & 4096                & 102400               &                  0,6639 &                0,0430 &             15,5 \\ \hline
 			     13       & 8192                & 221184               &                  1,5309 &                0,1854 &              8,3 \\ \hline
 			     14       & 16384               & 475136               &                  3,7426 &                1,7264 &              2,2 \\ \hline
-			     15       & 32768               & 1015808              &                 13,8145 &                9,4844 &              1,5 \\ \hline
+			     15       & 32768               & 1015808              &                 43,8145 &                9,4844 &              4,7 \\ \hline
 		\end{tabular}%
 	}
 \end{table}
 
 \section{Performance Analysis}
-
-
-
+As shown in Figure \ref{fig:graph1}, the execution time of the sequential solver increases exponentially as the quantity and size of the formulas increase. On the other hand, the parallel solver is able to maintain an almost linear growth. This is due to the fact that the input formula being in normal negated form, so it is composed of a set of formulas that are independent from each other and so easily executed simultaneously. The most critical phase of the whole algorithm is the parsing, as the closing of congruency is very fast being completely index-based. 
+\begin{figure}[htpb]
+\centering
 \begin{tikzpicture}
 \begin{axis}[
 title={Time},
@@ -296,21 +300,26 @@ legend pos=north west,
 ymajorgrids=true,
 grid style=dashed,
 ]
-
 \addplot[color=blue]
 coordinates {
-	(128,0.0117)(256,0.0290)(512,0.0612)(1024,0.1374)(2048,0.2988)(4096,0.6736)(8192,1.5526)(16384,3.7465)(32768,13.8530)
+	(128,0.0117)(256,0.0290)(512,0.0612)(1024,0.1374)(2048,0.2988)(4096,0.6736)(8192,1.5526)(16384,3.7465)(32768,43.8530)
 };
 \addplot[color=green]
 coordinates {
 	(128,0.0001)(256,0.0003)(512,0.0008)(1024,0.0026)(2048,0.0103)(4096,0.0442)(8192,0.1968)(16384,1.6690)(32768,9.5786)
 };
-
 \legend{Sequential sat,Parallel sat}
-
 \end{axis}
 \end{tikzpicture}
+\caption{Time performance comparison between parallel and sequential version.}
+\label{fig:graph1}
+\end{figure}
 
+
+Figure \ref{fig:graph2} shows the impact the heuristics have had on the resolution of the \textit{eq\_diamond} 15 benchmark. It can be seen easily that even increasing the number of cores the sequential solver does not improve performance. The parallel solver instead solves the test in much less time, visibly improving overall performance. Another important consideration that can be deduced from the analysis of the graph is that the use of the forbidden list does not bring any improvement. In some cases it even makes it slower than the execution of the congruency closure without this heuristics.
+This result is due to the fact that inserting the prohibited list introduces a linear control over a list, which in most cases slows down the execution of the congruency closure. In fact, the merge, even though it is recursive, will hardly be more complex than a sequential control.  All the comparison operations are made on direct accesses in cache, very fast and that allow to reduce the access in RAM for the \textit{principle of locality}.
+
+\begin{figure}[htpb]
 \begin{tikzpicture}
 \begin{axis}[
 x tick label style={
@@ -324,49 +333,49 @@ bar width=7pt,
 xlabel=Cores\\
 ]
 \addplot[color=blue,domain=15:15]
-coordinates {(4,47.4944)(8,13.8530)(16,37.3613)};
+coordinates {(4,47.4944)(8,43.8530)(16,37.3613)};
 \addplot 
-coordinates {(4,47.5747)(8,13.8145)(16,5.8145)};
+coordinates {(4,47.5747)(8,43.8145)(16,4.8145)};
 \addplot 
 coordinates {(4,19.7812)(8,9.5786)(16,38.5786)};
 \addplot 
-coordinates {(4,20.1922)(8,9.4844)(16,5.9145)};
+coordinates {(4,20.1922)(8,9.4844)(16,4.9145)};
 \legend{Seq,Seq w. FL ,Parallel, Parallel w. FL}
 \end{axis}
 \end{tikzpicture}
-
+\caption{Time performance comparison using different processors and heuristics.}
+\label{fig:graph2}
+\end{figure}
 
 \section{Conclusion}
+A possible implementation of the congruency closure algorithm was presented, highlighting the limits of this procedure. In particular, it was possible to see how the DAG construction process was the most computationally onerous part. The cyclomatic complexity of the parsing function is in effect at the limit of correctness, with nested loops and many iterations that slow down the whole process. A possible improvement could be the introduction of an external grammar parser and type checker, with its pros and cons. Once the graph has been built, the merge and check sequence is so efficient that it is irrelevant. For this reason the introduction of a heuristics, such as the forbidden list, that in theory should speed up the merge once realized can only slow down the algorithm.
+In addition to time, other non-functional constraints could be considered, such as energy dissipation and RAM consumption. In this way, this procedure could be taken at the edge, with limited hardware resources for fast decision making on embedded systems.
 
 \bibliography{biblio}
 \bibliographystyle{ieeetr}
-
-
+\onecolumn
 \appendix
-% Please add the following required packages to your document preamble:
-% \usepackage{booktabs}
-% \usepackage{graphicx}
 \begin{table}[htpb]
 	\centering
-	\caption{}
+	\caption{Subset of relevant strings used to check the correctness of the solver.}
 	\label{tab:my-table}
 	\resizebox{\textwidth}{!}{%
 		\begin{tabular}{@{}cclc@{}}
 			\toprule
 			\textbf{Theory} & \textbf{Source}   & \textbf{Formula}                                                                                           & \textbf{Result} \\ \midrule
-			Equality        & Bradley-Manna     & f(x)=f(y)\&x!=y                                                                                            & SAT             \\
+			Equality        & Bradley-Manna\cite{10.5555/1324777}     & f(x)=f(y)\&x!=y                                                                                            & SAT             \\
 			&                   & x=y\&f(x)!=f(y)                                                                                            & UNSAT           \\
 			&                   & f(a,b)=a\&f(f(a,b),b)!=a                                                                                   & UNSAT           \\
 			&                   & f(f(f(a)))=a\&f(f(f(f(f(a)))))=a\&f(a)!=a                                                                  & UNSAT           \\
 			&                   & f(f(f(a)))=f(f(a))\&f(f(f(f(a))))=a\&f(a)!=a                                                               & UNSAT           \\
 			&                   & f(x,y)=f(y,x)\&f(a,y)!=f(y,a)                                                                              & SAT             \\
 			&                   & f(g(x))=g(f(x))\&f(g(f(y)))=x\&f(y)=x\&g(f(x))!=x                                                          & UNSAT           \\
-			& IC Tests          & b=d\&f(b)=d\&f(d)=a\&a!=b                                                                                  & UNSAT           \\
+			& Robert-Oliveras\cite{NIEUWENHUIS2007557}          & b=d\&f(b)=d\&f(d)=a\&a!=b                                                                                  & UNSAT           \\
 			&                   & a=b1\&b1=b2\&b2=b3\&b3=c\&f(a1,a1)=a\&f(c1,c1)=c\&a1=c1\&a!=c                                              & UNSAT           \\
-			& Z3 Benchmark      & f1!=f2\&f3(f4,f5,f6,f7,f8(f9))!=f1\&f3(f4,f5,f6,f7,f10)=f1\&f10=f8(f9)\&f10=f8(f9)\&f3(f4,f5,f6,f7,f10)=f1 & UNSAT           \\
+			& Z3 Benchmark\cite{Z3}      & f1!=f2\&f3(f4,f5,f6,f7,f8(f9))!=f1\&f3(f4,f5,f6,f7,f10)=f1\&f10=f8(f9)\&f10=f8(f9)\&f3(f4,f5,f6,f7,f10)=f1 & UNSAT           \\
 			&                   & f1!=f2\&f3(f4,f5,f6,f7,f8(f9))!=f1\&f3(f4,f5,f6,f7,f10)=f1\&f10=f8(f9)\&f3(f4,f5,f6,f7,f10)=f1             & UNSAT           \\
-			&                   & f1!=f2\&f3(f4,f5,f6,f7,f8(f9))!=f1\&f3(f4,f5,f6,f7,f10)=f1\&f10=f8(f9)                                     & UNSAT           \\
-			List            & Bradley Manna     & x1=x2\&y1=y2\&cons(x1,y1)!=cons(x2,y2)                                                                     & UNSAT           \\
+			&                   & f1!=f2\&f3(f4,f5,f6,f7,f8(f9))!=f1\&f3(f4,f5,f6,f7,f10)=f1\&f10=f8(f9)                                     & UNSAT           \\\hline
+			List            & Bradley Manna\cite{10.5555/1324777}     & x1=x2\&y1=y2\&cons(x1,y1)!=cons(x2,y2)                                                                     & UNSAT           \\
 			&                   & x=y\&car(x)!=car(y)                                                                                        & UNSAT           \\
 			&                   & x=y\&cdr(x)!=cdr(y)                                                                                        & UNSAT           \\
 			&                   & car(cons(x,y))!=x                                                                                          & UNSAT           \\
@@ -375,28 +384,13 @@ coordinates {(4,20.1922)(8,9.4844)(16,5.9145)};
 			&                   & atom(x)\&cons(car(x),cdr(x))=x                                                                             & UNSAT           \\
 			&                   & car(x)=car(y)\&cdr(x)=cdr(y)\&f(x)!=f(y)\&!atom(x)\&!atom(y)                                               & UNSAT           \\
 			&                   & car(x)=y\&cdr(x)=z\&x!=cons(y,z)                                                                           & SAT             \\
-			& Intermediate exam & f(b)=b\&f(f(b))!=car(cdr(cons(f(b),cons(b,d))))                                                            & UNSAT           \\
-			Array           & Bradley-Manna     & i=k\&select(store(x,i,v),k)!=v                                                                             & UNSAT           \\
+			& Intermediate exam & f(b)=b\&f(f(b))!=car(cdr(cons(f(b),cons(b,d))))                                                            & UNSAT           \\\hline
+			Array           & Bradley-Manna\cite{10.5555/1324777}     & i=k\&select(store(x,i,v),k)!=v                                                                             & UNSAT           \\
 			&                   & i!=k\&select(store(x,i,v),k)!=select(x,k)                                                                  & UNSAT           \\
 			&                   & i1=j\&i1!=i2\&select(a,j)=v1\&select(store(store(a,i1,v1),i2,v2),j)!=select(a,j)                           & UNSAT           \\
 			& Intermediate exam & e=select(store(a,i,e),j)\&select(a,j)!=e                                                                   & SAT             \\ \bottomrule
 		\end{tabular}%
 	}
 \end{table}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 \end{document}
